@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import SectionWrapper from '../../shared/SectionWrapper.vue';
+import { SectionWrapper } from '../../shared';
 
 interface IFeatures {
   title: string;

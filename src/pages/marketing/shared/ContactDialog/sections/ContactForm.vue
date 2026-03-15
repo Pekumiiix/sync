@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 
-import BaseDialog from '@/components/re-useable/BaseDialog.vue';
-import BaseForm from '@/components/re-useable/BaseForm.vue';
+import { BaseDialog, BaseForm } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-
-import { type ContactData, contactSchema } from '../../schemas/contact.schema';
+import { type ContactData,contactSchema } from '@/pages/marketing/schemas/contact.schema';
 
 interface Props {
   open: boolean;

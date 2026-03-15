@@ -42,6 +42,7 @@ import { Button } from '@/components/ui/button';
           <ArrowRight
             :size="20"
             color="var(--color-primary-10)"
+            class="-rotate-25"
         /></Button>
 
         <Button

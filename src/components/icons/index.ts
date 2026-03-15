@@ -1,0 +1,9 @@
+export { default as EditIcon } from './Edit.vue';
+export { default as FolderIcon } from './Folder.vue';
+export { default as NotificationIcon } from './Notification.vue';
+export { default as PinIcon } from './Pin.vue';
+export { default as SearchIcon } from './Search.vue';
+export { default as SelectIcon } from './Select.vue';
+export { default as SettingsIcon } from './Settings.vue';
+export { default as TrashIcon } from './Trash.vue';
+export { default as UnpinIcon } from './Unpin.vue';

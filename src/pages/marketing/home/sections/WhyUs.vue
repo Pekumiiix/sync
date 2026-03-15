@@ -2,8 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import SectionDetails from '../../shared/SectionDetails.vue';
-import SectionWrapper from '../../shared/SectionWrapper.vue';
+import { SectionDetails, SectionWrapper } from '../../shared';
 
 interface IWhyUs {
   image: string;
@@ -48,7 +47,7 @@ const whyUs: IWhyUs[] = [
     />
 
     <div
-      class="flex flex-col md:flex-row flex-wrap items-center md:items-center md:justify-center lg:grid grid-cols-3 gap-6"
+      class="flex flex-col md:flex-row flex-wrap items-center md:justify-center lg:grid grid-cols-3 gap-6"
     >
       <div
         v-for="item in whyUs"

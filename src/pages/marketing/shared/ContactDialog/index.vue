@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import ContactForm from './ContactForm.vue';
-import ContactSuccess from './ContactSuccess.vue';
+import { ContactForm, ContactSuccess } from './sections';
 
 interface Props {
   open: boolean;

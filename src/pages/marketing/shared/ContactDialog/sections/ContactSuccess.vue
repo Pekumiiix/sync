@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-import BaseDialog from '@/components/re-useable/BaseDialog.vue';
+import { BaseDialog } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 
 const router = useRouter();

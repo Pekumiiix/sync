@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
 
-import SectionDetails from '../../shared/SectionDetails.vue';
-import SectionWrapper from '../../shared/SectionWrapper.vue';
+import { SectionDetails,SectionWrapper } from '../../shared';
 
 const howItWorks = [
   {

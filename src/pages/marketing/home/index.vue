@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import Pricing from '../shared/Pricing.vue';
-import About from './sections/About.vue';
-import Features from './sections/Features.vue';
-import Hero from './sections/Hero.vue';
-import HowItWorks from './sections/HowItWorks.vue';
-import WhyUs from './sections/WhyUs.vue';
+import { PricingSection } from '../shared';
+import {
+  AboutSection,
+  FeaturesSection,
+  HeroSection,
+  HowItWorksSection,
+  WhyUsSection
+} from './sections/index';
 </script>
 
 <template>
-  <Hero />
+  <HeroSection />
 
-  <WhyUs />
+  <WhyUsSection />
 
-  <About />
+  <AboutSection />
 
-  <Features />
+  <FeaturesSection />
 
-  <HowItWorks />
+  <HowItWorksSection />
 
-  <Pricing />
+  <PricingSection />
 </template>

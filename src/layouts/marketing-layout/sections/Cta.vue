@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import SectionDetails from '@/pages/marketing/shared/SectionDetails.vue';
-import SectionWrapper from '@/pages/marketing/shared/SectionWrapper.vue';
+import { SectionDetails, SectionWrapper } from '@/pages/marketing/shared';
 </script>
 
 <template>

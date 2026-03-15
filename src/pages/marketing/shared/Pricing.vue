@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { computed,ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { pricingPlans } from '@/components/constants/pricing-plans';
-import BaseSwitch from '@/components/re-useable/BaseSwitch.vue';
+import { BaseSwitch } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-import ContactDialog from './ContactDialog/index.vue';
-import SectionDetails from './SectionDetails.vue';
-import SectionWrapper from './SectionWrapper.vue';
+import { ContactDialog, SectionDetails, SectionWrapper } from '.';
 
 const open = ref(false);
 const isYearly = ref(false);

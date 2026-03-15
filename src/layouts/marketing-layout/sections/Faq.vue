@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import BaseAccordion from '@/components/re-useable/BaseAccordion.vue';
-import SectionDetails from '@/pages/marketing/shared/SectionDetails.vue';
-import SectionWrapper from '@/pages/marketing/shared/SectionWrapper.vue';
+import { BaseAccordion } from '@/components/re-useable';
+import { SectionDetails, SectionWrapper } from '@/pages/marketing/shared';
 
 const faqs = [
   {
