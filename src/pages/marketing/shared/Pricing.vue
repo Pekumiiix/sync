@@ -133,9 +133,6 @@ const plans = computed(() => {
       </div>
     </div>
 
-    <ContactDialog
-      :open="open"
-      @open-change="(val) => (open = val)"
-    />
+    <ContactDialog v-model="open" />
   </SectionWrapper>
 </template>

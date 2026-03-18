@@ -6,15 +6,12 @@ import { Button } from '@/components/ui/button';
 
 const router = useRouter();
 
-defineProps<{ open: boolean }>();
-
-const emit = defineEmits(['open-change']);
+const open = defineModel<boolean>();
 </script>
 
 <template>
   <BaseDialog
-    :open="open"
-    @open-change="emit('open-change', $event)"
+    v-model="open"
     title="We've gotten your response"
     description="Thanks for reaching out! We’ve got your enquiry and will be in touch soon to help you get started"
     :img="{
@@ -36,7 +33,7 @@ const emit = defineEmits(['open-change']);
         class="w-full h-14 rounded-full text-base font-medium leading-7"
         @click="
           router.push('/');
-          emit('open-change', false);
+          open = false;
         "
       >
         Go to home

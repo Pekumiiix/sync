@@ -5,17 +5,13 @@ import { BaseDialog, BaseForm } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { type ContactData,contactSchema } from '@/pages/marketing/schemas/contact.schema';
+import { type ContactData, contactSchema } from '@/pages/marketing/schemas/contact.schema';
 
-interface Props {
-  open: boolean;
-}
+const open = defineModel<boolean>();
 
-defineProps<Props>();
+const emit = defineEmits(['success']);
 
-const emit = defineEmits(['open-change', 'success']);
-
-const inputs = [
+const inputs: Array<{ name: keyof ContactData; label: string }> = [
   { name: 'firstname', label: 'First name' },
   { name: 'lastname', label: 'Last name' },
   { name: 'email', label: 'Email address' },
@@ -27,19 +23,14 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((data: ContactData) => {
-  console.log(data);
   emit('success');
+  console.log(data);
 });
-
-function handleOpenChange(value: boolean) {
-  emit('open-change', value);
-}
 </script>
 
 <template>
   <BaseDialog
-    :open="open"
-    @open-change="handleOpenChange"
+    v-model="open"
     title="Talk to us about your organization need"
     description="Our Enterprise solution is best for large companies with advanced security and support requirements."
     :class-names="{
@@ -63,42 +54,48 @@ function handleOpenChange(value: boolean) {
           :name="input.name"
           :label="input.label"
           :class-names="{ item: 'w-full' }"
-          v-slot="fieldProps"
-          ><Input
-            v-bind="fieldProps"
-            class="h-10! p-1.5 px-2.5 text-base placeholder:text-black-60 placeholder:text-base"
-        /></BaseForm>
+        >
+          <template #default="fieldProps">
+            <Input
+              v-bind="fieldProps"
+              class="w-full h-10! p-1.5 px-2.5 text-base placeholder:text-black-60 placeholder:text-base"
+            />
+          </template>
+        </BaseForm>
 
         <BaseForm
           name="company"
           label="Company"
           :class-names="{ item: 'w-full md:col-span-2' }"
-          v-slot="fieldProps"
         >
-          <Input
-            v-bind="fieldProps"
-            class="w-full h-10! p-1.5 px-2.5 text-base placeholder:text-black-60 placeholder:text-base"
-          />
+          <template #default="fieldProps">
+            <Input
+              v-bind="fieldProps"
+              class="w-full h-10! p-1.5 px-2.5 text-base placeholder:text-black-60 placeholder:text-base"
+            />
+          </template>
         </BaseForm>
 
         <BaseForm
           name="message"
           label="How we can we support you?"
           :class-names="{ item: 'w-full md:col-span-2' }"
-          v-slot="fieldProps"
         >
-          <Textarea
-            v-bind="fieldProps"
-            class="w-full h-30! py-1.5 px-2.5 text-base placeholder:text-black-60 placeholder:text-base"
-          />
+          <template #default="fieldProps">
+            <Textarea
+              v-bind="fieldProps"
+              class="w-full h-30! py-1.5 px-2.5 text-base placeholder:text-black-60 placeholder:text-base"
+            />
+          </template>
         </BaseForm>
       </div>
 
       <Button
         type="submit"
         class="w-full h-12 rounded-full text-base font-medium leading-7"
-        >Contact Sales</Button
       >
+        Contact Sales
+      </Button>
     </form>
   </BaseDialog>
 </template>

@@ -6,3 +6,6 @@ export interface IBookmarkCard {
   category: string;
   time: string;
 }
+
+export type DisplayType = 'list' | 'grid';
+export type SortOrder = 'a-z' | 'z-a' | 'newest' | 'oldest';

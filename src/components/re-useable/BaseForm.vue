@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="FormType extends Record<string, unknown>">
 import {
   FormControl,
   FormDescription,
@@ -10,7 +10,7 @@ import {
 import { cn } from '@/lib/utils';
 
 interface Props {
-  name: string;
+  name: keyof FormType & string;
   label?: string;
   description?: string;
   showMessage?: boolean;
@@ -42,8 +42,10 @@ withDefaults(defineProps<Props>(), {
         <slot v-bind="componentField" />
       </FormControl>
       <FormDescription :class="cn(classNames?.description)">{{ description }}</FormDescription>
-
-      <FormMessage v-if="showMessage" />
+      <FormMessage
+        v-if="showMessage"
+        class="-mt-2"
+      />
     </FormItem>
   </FormField>
 </template>

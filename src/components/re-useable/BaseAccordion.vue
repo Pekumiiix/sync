@@ -9,7 +9,12 @@ import { cn } from '@/lib/utils';
 
 interface Props {
   items: { value: string; trigger: string; content: string }[];
-  classNames?: { wrapper?: string; item?: string; trigger?: string; content?: string };
+  classNames?: {
+    wrapper?: string;
+    item?: string;
+    trigger?: string;
+    content?: string;
+  };
 }
 
 defineProps<Props>();

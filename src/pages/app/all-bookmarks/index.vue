@@ -1,14 +1,65 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
+import type { DisplayType, SortOrder } from '@/types/app.type';
+
 import { AppWrapper, ContentWrapper } from '../shared';
-import { AllBookmarks,PinnedBookmarks } from './sections';
+import { BookmarkTabWrapper } from './components';
+import { BookmarkTabContentWrapper,PinnedBookmarks } from './sections';
+
+const tabs = [
+  {
+    label: 'All',
+    value: 'all'
+  },
+  {
+    label: 'Chrome',
+    value: 'chrome'
+  }
+];
+
+const bookmarks = [
+  {
+    id: crypto.randomUUID(),
+    platform: 'Facebook',
+    link: 'www.facebook.com',
+    category: 'unsorted',
+    time: '3:30 PM',
+    image: '/images/app/sidebar/avatar.png'
+  }
+];
+
+const displayType = ref<DisplayType>('list');
+const sortOrder = ref<SortOrder>('a-z');
 </script>
 
 <template>
   <AppWrapper page="All Bookmarks">
     <ContentWrapper>
-      <PinnedBookmarks />
+      <BookmarkTabWrapper
+        defualtValue="all"
+        :tabs="tabs"
+        v-model:displayType="displayType"
+        v-model:sortOrder="sortOrder"
+      >
+        <PinnedBookmarks />
 
-      <AllBookmarks />
+        <template #all>
+          <BookmarkTabContentWrapper
+            platform="All"
+            :displayType="displayType"
+            :bookmarks="bookmarks"
+          />
+        </template>
+
+        <template #chrome>
+          <BookmarkTabContentWrapper
+            platform="Chrome"
+            :displayType="displayType"
+            :bookmarks="bookmarks"
+          />
+        </template>
+      </BookmarkTabWrapper>
     </ContentWrapper>
   </AppWrapper>
 </template>

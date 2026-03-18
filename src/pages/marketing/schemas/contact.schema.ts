@@ -21,7 +21,9 @@ const contactZodSchema = z.object({
     })
     .email('Please enter a valid email address'),
   company: z
-    .string()
+    .string({
+      required_error: 'Company name is required'
+    })
     .min(2, 'Company name must be at least 2 characters.')
     .max(100, 'Company name cannot exceed 100 characters'),
   country: z

@@ -3,30 +3,20 @@ import { ref } from 'vue';
 
 import { ContactForm, ContactSuccess } from './sections';
 
-interface Props {
-  open: boolean;
-}
-
-defineProps<Props>();
-const emit = defineEmits(['open-change']);
-
+const isContactFormOpen = defineModel<boolean>({ default: false });
 const showSuccess = ref(false);
 
 function handleSuccess() {
-  emit('open-change', false);
+  isContactFormOpen.value = false;
   showSuccess.value = true;
 }
 </script>
 
 <template>
   <ContactForm
-    :open="open"
-    @open-change="emit('open-change', $event)"
+    v-model="isContactFormOpen"
     @success="handleSuccess"
   />
 
-  <ContactSuccess
-    :open="showSuccess"
-    @open-change="showSuccess = $event"
-  />
+  <ContactSuccess v-model="showSuccess" />
 </template>

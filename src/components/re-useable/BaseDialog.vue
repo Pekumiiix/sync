@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import { X } from 'lucide-vue-next';
+
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+  DialogTitle} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface Props {
   title: string;
   description: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  showCloseButton?: boolean;
   classNames?: {
     content?: string;
     header?: string;
@@ -26,15 +27,22 @@ interface Props {
   };
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  showCloseButton: false
+});
+const modelValue = defineModel<boolean>();
 </script>
 
 <template>
-  <Dialog
-    :open="open"
-    @update:open="onOpenChange"
-  >
-    <DialogContent :class="cn(classNames?.content)">
+  <Dialog v-model:open="modelValue">
+    <DialogContent
+      :class="
+        cn(
+          'flex flex-col [&>button]:hidden shadow-[0px_4px_215px_0px_#00000026]',
+          classNames?.content
+        )
+      "
+    >
       <img
         v-if="img"
         :src="img.src"
@@ -42,12 +50,28 @@ defineProps<Props>();
         :class="img.class"
       />
 
-      <DialogHeader :class="cn(classNames?.header)">
-        <DialogTitle :class="cn(classNames?.title)">{{ title }}</DialogTitle>
-        <DialogDescription :class="cn(classNames?.description)">
-          {{ description }}
-        </DialogDescription>
-      </DialogHeader>
+      <div
+        :class="
+          cn('h-fit flex items-center', {
+            'justify-between p-6 border-b border-black/10': showCloseButton,
+            'justify-center': !showCloseButton
+          })
+        "
+      >
+        <DialogHeader :class="cn(classNames?.header)">
+          <DialogTitle :class="cn(classNames?.title)">{{ title }}</DialogTitle>
+          <DialogDescription :class="cn(classNames?.description)">
+            {{ description }}
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogClose
+          v-if="showCloseButton"
+          class="cursor-pointer"
+        >
+          <X class="size-7" />
+        </DialogClose>
+      </div>
 
       <slot />
     </DialogContent>
