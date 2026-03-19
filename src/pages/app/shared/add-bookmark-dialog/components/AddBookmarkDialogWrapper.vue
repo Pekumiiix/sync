@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { LoaderCircle } from 'lucide-vue-next';
 
 import { BaseDialog } from '@/components/re-useable';
-import { Progress } from '@/components/ui/progress';
 
 interface Props {
   isLoading?: boolean;
-  isFetchingInfo?: boolean;
 }
 
 defineProps<Props>();
 
-const displayBool = defineModel<boolean>('displayType', { default: false });
-
-const progress = ref<number>(50);
+const displayBool = defineModel<boolean>({ default: false });
 </script>
 
 <template>
@@ -42,18 +37,6 @@ const progress = ref<number>(50);
       <p class="text-xs leading-[160%] text-black-70">
         Fetching the link details takes ~30 seconds!
       </p>
-    </div>
-
-    <div
-      v-if="isFetchingInfo"
-      class="w-full flex flex-col items-center gap-2"
-    >
-      <p class="text-base font-medium leading-[160%] text-black-70">50%</p>
-
-      <Progress
-        :model-value="progress"
-        class="w-full h-3"
-      />
     </div>
 
     <slot v-else />

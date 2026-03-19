@@ -15,7 +15,6 @@ interface Props {
   description?: string;
   showMessage?: boolean;
   classNames?: {
-    field?: string;
     item?: string;
     label?: string;
     control?: string;
@@ -32,7 +31,6 @@ withDefaults(defineProps<Props>(), {
   <FormField
     v-slot="{ componentField }"
     :name="name"
-    :class="cn(classNames?.field)"
   >
     <FormItem :class="cn('flex flex-col gap-2 space-y-0', classNames?.item)">
       <FormLabel :class="cn('text-lg leading-6 text-black-90 font-medium', classNames?.label)">{{

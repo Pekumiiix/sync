@@ -3,11 +3,9 @@ import { ref } from 'vue';
 import { Plus } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button';
-import type { DisplayType } from '@/types/app.type';
-import type { IBookmarkCard } from '@/types/app.type';
+import type { DisplayType, IBookmarkCard } from '@/types/app.type';
 
 import { AddBookmarkDialog } from '../../shared/add-bookmark-dialog/dialogs';
-// import { BookmarkDetails } from '../../shared/add-bookmark-dialog/dialogs';
 import { GridBookmarkCard, ListBookmarkCard } from '../components';
 
 interface Props {
@@ -74,13 +72,5 @@ const open = ref(false);
     </div>
   </section>
 
-  <AddBookmarkDialog
-    v-model="open"
-    @close="open = false"
-  />
-
-  <!-- <BookmarkDetails
-    v-model="open"
-    @close="open = false"
-  /> -->
+  <AddBookmarkDialog v-model="open" />
 </template>

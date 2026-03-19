@@ -68,14 +68,14 @@ const displayType = defineModel<DisplayType>('displayType', { default: 'list' })
           v-model="sortOrder"
           :options="sortOrderOptions"
           :classNames="{
-            trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9]'
+            trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
           }"
         />
         <BaseSelect
           v-model="displayType"
           :options="displayTypeOptions"
           :classNames="{
-            trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9]'
+            trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
           }"
         />
       </div>

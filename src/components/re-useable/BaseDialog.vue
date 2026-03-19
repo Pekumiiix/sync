@@ -7,7 +7,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle} from '@/components/ui/dialog';
+  DialogTitle
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -30,6 +31,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   showCloseButton: false
 });
+
 const modelValue = defineModel<boolean>();
 </script>
 
@@ -69,7 +71,10 @@ const modelValue = defineModel<boolean>();
           v-if="showCloseButton"
           class="cursor-pointer"
         >
-          <X class="size-7" />
+          <X
+            class="size-5"
+            color="var(--color-black-70)"
+          />
         </DialogClose>
       </div>
 
