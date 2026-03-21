@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { AddBookmarkDialogWrapper } from '../components';
-import { type AddBookmarkData,addBookmarkSchema } from '../schemas/add-bookmark.schema';
+import { type AddBookmarkData, addBookmarkSchema } from '../schemas/add-bookmark.schema';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 import { BookmarkDetailsDialog } from '.';
 
@@ -41,6 +41,11 @@ const onSubmit = handleSubmit(async (values) => {
   displayBool.value = false;
   detailsDisplayBool.value = true;
 });
+
+function handleCreateBookmark(data: BookmarkDetails) {
+  console.log('Bookmark created:', data);
+  detailsDisplayBool.value = false;
+}
 </script>
 
 <template>
@@ -78,5 +83,7 @@ const onSubmit = handleSubmit(async (values) => {
     v-if="bookmarkDetails"
     v-model="detailsDisplayBool"
     :data="bookmarkDetails"
+    @save="handleCreateBookmark"
+    type="add"
   />
 </template>

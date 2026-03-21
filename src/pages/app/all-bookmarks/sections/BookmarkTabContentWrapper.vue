@@ -7,6 +7,7 @@ import type { DisplayType, IBookmarkCard } from '@/types/app.type';
 
 import { AddBookmarkDialog } from '../../shared/add-bookmark-dialog/dialogs';
 import { GridBookmarkCard, ListBookmarkCard } from '../components';
+import { transformBookmarks } from '../helper';
 
 interface Props {
   displayType: DisplayType;
@@ -14,9 +15,11 @@ interface Props {
   platform: string;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const open = ref(false);
+
+const transformedBookmarks = transformBookmarks(props.bookmarks);
 </script>
 
 <template>
@@ -44,30 +47,38 @@ const open = ref(false);
       class="flex flex-col"
     >
       <ListBookmarkCard
-        v-for="bookmark in bookmarks"
+        v-for="bookmark in transformedBookmarks"
+        v-model="bookmark.isSelected"
         :key="bookmark.id"
         :id="bookmark.id"
         :platform="bookmark.platform"
         :link="bookmark.link"
-        :category="bookmark.category"
+        :collection="bookmark.collection"
         :time="bookmark.time"
         :image="bookmark.image"
+        :isPinned="bookmark.isPinned"
+        :tags="bookmark.tags"
+        :description="bookmark.description"
       />
     </div>
 
     <div
       v-else
-      class="grid grid-cols-3 gap-3.5 px-6.5 pb-5"
+      class="flex flex-row flex-wrap gap-3.5 px-6.5 pb-5"
     >
       <GridBookmarkCard
-        v-for="bookmark in bookmarks"
+        v-for="bookmark in transformedBookmarks"
+        v-model="bookmark.isSelected"
         :key="bookmark.id"
         :id="bookmark.id"
         :platform="bookmark.platform"
         :link="bookmark.link"
-        :category="bookmark.category"
+        :collection="bookmark.collection"
         :time="bookmark.time"
         :image="bookmark.image"
+        :isPinned="bookmark.isPinned"
+        :tags="bookmark.tags"
+        :description="bookmark.description"
       />
     </div>
   </section>

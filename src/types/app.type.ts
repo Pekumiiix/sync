@@ -3,8 +3,11 @@ export interface IBookmarkCard {
   image: string;
   platform: string;
   link: string;
-  category: string;
+  collection: string;
   time: string;
+  isPinned: boolean;
+  tags: string[];
+  description: string;
 }
 
 export type DisplayType = 'list' | 'grid';

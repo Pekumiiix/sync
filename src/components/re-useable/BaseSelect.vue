@@ -20,9 +20,15 @@ interface Props {
   };
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const modelValue = defineModel<string>();
+
+function renderValue(value: string) {
+  const val = props.options.find((opt) => opt.value === value)?.label || value;
+
+  return val.charAt(0).toLocaleUpperCase() + val?.slice(1) || props.placeholder;
+}
 </script>
 
 <template>
@@ -41,7 +47,9 @@ const modelValue = defineModel<string>();
       <SelectValue
         :placeholder="placeholder"
         :class="classNames?.value"
-      />
+      >
+        {{ renderValue(modelValue || '') }}</SelectValue
+      >
     </SelectTrigger>
     <SelectContent
       :class="cn('border-none shadow-[0px_4px_25px_0px_#0000001A] p-0! m-0!', classNames?.content)"
@@ -52,7 +60,12 @@ const modelValue = defineModel<string>();
         :value="option.value"
         :class="cn('cursor-pointer hover:bg-primary-10!', classNames?.item)"
       >
-        {{ option.label }}
+        <slot
+          name="item"
+          :option="option"
+        >
+          {{ option.label }}
+        </slot>
       </SelectItem>
     </SelectContent>
   </Select>

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import { bookmarks } from '@/mock-data/bookmark';
 import type { DisplayType, SortOrder } from '@/types/app.type';
 
 import { AppWrapper, ContentWrapper } from '../shared';
 import { BookmarkTabWrapper } from './components';
-import { BookmarkTabContentWrapper,PinnedBookmarks } from './sections';
+import { BookmarkTabContentWrapper, PinnedBookmarks } from './sections';
 
 const tabs = [
   {
@@ -15,17 +16,6 @@ const tabs = [
   {
     label: 'Chrome',
     value: 'chrome'
-  }
-];
-
-const bookmarks = [
-  {
-    id: crypto.randomUUID(),
-    platform: 'Facebook',
-    link: 'www.facebook.com',
-    category: 'unsorted',
-    time: '3:30 PM',
-    image: '/images/app/sidebar/avatar.png'
   }
 ];
 

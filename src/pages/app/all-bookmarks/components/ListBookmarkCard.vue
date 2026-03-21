@@ -1,16 +1,60 @@
 <script setup lang="ts">
-import { EditIcon, PinIcon, TrashIcon } from '@/components/icons';
+import { ref } from 'vue';
+
+import { EditIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { IBookmarkCard as Props } from '@/types/app.type';
 
-defineProps<Props>();
+import { BookmarkDetailsDialog } from '../../shared/add-bookmark-dialog/dialogs';
+import type { BookmarkDetails } from '../../shared/add-bookmark-dialog/schemas/bookmark-details.schema';
+
+const props = defineProps<Props>();
+
+const detailsDisplayBool = ref<boolean>(false);
+
+const selectedBool = defineModel<boolean>({ default: false });
+
+const actions = [
+  props.isPinned
+    ? {
+        icon: UnpinIcon,
+        label: 'Unpin',
+        action: () => console.log('Unpinned')
+      }
+    : {
+        icon: PinIcon,
+        label: 'Pin',
+        action: () => console.log('Pinned')
+      },
+  {
+    icon: EditIcon,
+    label: 'Edit',
+    action: () => {
+      detailsDisplayBool.value = true;
+    }
+  },
+  {
+    icon: TrashIcon,
+    label: 'Delete',
+    action: () => {
+      console.log('Delete');
+    }
+  }
+];
+
+function handleEditBookmark(data: BookmarkDetails) {
+  console.log('Edit bookmark:', data);
+}
 </script>
 
 <template>
   <div class="flex items-center justify-between py-8 px-6.5 border-b border-stroke-1/10 group">
     <div class="w-fit flex items-center gap-4">
-      <Checkbox class="size-4" />
+      <Checkbox
+        v-model:checked="selectedBool"
+        class="size-4"
+      />
 
       <div class="flex items-center gap-2.5">
         <img
@@ -21,36 +65,54 @@ defineProps<Props>();
 
         <div class="flex flex-col gap-1">
           <p class="text-lg font-medium leading-[100%] text-black-90">{{ platform }}</p>
-          <p class="text-sm leading-4.5 text-black-90">{{ link }} | {{ category }}</p>
-          <p class="text-sm leading-4.5 text-black-50">{{ time }}</p>
+          <p class="text-sm leading-4.5 text-black-70">
+            {{ link }} | {{ collection }} | {{ time }}
+          </p>
+          <div class="flex items-center gap-1">
+            <template
+              v-for="(tag, index) in tags"
+              :key="tag"
+            >
+              <p class="text-xs leading-[100%] text-primary-90">#{{ tag }}</p>
+
+              <div
+                v-if="index < tags.length - 1"
+                class="w-px h-2 bg-primary-90"
+              />
+            </template>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="hidden group-hover:flex items-center gap-5">
       <Button
+        v-for="action in actions"
+        :key="action.label"
         size="icon"
         variant="ghost"
-        class="size-fit! p-1!"
+        class="size-fit! p-1! stroke-black-70"
+        @click="action.action"
       >
-        <PinIcon class="size-6" />
-      </Button>
-
-      <Button
-        size="icon"
-        variant="ghost"
-        class="size-fit! p-1!"
-      >
-        <EditIcon class="size-6" />
-      </Button>
-
-      <Button
-        size="icon"
-        variant="ghost"
-        class="size-fit! p-1!"
-      >
-        <TrashIcon class="size-6 stroke-black-70" />
+        <component
+          :is="action.icon"
+          class="size-6"
+        />
       </Button>
     </div>
   </div>
+
+  <BookmarkDetailsDialog
+    v-model="detailsDisplayBool"
+    :data="{
+      image,
+      title: platform,
+      description,
+      url: link,
+      tags,
+      collection
+    }"
+    @save="handleEditBookmark"
+    type="edit"
+  />
 </template>

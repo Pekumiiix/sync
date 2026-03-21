@@ -1,29 +1,53 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { Ellipsis } from 'lucide-vue-next';
 
-import { EditIcon, FolderIcon, SelectIcon, TrashIcon, UnpinIcon } from '@/components/icons';
-import { BasePopover } from '@/components/re-useable';
-import { Button } from '@/components/ui/button';
+import {
+  EditIcon,
+  FolderIcon,
+  PinIcon,
+  SelectIcon,
+  TrashIcon,
+  UnpinIcon
+} from '@/components/icons';
+import { BaseDropDownMenu } from '@/components/re-useable';
 import { cn } from '@/lib/utils';
 import type { IBookmarkCard as Props } from '@/types/app.type';
 
-defineProps<Props>();
+import { BookmarkDetailsDialog } from '../../shared/add-bookmark-dialog/dialogs';
+import type { BookmarkDetails } from '../../shared/add-bookmark-dialog/schemas/bookmark-details.schema';
 
-const actions = [
-  {
-    icon: UnpinIcon,
-    label: 'Unpin',
-    action: () => console.log('Unpinned')
-  },
+const props = defineProps<Props>();
+
+const detailsDisplayBool = ref<boolean>(false);
+
+const selectBool = defineModel<boolean>({ default: false });
+
+const actions = computed(() => [
+  props.isPinned
+    ? {
+        icon: UnpinIcon,
+        label: 'Unpin',
+        action: () => console.log('Unpinned')
+      }
+    : {
+        icon: PinIcon,
+        label: 'Pin',
+        action: () => console.log('Pinned')
+      },
   {
     icon: EditIcon,
     label: 'Edit',
-    action: () => console.log('Edited')
+    action: () => {
+      detailsDisplayBool.value = true;
+    }
   },
   {
     icon: SelectIcon,
-    label: 'Select',
-    action: () => console.log('Selected')
+    label: selectBool.value ? 'Deselect' : 'Select',
+    action: () => {
+      selectBool.value = !selectBool.value;
+    }
   },
   {
     icon: FolderIcon,
@@ -35,11 +59,15 @@ const actions = [
     label: 'Delete',
     action: () => console.log('Deleted')
   }
-];
+]);
+
+function handleEditBookmark(data: BookmarkDetails) {
+  console.log('Edit bookmark:', data);
+}
 </script>
 
 <template>
-  <div class="max-w-67.5 w-full flex flex-col rounded-xl border border-white-90">
+  <div class="min-w-68.5 w-[32%] 2xl:w-[22%] flex flex-col rounded-xl border border-white-90">
     <img
       :src="image"
       :alt="platform"
@@ -49,52 +77,53 @@ const actions = [
     <div class="w-full flex justify-between gap-5 py-5 px-3">
       <div class="flex flex-col gap-1">
         <p class="text-lg font-medium leading-[100%] text-black-90">{{ platform }}</p>
-        <p class="text-sm leading-4.5 text-black-90">{{ link }} | {{ category }}</p>
+        <p class="text-sm leading-4.5 text-black-90">{{ link }} | {{ collection }}</p>
         <p class="text-sm leading-4.5 text-black-50">{{ time }}</p>
       </div>
 
-      <BasePopover :class-names="{ content: 'w-32 flex flex-col gap-0.5 p-0 rounded-xl' }">
-        <template #trigger>
-          <Ellipsis
-            :size="24"
-            color="var(--color-black-50)"
-          />
-        </template>
-
-        <template #default>
-          <Button
-            v-for="item in actions"
-            :key="item.label"
-            variant="ghost"
-            :class="
-              cn(
-                'flex items-center justify-start gap-1.5 focus-visible:ring-0 rounded-none first:rounded-t-xl last:rounded-b-xl',
-                { 'hover:bg-[#FF2F00]/5': item.label === 'Delete' }
-              )
-            "
-            @click="item.action"
-          >
-            <component
-              :is="item.icon"
-              :class="
-                cn('size-3.5', {
-                  'stroke-[#FF2F00]': item.label === 'Delete',
-                  'stroke-black-90': item.label !== 'Delete'
-                })
-              "
-            />
-            <span
-              :class="
-                cn('text-xs leading-[100%] font-normal', {
-                  'text-[#FF2F00]': item.label === 'Delete',
-                  'text-black-90': item.label !== 'Delete'
-                })
-              "
-              >{{ item.label }}</span
-            >
-          </Button>
-        </template>
-      </BasePopover>
+      <BaseDropDownMenu
+        :items="actions"
+        :class-names="{
+          trigger: 'p-0.5 rounded-md hover:bg-[#E8E8E8]/50',
+          content: 'w-32 flex flex-col gap-0.5 p-0 rounded-xl',
+          item: (label) =>
+            cn(
+              'h-8 flex items-center justify-start gap-1.5 focus-visible:ring-0 rounded-none first:rounded-t-xl last:rounded-b-xl',
+              { 'hover:bg-[#FF2F00]/5!': label === 'Delete' }
+            ),
+          icon: (label) =>
+            cn('size-3.5 transition-colors duration-200', {
+              'stroke-[#FF2F00]': label === 'Delete',
+              'stroke-black-90': label !== 'Delete',
+              'fill-black-90': label === 'Deselect'
+            }),
+          label: (label) =>
+            cn('text-xs leading-[100%] font-normal', {
+              'text-[#FF2F00]': label === 'Delete',
+              'text-black-90': label !== 'Delete'
+            })
+        }"
+      >
+        <Ellipsis
+          :size="24"
+          color="var(--color-black-50)"
+          class="shrink-0"
+        />
+      </BaseDropDownMenu>
     </div>
   </div>
+
+  <BookmarkDetailsDialog
+    v-model="detailsDisplayBool"
+    :data="{
+      image,
+      title: platform,
+      description,
+      url: link,
+      tags,
+      collection
+    }"
+    @save="handleEditBookmark"
+    type="edit"
+  />
 </template>

@@ -12,9 +12,19 @@ import { cn } from '@/lib/utils';
 import { ActionDialogWrapper } from '../..';
 import { type BookmarkDetails, bookmarkDetailsSchema } from '../schemas/bookmark-details.schema';
 
-interface Props {
+interface AddProps {
+  type: 'add';
   data: Omit<BookmarkDetails, 'collection'>;
+  onSave: (data: BookmarkDetails) => void;
 }
+
+interface EditProps {
+  type: 'edit';
+  data: BookmarkDetails;
+  onSave: (data: BookmarkDetails) => void;
+}
+
+type Props = AddProps | EditProps;
 
 const props = defineProps<Props>();
 
@@ -28,12 +38,12 @@ const { handleSubmit, values, setFieldValue } = useForm<BookmarkDetails>({
     description: props.data?.description,
     url: props.data?.url,
     tags: props.data?.tags,
-    collection: 'unsorted'
+    collection: props.type === 'edit' ? props.data.collection : 'unsorted'
   }
 });
 
 const onSubmit = handleSubmit((data: BookmarkDetails) => {
-  console.log(data);
+  props.onSave(data);
 });
 
 const currentTags = values.tags || [];
@@ -65,8 +75,12 @@ const fieldClassName =
 <template>
   <ActionDialogWrapper
     v-model="displayBool"
-    title="Add bookmark manually"
-    description="Enter the URL and details below to save a new bookmark to your collection."
+    :title="type === 'add' ? 'Add Bookmark' : 'Edit Bookmark'"
+    :description="
+      type === 'add'
+        ? 'Enter the URL and details below to save a new bookmark to your collection.'
+        : 'Update the URL and details below to modify your saved bookmark.'
+    "
     content-class="w-[625px] max-h-[90vh] h-fit"
     :show-description="false"
   >
@@ -75,7 +89,7 @@ const fieldClassName =
       class="w-full h-full flex flex-col gap-6 pb-6 pt-5"
     >
       <div class="flex flex-col gap-6 px-6">
-        <div class="flex items-center gap-4">
+        <div class="flex gap-4">
           <img
             :src="values.image"
             alt="Logo"
@@ -97,9 +111,22 @@ const fieldClassName =
               v-bind="fieldProps"
               :options="[{ value: 'unsorted', label: 'Unsorted' }]"
               :class-names="{
-                trigger: fieldClassName
+                trigger: fieldClassName,
+                content: 'flex flex-col gap-2'
               }"
-          /></template>
+            >
+              <template #item="{ option }">
+                <div class="flex flex-col gap-1">
+                  <span class="text-base font-medium leading-5.5 text-black-80 -tracking-[1%]">
+                    {{ option.label }}
+                  </span>
+                  <span class="text-xs text-black-50 leading-[100%]"
+                    >Updated 2 mins ago | 23 items</span
+                  >
+                </div>
+              </template></BaseSelect
+            >
+          </template>
         </BaseForm>
 
         <div class="w-full flex flex-col gap-2">
@@ -143,7 +170,7 @@ const fieldClassName =
         </div>
       </div>
 
-      <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
+      <div class="flex items-center justify-end p-6 pb-0 border-t border-stroke-1/10">
         <Button
           type="submit"
           class="w-32 h-12 rounded-full text-base font-medium"

@@ -10,7 +10,7 @@ import { AppSidebar } from './sections';
   <SidebarProvider class="w-full min-h-screen flex justify-center">
     <AppSidebar />
 
-    <main class="container w-full min-h-screen flex flex-col">
+    <main class="flex-1 max-w-384 min-w-0 min-h-screen flex flex-col">
       <RouterView />
     </main>
   </SidebarProvider>
