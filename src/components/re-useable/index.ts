@@ -1,4 +1,5 @@
 export { default as BaseAccordion } from './BaseAccordion.vue';
+export { default as BaseAlertDialog } from './BaseAlertDialog.vue';
 export { default as BaseAvatar } from './BaseAvatar.vue';
 export { default as BaseDialog } from './BaseDialog.vue';
 export { default as BaseDropDownMenu } from './BaseDropDownMenu.vue';

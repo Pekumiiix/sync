@@ -3,23 +3,20 @@ import { ref } from 'vue';
 import { Plus } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button';
-import type { DisplayType, IBookmarkCard } from '@/types/app.type';
+import type { DisplayType, ITransformedBookmark } from '@/types/app.type';
 
 import { AddBookmarkDialog } from '../../shared/add-bookmark-dialog/dialogs';
 import { GridBookmarkCard, ListBookmarkCard } from '../components';
-import { transformBookmarks } from '../helper';
 
 interface Props {
   displayType: DisplayType;
-  bookmarks: IBookmarkCard[];
+  bookmarks: ITransformedBookmark[];
   platform: string;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const open = ref(false);
-
-const transformedBookmarks = transformBookmarks(props.bookmarks);
 </script>
 
 <template>
@@ -47,7 +44,7 @@ const transformedBookmarks = transformBookmarks(props.bookmarks);
       class="flex flex-col"
     >
       <ListBookmarkCard
-        v-for="bookmark in transformedBookmarks"
+        v-for="bookmark in bookmarks"
         v-model="bookmark.isSelected"
         :key="bookmark.id"
         :id="bookmark.id"
@@ -67,18 +64,11 @@ const transformedBookmarks = transformBookmarks(props.bookmarks);
       class="flex flex-row flex-wrap gap-3.5 px-6.5 pb-5"
     >
       <GridBookmarkCard
-        v-for="bookmark in transformedBookmarks"
+        v-for="bookmark in bookmarks"
         v-model="bookmark.isSelected"
         :key="bookmark.id"
-        :id="bookmark.id"
-        :platform="bookmark.platform"
-        :link="bookmark.link"
-        :collection="bookmark.collection"
-        :time="bookmark.time"
-        :image="bookmark.image"
-        :isPinned="bookmark.isPinned"
-        :tags="bookmark.tags"
-        :description="bookmark.description"
+        :bookmark="bookmark"
+        :showCheckbox="false"
       />
     </div>
   </section>

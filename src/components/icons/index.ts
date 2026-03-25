@@ -1,4 +1,5 @@
 export { default as EditIcon } from './Edit.vue';
+export { default as EyeIcon } from './Eye.vue';
 export { default as FolderIcon } from './Folder.vue';
 export { default as NotificationIcon } from './Notification.vue';
 export { default as PinIcon } from './Pin.vue';

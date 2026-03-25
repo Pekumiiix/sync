@@ -8,12 +8,14 @@ import type { IBookmarkCard as Props } from '@/types/app.type';
 
 import { BookmarkDetailsDialog } from '../../shared/add-bookmark-dialog/dialogs';
 import type { BookmarkDetails } from '../../shared/add-bookmark-dialog/schemas/bookmark-details.schema';
+import { DeleteBookmarkDialog } from '.';
 
 const props = defineProps<Props>();
 
-const detailsDisplayBool = ref<boolean>(false);
-
 const selectedBool = defineModel<boolean>({ default: false });
+
+const detailsDisplayBool = ref<boolean>(false);
+const deleteDisplayOpen = ref<boolean>(false);
 
 const actions = [
   props.isPinned
@@ -38,7 +40,7 @@ const actions = [
     icon: TrashIcon,
     label: 'Delete',
     action: () => {
-      console.log('Delete');
+      deleteDisplayOpen.value = true;
     }
   }
 ];
@@ -49,10 +51,12 @@ function handleEditBookmark(data: BookmarkDetails) {
 </script>
 
 <template>
-  <div class="flex items-center justify-between py-8 px-6.5 border-b border-stroke-1/10 group">
+  <div
+    class="flex items-center justify-between py-8 px-6.5 border-b border-stroke-1/10 group hover:bg-[#F8F8F9] transition-colors duration-200 cursor-pointer"
+  >
     <div class="w-fit flex items-center gap-4">
       <Checkbox
-        v-model:checked="selectedBool"
+        v-model:model-value="selectedBool"
         class="size-4"
       />
 
@@ -77,7 +81,7 @@ function handleEditBookmark(data: BookmarkDetails) {
 
               <div
                 v-if="index < tags.length - 1"
-                class="w-px h-2 bg-primary-90"
+                class="w-px h-2 bg-primary-90 shrink-0"
               />
             </template>
           </div>
@@ -96,7 +100,7 @@ function handleEditBookmark(data: BookmarkDetails) {
       >
         <component
           :is="action.icon"
-          class="size-6"
+          class="size-4"
         />
       </Button>
     </div>
@@ -115,4 +119,6 @@ function handleEditBookmark(data: BookmarkDetails) {
     @save="handleEditBookmark"
     type="edit"
   />
+
+  <DeleteBookmarkDialog v-model="deleteDisplayOpen" />
 </template>

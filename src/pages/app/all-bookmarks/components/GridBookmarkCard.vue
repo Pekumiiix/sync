@@ -11,20 +11,30 @@ import {
   UnpinIcon
 } from '@/components/icons';
 import { BaseDropDownMenu } from '@/components/re-useable';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import type { IBookmarkCard as Props } from '@/types/app.type';
+import type { IBookmarkCard } from '@/types/app.type';
 
 import { BookmarkDetailsDialog } from '../../shared/add-bookmark-dialog/dialogs';
 import type { BookmarkDetails } from '../../shared/add-bookmark-dialog/schemas/bookmark-details.schema';
+import { DeleteBookmarkDialog } from '.';
+
+interface Props {
+  bookmark: IBookmarkCard;
+  showCheckbox: boolean;
+}
 
 const props = defineProps<Props>();
+
+const { platform, link, collection, time, image, isPinned, tags, description } = props.bookmark;
 
 const detailsDisplayBool = ref<boolean>(false);
 
 const selectBool = defineModel<boolean>({ default: false });
+const deleteDisplayBool = ref<boolean>(false);
 
 const actions = computed(() => [
-  props.isPinned
+  isPinned
     ? {
         icon: UnpinIcon,
         label: 'Unpin',
@@ -57,7 +67,9 @@ const actions = computed(() => [
   {
     icon: TrashIcon,
     label: 'Delete',
-    action: () => console.log('Deleted')
+    action: () => {
+      deleteDisplayBool.value = true;
+    }
   }
 ]);
 
@@ -81,7 +93,13 @@ function handleEditBookmark(data: BookmarkDetails) {
         <p class="text-sm leading-4.5 text-black-50">{{ time }}</p>
       </div>
 
+      <Checkbox
+        v-if="showCheckbox"
+        v-model:model-value="selectBool"
+      />
+
       <BaseDropDownMenu
+        v-else
         :items="actions"
         :class-names="{
           trigger: 'p-0.5 rounded-md hover:bg-[#E8E8E8]/50',
@@ -126,4 +144,6 @@ function handleEditBookmark(data: BookmarkDetails) {
     @save="handleEditBookmark"
     type="edit"
   />
+
+  <DeleteBookmarkDialog v-model="deleteDisplayBool" />
 </template>
