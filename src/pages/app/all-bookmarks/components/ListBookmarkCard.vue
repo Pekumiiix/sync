@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { EditIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
+import { EditIcon, EyeIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { IBookmarkCard as Props } from '@/types/app.type';
 
-import { BookmarkDetailsDialog } from '../../shared/add-bookmark-dialog/dialogs';
-import type { BookmarkDetails } from '../../shared/add-bookmark-dialog/schemas/bookmark-details.schema';
-import { DeleteBookmarkDialog } from '.';
+import { BookmarkDetailsDialog, DeleteBookmarkDialog } from '../dialogs';
+import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 
 const props = defineProps<Props>();
 
@@ -18,6 +17,13 @@ const detailsDisplayBool = ref<boolean>(false);
 const deleteDisplayOpen = ref<boolean>(false);
 
 const actions = [
+  {
+    icon: EyeIcon,
+    label: 'View',
+    action: () => {
+      console.log('Viewed this bookmark.');
+    }
+  },
   props.isPinned
     ? {
         icon: UnpinIcon,
@@ -120,5 +126,8 @@ function handleEditBookmark(data: BookmarkDetails) {
     type="edit"
   />
 
-  <DeleteBookmarkDialog v-model="deleteDisplayOpen" />
+  <DeleteBookmarkDialog
+    :bookmark-ids="props.id"
+    v-model="deleteDisplayOpen"
+  />
 </template>

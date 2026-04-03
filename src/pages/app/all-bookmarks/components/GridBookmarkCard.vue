@@ -15,9 +15,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { IBookmarkCard } from '@/types/app.type';
 
-import { BookmarkDetailsDialog } from '../../shared/add-bookmark-dialog/dialogs';
-import type { BookmarkDetails } from '../../shared/add-bookmark-dialog/schemas/bookmark-details.schema';
-import { DeleteBookmarkDialog } from '.';
+import { BookmarkDetailsDialog, DeleteBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
+import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 
 interface Props {
   bookmark: IBookmarkCard;
@@ -26,9 +25,10 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { platform, link, collection, time, image, isPinned, tags, description } = props.bookmark;
+const { id, platform, link, collection, time, image, isPinned, tags, description } = props.bookmark;
 
 const detailsDisplayBool = ref<boolean>(false);
+const moveBookmarkDisplayBool = ref<boolean>(false);
 
 const selectBool = defineModel<boolean>({ default: false });
 const deleteDisplayBool = ref<boolean>(false);
@@ -62,7 +62,9 @@ const actions = computed(() => [
   {
     icon: FolderIcon,
     label: 'Move',
-    action: () => console.log('Moved')
+    action: () => {
+      moveBookmarkDisplayBool.value = true;
+    }
   },
   {
     icon: TrashIcon,
@@ -145,5 +147,13 @@ function handleEditBookmark(data: BookmarkDetails) {
     type="edit"
   />
 
-  <DeleteBookmarkDialog v-model="deleteDisplayBool" />
+  <DeleteBookmarkDialog
+    :bookmarkIds="id"
+    v-model="deleteDisplayBool"
+  />
+
+  <MoveBookmarkDialog
+    :bookmarkIds="id"
+    v-model="moveBookmarkDisplayBool"
+  />
 </template>

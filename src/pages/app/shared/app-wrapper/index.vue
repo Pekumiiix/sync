@@ -15,18 +15,25 @@ defineProps<Props>();
       <h5 class="text-lg leading-6 font-semibold text-black-90 -tracking-[1%]">{{ page }}</h5>
 
       <div class="flex items-center justify-between gap-3">
-        <Button
-          variant="outline"
-          class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
-        >
-          <NotificationIcon class="size-4.5" />
-        </Button>
+        <div class="size-fit relative">
+          <Button
+            variant="outline"
+            class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
+          >
+            <NotificationIcon class="size-4.5" />
+          </Button>
+
+          <span class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0" />
+        </div>
 
         <Button
+          as-child
           variant="outline"
           class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
         >
-          <SettingsIcon class="size-4.5" />
+          <router-link to="/app/settings">
+            <SettingsIcon class="size-4.5" />
+          </router-link>
         </Button>
       </div>
     </nav>

@@ -6,9 +6,9 @@ import { BaseForm } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { AddBookmarkDialogWrapper } from '../components';
 import { type AddBookmarkData, addBookmarkSchema } from '../schemas/add-bookmark.schema';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
+import { AddBookmarkDialogWrapper } from '../wrappers';
 import { BookmarkDetailsDialog } from '.';
 
 const displayBool = defineModel<boolean>({ default: false });

@@ -7,3 +7,4 @@ export { default as BaseForm } from './BaseForm.vue';
 export { default as BasePopover } from './BasePopover.vue';
 export { default as BaseSelect } from './BaseSelect.vue';
 export { default as BaseSwitch } from './BaseSwitch.vue';
+export { default as BaseTabs } from './BaseTabs.vue';

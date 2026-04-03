@@ -14,6 +14,17 @@ export interface ITransformedBookmark extends IBookmarkCard {
   isSelected: boolean;
 }
 
+export interface IFolderCard {
+  id: string;
+  name: string;
+  updated_at: string;
+  item_count: number;
+}
+
+export interface ITransformedFolder extends IFolderCard {
+  isSelected: boolean;
+}
+
 export interface ISelectedBookmark {
   id: string;
   isPinned: boolean;

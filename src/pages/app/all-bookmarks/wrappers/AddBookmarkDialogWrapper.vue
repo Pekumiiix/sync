@@ -20,7 +20,7 @@ const displayBool = defineModel<boolean>({ default: false });
     :img="{ src: '/images/app/dialogs/link.png', alt: 'Link', class: 'size-10 shrink-0' }"
     :classNames="{
       content:
-        'w-[625px] h-fit flex flex-col gap-3 items-center rounded-[25px] pt-10 pb-6 border border-stroke-1/20 shadow-[0px_4px_215px_0px_#00000026] [&>button]:hidden',
+        'w-156.25 h-fit flex flex-col gap-3 items-center rounded-[25px] pt-10 pb-6 border border-stroke-1/20 shadow-[0px_4px_215px_0px_#00000026] [&>button]:hidden',
       header: 'flex flex-col items-center gap-1',
       title: 'text-xl font-medium leading-7 text-black-90 -tracking-[1%]',
       description: 'text-sm leading-4.5 text-black-80 font-normal'

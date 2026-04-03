@@ -59,6 +59,14 @@ export default defineConfigWithVueTs(
         {
           element: 'input',
           message: 'Use the custom <Input> component instead of the native HTML <input>.'
+        },
+        {
+          element: 'label',
+          message: 'Use the custom <Label> component instead of the native HTML <label>.'
+        },
+        {
+          element: 'textarea',
+          message: 'Use the custom <Textarea> component instead of the native HTML <textarea>.'
         }
       ],
 

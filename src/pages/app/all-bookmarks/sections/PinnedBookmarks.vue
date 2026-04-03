@@ -1,14 +1,33 @@
 <script setup lang="ts">
-import type { ITransformedBookmark } from '@/types/app.type';
+import { ref, watch } from 'vue';
+
+import { bookmarks } from '@/mock-data/bookmark';
 
 import { GridBookmarkCard } from '../components';
+import { transformBookmarks } from '../helper';
 
 interface Props {
-  selectedBookmarksLength: number;
-  pinnedBookmarks: ITransformedBookmark[];
+  selectedPinnedBookmarksLength: number;
 }
 
 defineProps<Props>();
+
+const pinnedBookmarks = ref(bookmarks.filter((bookmark) => bookmark.isPinned));
+const transformedBookmarks = ref(transformBookmarks(pinnedBookmarks.value));
+
+const selectedPinnedBookmarks = defineModel<string[] | null>({ default: null });
+
+watch(
+  transformedBookmarks,
+
+  (newBookmarks) => {
+    const selected = newBookmarks.filter((bookmark) => bookmark.isSelected);
+
+    selectedPinnedBookmarks.value = selected.length > 0 ? selected.map((b) => b.id) : null;
+  },
+
+  { deep: true, immediate: true }
+);
 </script>
 
 <template>
@@ -17,11 +36,11 @@ defineProps<Props>();
 
     <div class="flex flex-row gap-3.5 overflow-x-scroll scrollbar-none">
       <GridBookmarkCard
-        v-for="bookmark in pinnedBookmarks"
+        v-for="bookmark in transformedBookmarks"
         v-model="bookmark.isSelected"
         :key="bookmark.id"
         :bookmark="bookmark"
-        :showCheckbox="selectedBookmarksLength > 0"
+        :showCheckbox="selectedPinnedBookmarksLength > 0"
       />
     </div>
   </section>

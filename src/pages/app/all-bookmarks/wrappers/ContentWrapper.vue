@@ -24,7 +24,17 @@ const query = ref('');
       />
     </div>
 
-    <div class="flex items-center gap-3">
+    <p
+      v-if="query !== ''"
+      class="text-lg font-medium leading-[100%] text-black-70"
+    >
+      Showing result for “{{ query }}”
+    </p>
+
+    <div
+      v-else
+      class="flex items-center gap-3"
+    >
       <div
         class="w-20 h-9.5 flex items-center justify-center py-3 px-4 -space-x-1.5 rounded-full bg-tertiary-background"
       >

@@ -9,8 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-import { ActionDialogWrapper } from '../..';
 import { type BookmarkDetails, bookmarkDetailsSchema } from '../schemas/bookmark-details.schema';
+import { ActionDialogWrapper } from '../wrappers';
 
 interface AddProps {
   type: 'add';

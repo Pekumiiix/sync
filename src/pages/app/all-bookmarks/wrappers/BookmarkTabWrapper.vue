@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { EyeIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import { bookmarks } from '@/mock-data/bookmark';
 import type { DisplayType, SortOrder } from '@/types/app.type';
 
+import { BookmarkTabContentWrapper } from '.';
+
 interface Props {
-  defualtValue: string;
+  defaultValue: string;
   tabs: {
     label: string;
     icon?: string;
     value: string;
   }[];
   selectedBookmarksLength: number;
-  allSelectedBookmarksArePinned: boolean;
 }
 
 const props = defineProps<Props>();
@@ -55,18 +57,13 @@ const actions = computed(() => [
         }
       ]
     : []),
-  ...(props.allSelectedBookmarksArePinned
-    ? [
-        {
-          label: 'Unpin',
-          icon: UnpinIcon,
-          onClick: () => {
-            console.log('Unpinned');
-          }
-        }
-      ]
-    : []),
-
+  {
+    label: 'Unpin',
+    icon: UnpinIcon,
+    onClick: () => {
+      console.log('Unpinned');
+    }
+  },
   {
     label: 'Delete',
     icon: TrashIcon,
@@ -76,13 +73,15 @@ const actions = computed(() => [
   }
 ]);
 
-const sortOrder = defineModel<SortOrder>('sortOrder', { default: 'a-z' });
-const displayType = defineModel<DisplayType>('displayType', { default: 'list' });
+const displayType = ref<DisplayType>('list');
+const sortOrder = ref<SortOrder>('a-z');
+
+const selectedBookmarks = ref<string[] | null>(null);
 </script>
 
 <template>
   <Tabs
-    :default-value="defualtValue"
+    :defaultValue="defaultValue"
     class="w-full flex flex-col"
   >
     <div class="w-full flex items-center justify-between py-5 px-6.5 border-b border-stroke-1/10">
@@ -98,7 +97,7 @@ const displayType = defineModel<DisplayType>('displayType', { default: 'list' })
           <img
             v-if="tab.icon"
             :src="tab.icon"
-            alt="tab.label"
+            alt="tab icon"
             class="size-4 shrink-0"
           />
           {{ tab.label }}
@@ -131,7 +130,7 @@ const displayType = defineModel<DisplayType>('displayType', { default: 'list' })
       </div>
 
       <div
-        v-if="selectedBookmarksLength === 0"
+        v-else
         class="w-fit h-13.25 flex items-center gap-4"
       >
         <BaseSelect
@@ -159,7 +158,12 @@ const displayType = defineModel<DisplayType>('displayType', { default: 'list' })
       :value="tab.value"
       class="w-full flex flex-col gap-0 space-y-0"
     >
-      <slot :name="tab.value" />
+      <BookmarkTabContentWrapper
+        :platform="tab.label"
+        v-model="selectedBookmarks"
+        :displayType="displayType"
+        :bookmarks="bookmarks"
+      />
     </TabsContent>
   </Tabs>
 </template>

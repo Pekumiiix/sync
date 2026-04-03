@@ -1,17 +1,48 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import { TrashIcon } from '@/components/icons';
 import { BaseAlertDialog } from '@/components/re-useable';
+import { pluralizeIfArray } from '@/utils/stringutils';
+
+interface Props {
+  bookmarkIds: string | string[];
+}
+
+const props = defineProps<Props>();
 
 const displayBool = defineModel<boolean>({ default: false });
+
+const isMultiple = computed(() => Array.isArray(props.bookmarkIds));
+
+const dialogTitle = computed(() => `Delete bookmark${pluralizeIfArray(props.bookmarkIds)}`);
+
+const dialogDescription = computed(
+  () =>
+    `Are you sure you want to delete ${
+      isMultiple.value ? 'these' : 'this'
+    } bookmark${pluralizeIfArray(props.bookmarkIds)}? You won’t be able to restore ${
+      isMultiple.value ? 'them' : 'it'
+    } after this action has been completed.`
+);
+
+function handleDelete() {
+  console.log('Deleting bookmark(s) with id(s):', props.bookmarkIds);
+  displayBool.value = false;
+}
+
+function handleCancel() {
+  displayBool.value = false;
+}
 </script>
 
 <template>
   <BaseAlertDialog
     v-model:open="displayBool"
-    title="Delete bookmark"
-    description="Are you sure you want to delete this bookmark, you won’t be a able to restore it after this action has been completed"
-    :confirm="{ label: 'Yes, delete', action: () => {} }"
-    :cancel="{ label: `No, don't delete`, action: () => {} }"
+    :title="dialogTitle"
+    :description="dialogDescription"
+    :confirm="{ label: 'Yes, delete', action: handleDelete }"
+    :cancel="{ label: `No, don't delete`, action: handleCancel }"
     :classNames="{
       content:
         'w-100! flex flex-col items-center px-0 pb-0 pt-10 rounded-[30px] border-stroke-1/20 space-y-0',
