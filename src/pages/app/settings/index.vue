@@ -41,7 +41,7 @@ const tabs = [
 
 <template>
   <AppWrapper page="Settings">
-    <div class="w-full min-h-full mt-4">
+    <div class="size-full mt-4">
       <BaseTabs
         default-value="account"
         orientation="horizontal"

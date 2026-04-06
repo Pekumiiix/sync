@@ -68,6 +68,12 @@ function removeTag(tagToRemove: string) {
   );
 }
 
+const TypedFormField = BaseForm as new () => {
+  $props: InstanceType<typeof BaseForm>['$props'] & {
+    name: keyof BookmarkDetails;
+  };
+};
+
 const fieldClassName =
   'w-full h-12.25! text-base leading-[100%] text-black-90 placeholder:text-black-60 py-3.5 px-4.5 rounded-full border border-[#E8E8E8]';
 </script>
@@ -102,7 +108,7 @@ const fieldClassName =
           </div>
         </div>
 
-        <BaseForm
+        <TypedFormField
           name="collection"
           label="Collection"
         >
@@ -127,10 +133,10 @@ const fieldClassName =
               </template></BaseSelect
             >
           </template>
-        </BaseForm>
+        </TypedFormField>
 
         <div class="w-full flex flex-col gap-2">
-          <BaseForm
+          <TypedFormField
             name="tags"
             label="Tags"
           >
@@ -140,7 +146,7 @@ const fieldClassName =
               placeholder="Enter tags"
               :class="fieldClassName"
             />
-          </BaseForm>
+          </TypedFormField>
 
           <div class="flex flex-wrap gap-2">
             <div

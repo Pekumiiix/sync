@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="FormType extends Record<string, unknown>">
+<script setup lang="ts">
 import {
   FormControl,
   FormDescription,
@@ -10,7 +10,7 @@ import {
 import { cn } from '@/lib/utils';
 
 interface Props {
-  name: keyof FormType & string;
+  name: string;
   label?: string;
   description?: string;
   showMessage?: boolean;

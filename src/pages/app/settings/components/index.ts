@@ -1,1 +1,1 @@
-export { default as SettingsWrapper } from './SettingsWrapper.vue';
+export { default as SettingsInputField } from './SettingsInputField.vue';

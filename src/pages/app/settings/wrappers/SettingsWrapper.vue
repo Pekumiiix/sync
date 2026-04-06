@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { LoaderCircle } from 'lucide-vue-next';
+
 import { Button } from '@/components/ui/button';
 
 interface Props {
   title: string;
   description: string;
+  isDirty?: boolean;
+  isLoading?: boolean;
   onCancel: () => void;
   onSave: () => void;
 }
@@ -22,6 +26,7 @@ defineProps<Props>();
       <div class="flex gap-3.75">
         <Button
           @click="onCancel"
+          :disabled="!isDirty || isLoading"
           variant="ghost"
           class="w-24 h-9.5 rounded-full py-3 px-4 text-xs font-medium text-black-100 leading-[100%] bg-[#F8F8F9]"
         >
@@ -29,9 +34,15 @@ defineProps<Props>();
         </Button>
         <Button
           @click="onSave"
+          :disabled="!isDirty || isLoading"
           class="w-24 h-9.5 rounded-full py-3 px-4 text-xs font-medium leading-[100%]"
         >
-          Save
+          <LoaderCircle
+            v-if="isLoading"
+            class="size-5 stroke-white animate-spin stroke-2"
+          />
+
+          <span v-else>Save</span>
         </Button>
       </div>
     </div>
