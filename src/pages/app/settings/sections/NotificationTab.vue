@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SettingsWrapper } from '../components';
+import { SettingsWrapper } from '../wrappers';
 </script>
 
 <template>
