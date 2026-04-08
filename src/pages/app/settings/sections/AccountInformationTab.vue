@@ -23,16 +23,17 @@ const isUploading = ref(false);
 
 const selectedFile = ref<File | null>(null);
 
-const { handleSubmit, values, setFieldValue, meta, resetForm } = useForm<AccountInformationData>({
-  validationSchema: accountInformationSchema,
-  initialValues: {
-    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-    first_name: 'John',
-    last_name: 'Doe',
-    email: 'john.doe@example.com',
-    location: 'New York, USA'
-  }
-});
+const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
+  useForm<AccountInformationData>({
+    validationSchema: accountInformationSchema,
+    initialValues: {
+      avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
+      first_name: 'John',
+      last_name: 'Doe',
+      email: 'john.doe@example.com',
+      location: 'New York, USA'
+    }
+  });
 
 const processFile = (file: File) => {
   selectedFile.value = file;
@@ -91,6 +92,7 @@ const TypedFormField = SettingsInputField as new () => {
     title="Account information"
     description="Manage your personal details, login credentials, and security settings"
     :isDirty="meta.dirty"
+    :is-loading="isSubmitting"
     v-on:cancel="() => resetForm()"
     v-on:save="() => handleSubmit(() => {})()"
   >
