@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
 interface Props {
-  defaultValue: string;
   orientation: 'horizontal' | 'vertical';
   tabs: {
     value: string;
@@ -21,11 +20,13 @@ interface Props {
 }
 
 defineProps<Props>();
+
+const modelValue = defineModel<string>();
 </script>
 
 <template>
   <Tabs
-    :default-value="defaultValue"
+    v-model="modelValue"
     :orientation="orientation"
     :class="cn(classNames?.tab)"
   >

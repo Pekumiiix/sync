@@ -1,24 +1,17 @@
 <script setup lang="ts">
 import { Switch } from '@/components/ui/switch';
 
-const props = defineProps<{
-  modelValue: boolean;
+defineProps<{
   id?: string;
-  class?: string;
 }>();
 
-const emit = defineEmits(['update:modelValue']);
-
-function handleUpdate(checked: boolean) {
-  emit('update:modelValue', checked);
-}
+const checked = defineModel<boolean>();
 </script>
 
 <template>
   <Switch
     :id="id"
-    :checked="modelValue"
-    @update:model-value="handleUpdate"
-    :class="props.class"
+    v-model:model-value="checked"
+    class="cursor-pointer"
   />
 </template>

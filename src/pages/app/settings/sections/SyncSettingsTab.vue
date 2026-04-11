@@ -57,8 +57,8 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
     description="Control how your bookmarks sync across browsers."
     :isDirty="meta.dirty"
     :is-loading="isSubmitting"
-    v-on:cancel="() => resetForm()"
-    v-on:save="() => handleSubmit(() => {})()"
+    @cancel="() => resetForm()"
+    @save="() => handleSubmit(() => {})()"
   >
     <SettingsSubSectionWrapper
       title="Browsers connected"

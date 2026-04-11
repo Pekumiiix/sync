@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useUrlSearchParams } from '@vueuse/core';
+
 import { BaseTabs } from '@/components/re-useable';
 
 import { AppWrapper } from '../shared';
@@ -9,6 +12,15 @@ import {
   NotificationsTab,
   SyncSettingsTab
 } from './sections';
+
+const params = useUrlSearchParams('history');
+
+const activeTab = computed({
+  get: () => (params.tab as string) || 'account',
+  set: (newValue) => {
+    params.tab = newValue;
+  }
+});
 
 const tabs = [
   {
@@ -43,7 +55,7 @@ const tabs = [
   <AppWrapper page="Settings">
     <div class="size-full mt-4">
       <BaseTabs
-        default-value="account"
+        v-model="activeTab"
         orientation="horizontal"
         :tabs="tabs"
         :class-names="{

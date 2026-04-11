@@ -93,8 +93,8 @@ const TypedFormField = SettingsInputField as new () => {
     description="Manage your personal details, login credentials, and security settings"
     :isDirty="meta.dirty"
     :is-loading="isSubmitting"
-    v-on:cancel="() => resetForm()"
-    v-on:save="() => handleSubmit(() => {})()"
+    @cancel="() => resetForm()"
+    @save="() => handleSubmit(() => {})()"
   >
     <SettingsSubSectionWrapper
       title="Profile picture"

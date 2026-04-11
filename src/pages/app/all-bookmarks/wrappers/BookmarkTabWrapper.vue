@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
+import { getBrowserImage } from '@/components/constants/browsers';
 import { EyeIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
@@ -12,10 +13,8 @@ import type { DisplayType, SortOrder } from '@/types/app.type';
 import { BookmarkTabContentWrapper } from '.';
 
 interface Props {
-  defaultValue: string;
   tabs: {
     label: string;
-    icon?: string;
     value: string;
   }[];
   selectedBookmarksLength: number;
@@ -77,11 +76,13 @@ const displayType = ref<DisplayType>('list');
 const sortOrder = ref<SortOrder>('a-z');
 
 const selectedBookmarks = ref<string[] | null>(null);
+
+const activeTab = defineModel<string>();
 </script>
 
 <template>
   <Tabs
-    :defaultValue="defaultValue"
+    v-model="activeTab"
     class="w-full flex flex-col"
   >
     <div class="w-full flex items-center justify-between py-5 px-6.5 border-b border-stroke-1/10">
@@ -95,9 +96,9 @@ const selectedBookmarks = ref<string[] | null>(null);
           class="min-w-20.75 w-fit flex items-center gap-2 py-2 px-3.5 rounded-full text-xs font-medium leading-[100%] text-black-80 font-dm-sans data-[state=active]:font-inter data-[state=active]:text-white data-[state=active]:bg-black-100 hover:bg-primary-10 transition duration-300 cursor-pointer"
         >
           <img
-            v-if="tab.icon"
-            :src="tab.icon"
-            alt="tab icon"
+            v-if="getBrowserImage(tab.value)"
+            :src="getBrowserImage(tab.value)"
+            :alt="tab.label"
             class="size-4 shrink-0"
           />
           {{ tab.label }}
