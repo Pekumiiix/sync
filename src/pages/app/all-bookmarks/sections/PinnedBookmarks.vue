@@ -2,9 +2,9 @@
 import { ref, watch } from 'vue';
 
 import { bookmarks } from '@/mock-data/bookmark';
+import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { GridBookmarkCard } from '../components';
-import { transformBookmarks } from '../helper';
 
 interface Props {
   selectedPinnedBookmarksLength: number;

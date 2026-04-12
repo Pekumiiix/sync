@@ -18,7 +18,10 @@ defineProps<Props>();
       <slot name="trigger" />
     </PopoverTrigger>
 
-    <PopoverContent :class="cn('border-none', classNames?.content)">
+    <PopoverContent
+      align="end"
+      :class="cn('border-none shadow-[0px_4px_70px_0px_#00000026]', classNames?.content)"
+    >
       <slot />
     </PopoverContent>
   </Popover>

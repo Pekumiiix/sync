@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { NotificationIcon, SettingsIcon } from '@/components/icons';
+import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+
+import { NotificationPanel } from './sections';
 
 interface Props {
   page: string;
@@ -16,12 +18,7 @@ defineProps<Props>();
 
       <div class="flex items-center justify-between gap-3">
         <div class="size-fit relative">
-          <Button
-            variant="outline"
-            class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
-          >
-            <NotificationIcon class="size-4.5" />
-          </Button>
+          <NotificationPanel />
 
           <span class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0" />
         </div>

@@ -9,10 +9,11 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem} from '@/components/ui/sidebar';
+  SidebarMenuItem
+} from '@/components/ui/sidebar';
 
 import { AppSidebarGroup } from '../components';
-import { AppSidebarFooter,UserInfo } from '.';
+import { AppSidebarFooter, UserInfo } from '.';
 </script>
 
 <template>
@@ -35,8 +36,26 @@ import { AppSidebarFooter,UserInfo } from '.';
       <AppSidebarGroup
         label="General"
         :items="[
-          { path: '#', name: 'All Bookmarks', count: 0 },
-          { path: '#', name: 'Unsorted', count: 0 }
+          {
+            path: '/app',
+            name: 'All Bookmarks',
+            count: 0,
+            images: [
+              'https://picsum.photos/seed/1/800/600',
+              'https://picsum.photos/seed/2/800/600',
+              'https://picsum.photos/seed/3/1200/600'
+            ]
+          },
+          {
+            path: '#',
+            name: 'Unsorted',
+            count: 0,
+            images: [
+              'https://picsum.photos/seed/4/800/600',
+              'https://picsum.photos/seed/5/800/600',
+              'https://picsum.photos/seed/6/1200/600'
+            ]
+          }
         ]"
       />
 
@@ -49,7 +68,9 @@ import { AppSidebarFooter,UserInfo } from '.';
         <SidebarGroupContent class="mt-3">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton class="flex items-center py-3.5 px-3 gap-1.5 cursor-pointer">
+              <SidebarMenuButton
+                class="h-12.25 flex items-center py-3.5 px-3 gap-1.5 cursor-pointer"
+              >
                 <Plus
                   :size="20"
                   color="var(--color-black-90)"

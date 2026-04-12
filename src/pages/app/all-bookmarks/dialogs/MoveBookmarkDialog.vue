@@ -4,9 +4,10 @@ import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { mockFolders } from '@/mock-data/folders';
+import { transformBookmarkFolders } from '@/utils/bookmarkUtils';
 import { pluralizeIfArray } from '@/utils/stringutils';
 
-import { transformFolders } from '../helper';
+import { FolderThumbnail } from '../../shared';
 import { ActionDialogWrapper } from '../wrappers';
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const transformedBookmarks = ref(transformFolders(mockFolders));
+const transformedBookmarks = ref(transformBookmarkFolders(mockFolders));
 const selectedFolderId = ref<string | null>(null);
 
 const displayBool = defineModel<boolean>({ default: false });
@@ -64,11 +65,28 @@ function handleMove() {
         "
         @click="handleSelectFolder(folder.id)"
       >
-        <div class="flex flex-col items-start gap-1">
-          <p class="text-base font-medium leading-5.5 -tracking-[1%] text-black-80">
-            {{ folder.name }}
-          </p>
-          <p class="text-xs leading-[100%] text-black-50">Updated {{ folder.updated_at }}</p>
+        <div class="flex gap-3">
+          <FolderThumbnail
+            :images="[
+              'https://picsum.photos/seed/4/800/600',
+              'https://picsum.photos/seed/5/800/600',
+              'https://picsum.photos/seed/6/1200/600'
+            ]"
+            :class-names="{
+              container: 'size-9 rounded-[6px] py-1 px-0.5',
+              images: {
+                top: 'rounded-tl-[6px] rounded-tr-[6px] rounded-[4px]',
+                bottom: 'w-full h-3.75 rounded-[4px]'
+              }
+            }"
+          />
+
+          <div class="flex flex-col items-start gap-1">
+            <p class="text-base font-medium leading-5.5 -tracking-[1%] text-black-80">
+              {{ folder.name }}
+            </p>
+            <p class="text-xs leading-[100%] text-black-50">Updated {{ folder.updated_at }}</p>
+          </div>
         </div>
 
         <p class="text-xs leading-[100%] text-black-80">{{ folder.item_count }} items</p>

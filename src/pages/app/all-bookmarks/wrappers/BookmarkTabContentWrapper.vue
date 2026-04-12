@@ -7,10 +7,10 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { bookmarks as mockBookmarks } from '@/mock-data/bookmark';
 import type { DisplayType, IBookmarkCard } from '@/types/app.type';
+import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { GridBookmarkCard, ListBookmarkCard } from '../components';
 import { AddBookmarkDialog, DeleteBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
-import { transformBookmarks } from '../helper';
 
 interface Props {
   displayType: DisplayType;
