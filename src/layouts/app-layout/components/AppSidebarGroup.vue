@@ -10,7 +10,7 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import FolderThumbnail from '@/pages/app/shared/FolderThumbnail.vue';
+import { FolderThumbnail } from '@/pages/app/shared/components';
 
 interface Props {
   label: string;

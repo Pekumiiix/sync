@@ -5,6 +5,8 @@ import AppLayout from '@/layouts/app-layout/index.vue';
 import MarketingLayout from '@/layouts/marketing-layout/index.vue';
 // -- App Pages --------
 import AllBookmarksPage from '@/pages/app/all-bookmarks/index.vue';
+import BookmarkFolderPage from '@/pages/app/bookmark-folder/index.vue';
+import MembersPage from '@/pages/app/members/index.vue';
 import SettingsPage from '@/pages/app/settings/index.vue';
 // -- Marketing Pages --------
 import HomePage from '@/pages/marketing/home/index.vue';
@@ -36,7 +38,7 @@ const router = createRouter({
       component: AppLayout,
       children: [
         {
-          path: '',
+          path: 'all-bookmarks',
           name: 'All Bookmarks',
           component: AllBookmarksPage
         },
@@ -44,6 +46,16 @@ const router = createRouter({
           path: 'settings',
           name: 'Settings',
           component: SettingsPage
+        },
+        {
+          path: ':folderId',
+          name: 'Bookmark Folder',
+          component: BookmarkFolderPage
+        },
+        {
+          path: ':folderId/members',
+          name: 'Members',
+          component: MembersPage
         }
       ]
     }

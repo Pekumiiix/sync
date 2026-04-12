@@ -37,7 +37,7 @@ import { AppSidebarFooter, UserInfo } from '.';
         label="General"
         :items="[
           {
-            path: '/app',
+            path: '/app/all-bookmarks',
             name: 'All Bookmarks',
             count: 0,
             images: [

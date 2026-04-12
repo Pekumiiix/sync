@@ -7,7 +7,7 @@ import { mockFolders } from '@/mock-data/folders';
 import { transformBookmarkFolders } from '@/utils/bookmarkUtils';
 import { pluralizeIfArray } from '@/utils/stringutils';
 
-import { FolderThumbnail } from '../../shared';
+import { FolderThumbnail } from '../../shared/components';
 import { ActionDialogWrapper } from '../wrappers';
 
 interface Props {

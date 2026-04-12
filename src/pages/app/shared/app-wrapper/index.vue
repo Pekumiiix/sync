@@ -1,20 +1,43 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 
 import { NotificationPanel } from './sections';
 
 interface Props {
-  page: string;
+  page?: string;
 }
 
 defineProps<Props>();
+
+const router = useRouter();
 </script>
 
 <template>
   <header class="w-full h-23.25 flex items-center py-5 px-6.5 border-b border-[#292D321A]">
     <nav class="size-full flex items-center justify-between">
-      <h5 class="text-lg leading-6 font-semibold text-black-90 -tracking-[1%]">{{ page }}</h5>
+      <h5
+        v-if="page"
+        class="text-lg leading-6 font-semibold text-black-90 -tracking-[1%]"
+      >
+        {{ page }}
+      </h5>
+
+      <Button
+        v-else
+        @click="router.back()"
+        variant="ghost"
+        class="size-fit flex items-center gap-1.5 p-0! text-xl font-medium leading-7 -tracking-[1%] text-black-90 hover:bg-transparent"
+      >
+        <img
+          src="/images/app/icons/arrow-left.png"
+          alt="Arrow left"
+          class="size-6"
+        />
+        Back
+      </Button>
 
       <div class="flex items-center justify-between gap-3">
         <div class="size-fit relative">
