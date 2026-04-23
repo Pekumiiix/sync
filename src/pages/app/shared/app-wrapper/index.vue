@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+import env from '@/config/env';
 
+import { AddPasswordDialog, JoinWorkSpaceDialog } from '../dialogs';
 import { NotificationPanel } from './sections';
 
 interface Props {
@@ -13,6 +16,9 @@ interface Props {
 defineProps<Props>();
 
 const router = useRouter();
+
+const passwordDialogDisplayBool = ref<boolean>(false);
+const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
 </script>
 
 <template>
@@ -59,5 +65,16 @@ const router = useRouter();
     </nav>
   </header>
 
+  <div
+    v-if="env.isDev"
+    class="w-full h-23.25 flex items-center gap-3 py-5 px-6.5 border-b border-[#292D321A]"
+  >
+    <Button @click="passwordDialogDisplayBool = true">Show Password Dialog</Button>
+    <Button @click="joinWorkspaceDialogDisplayBool = true">Show Join Workspace Dialog</Button>
+  </div>
+
   <slot />
+
+  <AddPasswordDialog v-model="passwordDialogDisplayBool" />
+  <JoinWorkSpaceDialog v-model="joinWorkspaceDialogDisplayBool" />
 </template>

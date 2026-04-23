@@ -2,21 +2,14 @@
 import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 
-import { BaseForm } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { createTypedForm } from '@/utils/formUtils';
 
 import { type AddBookmarkData, addBookmarkSchema } from '../schemas/add-bookmark.schema';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 import { AddBookmarkDialogWrapper } from '../wrappers';
 import { BookmarkDetailsDialog } from '.';
-
-const displayBool = defineModel<boolean>({ default: false });
-const detailsDisplayBool = ref<boolean>(false);
-
-const isLoading = ref<boolean>(false);
-
-const bookmarkDetails = ref<Omit<BookmarkDetails, 'collection'> | undefined>(undefined);
 
 const { handleSubmit, meta, isSubmitting } = useForm<AddBookmarkData>({
   validationSchema: addBookmarkSchema
@@ -46,6 +39,15 @@ function handleCreateBookmark(data: BookmarkDetails) {
   console.log('Bookmark created:', data);
   detailsDisplayBool.value = false;
 }
+
+const TypedFormField = createTypedForm<AddBookmarkData>();
+
+const displayBool = defineModel<boolean>({ default: false });
+const detailsDisplayBool = ref<boolean>(false);
+
+const isLoading = ref<boolean>(false);
+
+const bookmarkDetails = ref<Omit<BookmarkDetails, 'collection'> | undefined>(undefined);
 </script>
 
 <template>
@@ -57,7 +59,7 @@ function handleCreateBookmark(data: BookmarkDetails) {
       @submit="onSubmit"
       class="w-full flex gap-2.5 py-5"
     >
-      <BaseForm
+      <TypedFormField
         name="url"
         :classNames="{ item: 'w-full' }"
       >
@@ -67,7 +69,7 @@ function handleCreateBookmark(data: BookmarkDetails) {
             class="w-full h-11 py-1 pl-4 pr-2 rounded-full border-[#E8E8E8]"
           />
         </template>
-      </BaseForm>
+      </TypedFormField>
 
       <Button
         :disabled="isSubmitting || !meta.valid"

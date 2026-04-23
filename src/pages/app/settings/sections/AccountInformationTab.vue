@@ -7,8 +7,8 @@ import { useForm } from 'vee-validate';
 import { BaseAvatar } from '@/components/re-useable';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { createTypedForm } from '@/utils/formUtils';
 
-import { SettingsInputField } from '../components';
 import {
   type AccountInformationData,
   accountInformationSchema
@@ -80,11 +80,7 @@ function onInputChange(event: Event) {
   }
 }
 
-const TypedFormField = SettingsInputField as new () => {
-  $props: InstanceType<typeof SettingsInputField>['$props'] & {
-    name: keyof AccountInformationData;
-  };
-};
+const TypedFormField = createTypedForm<AccountInformationData>();
 </script>
 
 <template>

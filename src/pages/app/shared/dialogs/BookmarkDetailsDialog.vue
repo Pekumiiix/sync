@@ -3,11 +3,12 @@ import { ref } from 'vue';
 import { X } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
-import { BaseForm, BaseSelect } from '@/components/re-useable';
+import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { createTypedForm } from '@/utils/formUtils';
 
 import { type BookmarkDetails, bookmarkDetailsSchema } from '../schemas/bookmark-details.schema';
 import { ActionDialogWrapper } from '../wrappers';
@@ -68,11 +69,7 @@ function removeTag(tagToRemove: string) {
   );
 }
 
-const TypedFormField = BaseForm as new () => {
-  $props: InstanceType<typeof BaseForm>['$props'] & {
-    name: keyof BookmarkDetails;
-  };
-};
+const TypedFormField = createTypedForm<BookmarkDetails>();
 
 const fieldClassName =
   'w-full h-12.25! text-base leading-[100%] text-black-90 placeholder:text-black-60 py-3.5 px-4.5 rounded-full border border-[#E8E8E8]';

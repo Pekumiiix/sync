@@ -12,7 +12,7 @@ withDefaults(defineProps<Props>(), {
   showDescription: true
 });
 
-const displayBool = defineModel<boolean>('displayType', { default: false });
+const displayBool = defineModel<boolean>({ default: false });
 </script>
 
 <template>
