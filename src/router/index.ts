@@ -2,12 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // --- Layouts --------------
 import AppLayout from '@/layouts/app-layout/index.vue';
+import AuthLayout from '@/layouts/auth-layout/index.vue';
 import MarketingLayout from '@/layouts/marketing-layout/index.vue';
 // -- App Pages --------
 import AllBookmarksPage from '@/pages/app/all-bookmarks/index.vue';
 import BookmarkFolderPage from '@/pages/app/bookmark-folder/index.vue';
 import MembersPage from '@/pages/app/members/index.vue';
 import SettingsPage from '@/pages/app/settings/index.vue';
+// -- Auth Pages --------
+import SignInPage from '@/pages/auth/sign-in/index.vue';
 // -- Marketing Pages --------
 import HomePage from '@/pages/marketing/home/index.vue';
 import PricingPage from '@/pages/marketing/pricing/index.vue';
@@ -29,6 +32,18 @@ const router = createRouter({
           path: 'pricing',
           name: 'Pricing',
           component: PricingPage
+        }
+      ]
+    },
+    {
+      path: '/auth',
+      name: 'Auth',
+      component: AuthLayout,
+      children: [
+        {
+          path: 'sign-in',
+          name: 'Sign In',
+          component: SignInPage
         }
       ]
     },

@@ -7,8 +7,8 @@ import { useForm } from 'vee-validate';
 import { BaseAvatar } from '@/components/re-useable';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { createTypedForm } from '@/utils/formUtils';
 
+import { SettingsInputField } from '../components';
 import {
   type AccountInformationData,
   accountInformationSchema
@@ -79,8 +79,6 @@ function onInputChange(event: Event) {
     }
   }
 }
-
-const TypedFormField = createTypedForm<AccountInformationData>();
 </script>
 
 <template>
@@ -152,13 +150,13 @@ const TypedFormField = createTypedForm<AccountInformationData>();
       description="Tell us your name"
     >
       <div class="max-w-139 w-full grid grid-cols-2 gap-6">
-        <TypedFormField
+        <SettingsInputField
           name="first_name"
           label="First name"
           placeholder="Enter your first name"
         />
 
-        <TypedFormField
+        <SettingsInputField
           name="last_name"
           label="Last name"
           placeholder="Enter your last name"
@@ -171,7 +169,7 @@ const TypedFormField = createTypedForm<AccountInformationData>();
       description="Tell us your email address"
     >
       <div class="max-w-139 w-full">
-        <TypedFormField
+        <SettingsInputField
           name="email"
           label="Email"
           placeholder="Enter your email"
@@ -184,7 +182,7 @@ const TypedFormField = createTypedForm<AccountInformationData>();
       description="Tell us your location"
     >
       <div class="max-w-139 w-full">
-        <TypedFormField
+        <SettingsInputField
           name="location"
           label="Location"
           placeholder="Enter your location"

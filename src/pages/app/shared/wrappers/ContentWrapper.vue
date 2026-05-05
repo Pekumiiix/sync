@@ -2,10 +2,11 @@
 import { ref } from 'vue';
 import { Upload } from 'lucide-vue-next';
 
-import BaseAvatar from '@/components/re-useable/BaseAvatar.vue';
+import { BaseAvatar } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 
 import { SearchInput } from '../components';
+import { ShareBookmarkDialog } from '../dialogs';
 
 interface Props {
   showTabActions?: boolean;
@@ -17,6 +18,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const query = ref('');
+const showShareDialog = ref(false);
 </script>
 
 <template>
@@ -52,7 +54,10 @@ const query = ref('');
         />
       </router-link>
 
-      <Button class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full">
+      <Button
+        @click="showShareDialog = true"
+        class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full"
+      >
         <span class="text-xs font-medium">Share</span>
         <Upload
           :size="20"
@@ -63,4 +68,6 @@ const query = ref('');
   </section>
 
   <slot />
+
+  <ShareBookmarkDialog v-model="showShareDialog" />
 </template>

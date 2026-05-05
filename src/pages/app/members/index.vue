@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 
 import { AppWrapper } from '../shared';
 import { SearchInput } from '../shared/components';
-import { MemberItem } from './components';
+import { MembersItem } from '../shared/components';
 
 const query = ref('');
 
@@ -27,14 +27,14 @@ console.log(route.params.folderId);
       />
     </div>
 
-    <MemberItem
+    <MembersItem
       avatar_url="https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
       name="Pelumi Amao"
       email="pelumi@amao.com"
       role="admin"
     />
 
-    <MemberItem
+    <MembersItem
       avatar_url="https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
       name="Pelumi Amao"
       email="pelumi@amao.com"

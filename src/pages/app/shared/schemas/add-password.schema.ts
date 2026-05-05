@@ -1,7 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-import { passwordBaseSchema } from '@/components/constants/password-schema';
+import { passwordBaseSchema } from '@/components/constants/schema';
 
 export const addPasswordZodSchema = z
   .object({

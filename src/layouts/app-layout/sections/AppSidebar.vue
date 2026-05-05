@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Plus } from 'lucide-vue-next';
 
 import {
@@ -11,9 +12,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
+import { CreateFolderDialog } from '@/pages/app/shared/dialogs';
 
 import { AppSidebarGroup } from '../components';
 import { AppSidebarFooter, UserInfo } from '.';
+
+const displayCreateFolderDialog = ref(false);
 </script>
 
 <template>
@@ -69,6 +73,7 @@ import { AppSidebarFooter, UserInfo } from '.';
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
+                @click="displayCreateFolderDialog = true"
                 class="h-12.25 flex items-center py-3.5 px-3 gap-1.5 cursor-pointer"
               >
                 <Plus
@@ -85,4 +90,6 @@ import { AppSidebarFooter, UserInfo } from '.';
 
     <AppSidebarFooter />
   </Sidebar>
+
+  <CreateFolderDialog v-model="displayCreateFolderDialog" />
 </template>

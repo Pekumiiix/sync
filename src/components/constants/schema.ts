@@ -8,3 +8,7 @@ export const passwordBaseSchema = z
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
   .regex(/[0-9]/, 'Password must contain at least one number')
   .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character');
+
+export const emailBaseSchema = z
+  .string({ required_error: 'Email is required' })
+  .email('Invalid email address');

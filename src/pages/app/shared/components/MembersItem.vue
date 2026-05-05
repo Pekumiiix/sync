@@ -19,7 +19,7 @@ const userRole = ref(props.role);
   <div
     class="w-full flex items-center justify-between py-5.5 px-6.5 border-b last:border-none border-stroke-1/5"
   >
-    <div class="flex items-center gap-2">
+    <div class="flex flex-row items-center gap-2">
       <BaseAvatar
         :src="avatar_url"
         :fallback="name"

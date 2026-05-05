@@ -8,7 +8,7 @@ interface Props {
 
 defineProps<Props>();
 
-const query = defineModel<string>('');
+const query = defineModel<string>({ default: '' });
 </script>
 
 <template>
