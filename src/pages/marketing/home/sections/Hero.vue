@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 <template>
   <section
-    class="w-full flex flex-col items-center gap-30 px-4 md:px-18 lg:px-36.25 pt-43.25 md:pt-70.5 bg-primary max-md:bg-[url('/images/landing-page/hero/mobile-bg.png')] bg-contain bg-no-repeat"
+    class="w-full flex flex-col items-center gap-30 px-4 md:px-18 lg:px-36.25 pt-43.25 md:pt-70.5 bg-primary max-md:bg-[url('/images/landing-page/hero/mobile-bg.png')] bg-[url('/images/landing-page/hero/desktop-bg.png')] bg-cover bg-center bg-no-repeat"
   >
     <div class="max-w-181 w-full flex flex-col items-center gap-11">
       <div class="flex flex-col items-center gap-6 md:gap-4">
@@ -38,12 +38,14 @@ import { Button } from '@/components/ui/button';
       <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-3">
         <Button
           class="w-54.75 md:w-46.5 h-14 md:h-13 flex items-center gap-1.25 text-lg md:text-base font-semibold font-inter-tight leading-[100%] py-4 px-5 rounded-full"
-          >Download Plugin
+        >
+          Download Plugin
           <ArrowRight
             :size="20"
             color="var(--color-primary-10)"
             class="-rotate-25"
-        /></Button>
+          />
+        </Button>
 
         <Button
           variant="outline"

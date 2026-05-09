@@ -53,7 +53,9 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
 </script>
 
 <template>
-  <div class="basis-1/2 flex flex-col 2xl:justify-center gap-52.75 py-35.25 px-8.75 2xl:pr-15">
+  <div
+    class="max-w-3xl w-full flex flex-col 2xl:justify-center gap-52.75 py-35.25 px-8.75 2xl:pr-15"
+  >
     <div class="flex flex-col gap-9">
       <img
         src="/images/logo-2.png"

@@ -22,7 +22,7 @@ const plans = computed(() => {
 
 <template>
   <SectionWrapper
-    class="bg-primary bg-[url('/images/landing-page/pricing/bg.png')] bg-contain bg-no-repeat"
+    class="bg-primary bg-[url('/images/landing-page/pricing/bg.png')] bg-cover bg-center bg-no-repeat"
   >
     <SectionDetails
       heading="Unlock the Full Power of Your Bookmarks"
@@ -34,8 +34,9 @@ const plans = computed(() => {
       <Label
         for="cycle"
         class="text-sm md:text-lg leading-4.5 md:leading-6.5 text-white-80 hover:text-white cursor-pointer"
-        >Monthly</Label
       >
+        Monthly
+      </Label>
 
       <BaseSwitch
         id="cycle"
@@ -46,10 +47,12 @@ const plans = computed(() => {
       <Label
         for="cycle"
         class="text-lg leading-6.5 text-white-80 hover:text-white cursor-pointer"
-        >Annually</Label
       >
+        Annually
+      </Label>
 
       <p
+        v-if="isYearly"
         class="h-8 md:h-13 flex items-center justify-center max-md:text-xs font-inter font-semibold text-primary-20 px-2.25 md:px-3 rounded-full border border-primary-90"
       >
         Save upto 20%
