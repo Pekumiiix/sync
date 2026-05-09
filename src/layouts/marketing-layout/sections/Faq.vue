@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { BaseAccordion } from '@/components/re-useable';
-import { SectionDetails, SectionWrapper } from '@/pages/marketing/shared';
+import { SectionDetails } from '@/pages/marketing/shared/components';
+import { SectionWrapper } from '@/pages/marketing/shared/wrappers';
 
 const faqs = [
   {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 
-import { SectionWrapper } from '../../shared';
+import { SectionWrapper } from '../../shared/wrappers';
 </script>
 
 <template>

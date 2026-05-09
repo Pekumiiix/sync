@@ -10,5 +10,5 @@ export const passwordBaseSchema = z
   .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character');
 
 export const emailBaseSchema = z
-  .string({ required_error: 'Email is required' })
+  .string({ required_error: 'Provide a valid email address' })
   .email('Invalid email address');

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
 
-import { SectionDetails,SectionWrapper } from '../../shared';
+import { SectionDetails } from '../../shared/components';
+import { SectionWrapper } from '../../shared/wrappers';
 
 const howItWorks = [
   {

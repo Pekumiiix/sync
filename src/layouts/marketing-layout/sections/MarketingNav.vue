@@ -3,6 +3,13 @@ import { RouterLink } from 'vue-router';
 import { Menu } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 </script>
 
 <template>
@@ -38,15 +45,34 @@ import { Button } from '@/components/ui/button';
 
       <Button
         class="hidden md:flex h-11.75 py-4 px-6 rounded-[30px] text-xs font-semibold leading-[100%] font-instrument-sans"
-        >Get Started</Button
       >
-
-      <Button class="flex md:hidden size-fit! p-1! bg-transparent hover:bg-white-90">
-        <Menu
-          color="var(--color-primary-100)"
-          class="shrink-0 size-8"
-        />
+        Get Started
       </Button>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          asChild
+          class="md:hidden"
+        >
+          <Menu
+            className="size-5"
+            aria-label="Open menu"
+            color="var(--color-primary-100)"
+          />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          class="w-93.75 max-w-[calc(100vw-32px)] pt-5.75 pb-8 px-4 rounded-4xl shadow-[0px_4px_250px_0px_#0000004D] border-none bg-white mt-9 -mr-4"
+        >
+          <DropdownMenuGroup className="flex flex-col gap-3">
+            <DropdownMenuItem
+              className="w-full h-12.5 flex items-center justify-center rounded-full py-3 px-4 bg-primary-100 text-sm font-medium leading-[100%] text-white cursor-pointer"
+            >
+              Get Started
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   </nav>
 </template>

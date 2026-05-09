@@ -10,7 +10,10 @@ import BookmarkFolderPage from '@/pages/app/bookmark-folder/index.vue';
 import MembersPage from '@/pages/app/members/index.vue';
 import SettingsPage from '@/pages/app/settings/index.vue';
 // -- Auth Pages --------
+import ForgotPasswordPage from '@/pages/auth/forgot-password/index.vue';
+import ResetPasswordPage from '@/pages/auth/reset-paasword/index.vue';
 import SignInPage from '@/pages/auth/sign-in/index.vue';
+import SignUpPage from '@/pages/auth/sign-up/index.vue';
 // -- Marketing Pages --------
 import HomePage from '@/pages/marketing/home/index.vue';
 import PricingPage from '@/pages/marketing/pricing/index.vue';
@@ -18,6 +21,7 @@ import PricingPage from '@/pages/marketing/pricing/index.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // --- Marketing Routes ---
     {
       path: '/',
       name: 'Homepage',
@@ -35,6 +39,8 @@ const router = createRouter({
         }
       ]
     },
+
+    // --- Auth Routes ---
     {
       path: '/auth',
       name: 'Auth',
@@ -44,9 +50,26 @@ const router = createRouter({
           path: 'sign-in',
           name: 'Sign In',
           component: SignInPage
+        },
+        {
+          path: 'sign-up',
+          name: 'Sign Up',
+          component: SignUpPage
+        },
+        {
+          path: 'forgot-password',
+          name: 'Forgot Password',
+          component: ForgotPasswordPage
+        },
+        {
+          path: 'reset-password',
+          name: 'Reset Password',
+          component: ResetPasswordPage
         }
       ]
     },
+
+    // --- App Routes ---
     {
       path: '/app',
       name: 'App',

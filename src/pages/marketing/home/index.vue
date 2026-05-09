@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PricingSection } from '../shared';
+import { PricingSection } from '../shared/sections';
 import {
   AboutSection,
   FeaturesSection,

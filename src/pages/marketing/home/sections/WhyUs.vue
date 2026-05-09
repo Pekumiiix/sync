@@ -2,7 +2,8 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { SectionDetails, SectionWrapper } from '../../shared';
+import { SectionDetails } from '../../shared/components';
+import { SectionWrapper } from '../../shared/wrappers';
 
 interface IWhyUs {
   image: string;
@@ -40,7 +41,7 @@ const whyUs: IWhyUs[] = [
 <template>
   <SectionWrapper class="container max-md:gap-2.5">
     <SectionDetails
-      heading="Smater Saving and Sharing"
+      heading="Smarter Saving and Sharing"
       caption="Save more than just bookmarks—organize, access, and share your favorite links effortlessly,
         all in one smart and convenient place."
       :class-names="{ wrapper: 'gap-3' }"

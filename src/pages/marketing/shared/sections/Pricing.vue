@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-import { ContactDialog, SectionDetails, SectionWrapper } from '.';
+import { SectionDetails } from '../components';
+import { ContactFormDialog } from '../dialogs';
+import { SectionWrapper } from '../wrappers';
 
 const open = ref(false);
 const isYearly = ref(false);
@@ -133,6 +135,6 @@ const plans = computed(() => {
       </div>
     </div>
 
-    <ContactDialog v-model="open" />
+    <ContactFormDialog v-model="open" />
   </SectionWrapper>
 </template>

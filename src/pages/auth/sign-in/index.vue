@@ -1,55 +1,79 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
+import { Check } from 'lucide-vue-next';
+import { useForm } from 'vee-validate';
+
+import { Checkbox } from '@/components/ui/checkbox';
+import { createAuthTypedForm } from '@/utils/formUtils';
+
+import { AuthInput, AuthPasswordInput } from '../shared/components';
+import { AuthWrapper } from '../shared/wrappers';
+import { type SignInData, signInSchema } from './schema';
+
+const TypedFormField = createAuthTypedForm<SignInData>();
+
+const { handleSubmit, meta, isSubmitting } = useForm<SignInData>({
+  validationSchema: signInSchema
+});
+
+const onSubmit = handleSubmit(async (values) => {
+  console.log(values);
+});
 </script>
 
 <template>
-  <div class="basis-1/2 flex flex-col gap-52.75 py-35.25 px-8.75">
-    <div class="flex flex-col gap-9">
-      <img
-        src="/images/logo.png"
-        alt="Sync"
-        class="size-16.75"
-      />
+  <AuthWrapper
+    page="sign_in"
+    :onSubmit="onSubmit"
+    :isValid="meta.valid"
+    :isLoading="isSubmitting"
+  >
+    <TypedFormField
+      name="email"
+      label="Email address"
+    >
+      <template #default="fieldProps">
+        <AuthInput
+          v-bind="fieldProps"
+          placeholder="Enter email address"
+        />
+      </template>
+    </TypedFormField>
 
-      <p class="text-[31px] font-bold leading-[100%] -tracking-[2%] text-black-100">
-        Welcome back 👋
-      </p>
-    </div>
+    <TypedFormField
+      name="password"
+      label="Password"
+    >
+      <template #default="fieldProps">
+        <AuthPasswordInput v-bind="fieldProps" />
+      </template>
+    </TypedFormField>
 
-    <form class="w-full flex flex-col items-center gap-16.75">
-      <div class="w-full flex flex-col gap-8">
-        <Button class="w-full py-8.25 rounded-full text-[29px] leading-8.25">Sign In</Button>
-
-        <div class="flex items-center gap-5">
-          <div class="max-w-69 w-full h-px bg-stroke-1/10" />
-          <p
-            class="px-5.5 py-1.5 bg-[#F1F5F900] text-[27px] font-medium leading-7 text-black-100 tracking-[8%]"
+    <div class="flex items-center justify-between">
+      <TypedFormField
+        name="rememberMe"
+        label="Remember me"
+        :class-names="{
+          item: 'flex-row-reverse items-center',
+          label: 'text-[26px]!'
+        }"
+      >
+        <template #default="fieldProps">
+          <Checkbox
+            :checked="fieldProps.value === true"
+            @update:checked="fieldProps.onChange"
+            class="size-7.25 rounded-[8px] border-[#E5E5E5] hover:border-primary-90"
           >
-            OR
-          </p>
-          <div class="max-w-69 w-full h-px bg-stroke-1/10" />
-        </div>
+            <Check class="size-5.5" />
+          </Checkbox>
+        </template>
+      </TypedFormField>
 
-        <Button
-          variant="outline"
-          class="w-full py-8.25 rounded-full text-[29px] leading-8.25 text-black-100 border-stroke-1/10"
-        >
-          Continue with Google
-        </Button>
-      </div>
-    </form>
-
-    <div class="w-full flex items-center justify-center gap-1.25">
-      <p class="text-[29px] -tracking-[2%]">
-        <span class="text-black-60">Don’t have an account?</span> ✨
-        <router-link
-          to="/signup"
-          class="text-black-100"
-        >
-          Create one
-        </router-link>
-        ✨
-      </p>
+      <router-link
+        to="/auth/forgot-password"
+        class="text-[27px] leading-7.25 text-[#D22109] -tracking-[2%]"
+      >
+        Forgot password?
+      </router-link>
     </div>
-  </div>
+  </AuthWrapper>
 </template>

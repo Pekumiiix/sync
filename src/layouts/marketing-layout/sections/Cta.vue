@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { SectionDetails, SectionWrapper } from '@/pages/marketing/shared';
+import { SectionDetails } from '@/pages/marketing/shared/components';
+import { SectionWrapper } from '@/pages/marketing/shared/wrappers';
 </script>
 
 <template>

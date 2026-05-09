@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { SectionWrapper } from '../../shared';
+import { SectionWrapper } from '../../shared/wrappers';
 
 interface IFeatures {
   title: string;
