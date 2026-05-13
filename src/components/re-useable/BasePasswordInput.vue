@@ -26,6 +26,10 @@ withDefaults(defineProps<Props>(), {
   })
 });
 
+defineOptions({
+  inheritAttrs: false
+});
+
 const showPassword = ref<boolean>(false);
 </script>
 
@@ -33,12 +37,13 @@ const showPassword = ref<boolean>(false);
   <div
     :class="
       cn(
-        'h-12.5 relative flex items-center justify-between py-3.5 px-4.5 rounded-full border border-[#E8E8E8] focus-within:border-primary-90 hover:border-primary-90/70 transition-colors duration-200',
+        'h-12.5 relative flex items-center justify-between py-3.5 px-4.5 rounded-full border border-[#E8E8E8]  hover:border-primary-90/70 focus-within:border-primary-90 group-hover:border-primary-90/70 transition-colors duration-200',
         classNames?.root
       )
     "
   >
     <Input
+      v-bind="$attrs"
       :type="showPassword ? 'text' : 'password'"
       :class="cn('p-0 border-none outline-none shadow-none rounded-none', classNames?.input)"
       :placeholder="placeholder"

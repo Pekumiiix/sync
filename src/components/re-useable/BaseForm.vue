@@ -32,14 +32,22 @@ withDefaults(defineProps<Props>(), {
     v-slot="{ componentField }"
     :name="name"
   >
-    <FormItem :class="cn('flex flex-col gap-2 space-y-0', classNames?.item)">
-      <FormLabel :class="cn('text-lg leading-6 text-black-90 font-medium', classNames?.label)">{{
-        label
-      }}</FormLabel>
+    <FormItem :class="cn('group flex flex-col gap-2 space-y-0', classNames?.item)">
+      <FormLabel
+        v-if="label"
+        :class="cn('text-lg leading-6 text-black-90 font-medium cursor-pointer', classNames?.label)"
+      >
+        {{ label }}
+      </FormLabel>
       <FormControl :class="cn(classNames?.control)">
         <slot v-bind="componentField" />
       </FormControl>
-      <FormDescription :class="cn(classNames?.description)">{{ description }}</FormDescription>
+      <FormDescription
+        v-if="description"
+        :class="cn(classNames?.description)"
+      >
+        {{ description }}
+      </FormDescription>
       <FormMessage
         v-if="showMessage"
         class="-mt-2"

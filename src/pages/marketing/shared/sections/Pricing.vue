@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { AnimatePresence } from 'motion-v';
 
 import { pricingPlans } from '@/components/constants/pricing-plans';
+import { MotionParagraph } from '@/components/motion-wrappers';
 import { BaseSwitch } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -41,7 +43,7 @@ const plans = computed(() => {
       <BaseSwitch
         id="cycle"
         v-model="isYearly"
-        class="h-8 md:h-13 w-15 md:w-22.75 [&>span]:size-8 md:[&>span]:size-13 [&>span]:data-[state=checked]:translate-x-6.5 md:[&>span]:data-[state=checked]:translate-x-10"
+        class="h-8 md:h-13 w-15 md:w-22.75 [&>span]:size-8 md:[&>span]:size-13 [&>span]:data-[state=checked]:translate-x-6.5 md:[&>span]:data-[state=checked]:translate-x-10 transition-colors duration-500 [&>span]:duration-500"
       />
 
       <Label
@@ -51,12 +53,19 @@ const plans = computed(() => {
         Annually
       </Label>
 
-      <p
-        v-if="isYearly"
-        class="h-8 md:h-13 flex items-center justify-center max-md:text-xs font-inter font-semibold text-primary-20 px-2.25 md:px-3 rounded-full border border-primary-90"
-      >
-        Save upto 20%
-      </p>
+      <AnimatePresence>
+        <MotionParagraph
+          v-if="isYearly"
+          :config="{
+            initial: { opacity: 0, scale: 0.8 },
+            animate: { opacity: 1, scale: 1 },
+            exit: { opacity: 0, scale: 0 }
+          }"
+          class="h-8 md:h-13 flex items-center justify-center max-md:text-xs font-inter font-semibold text-primary-20 px-2.25 md:px-3 rounded-full border border-primary-90"
+        >
+          Save upto 20%
+        </MotionParagraph>
+      </AnimatePresence>
     </div>
 
     <div class="flex flex-col gap-6">
@@ -93,8 +102,9 @@ const plans = computed(() => {
             </div>
             <Button
               class="h-14.5 py-3.5 px-7.5 rounded-full bg-white text-base font-medium font-poppins leading-7.5 text-[#13213B] hover:bg-white-90"
-              >Get Started</Button
             >
+              <router-link to="/app/all-bookmarks">Get Started</router-link>
+            </Button>
           </div>
 
           <div class="h-0.5 w-full bg-[#CBCED3] opacity-10" />

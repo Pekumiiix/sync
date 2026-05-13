@@ -69,7 +69,12 @@ const features: IFeatures[] = [
             {{ feature.heading }}
           </h3>
 
-          <Button class="w-31.5 md:w-48.25 h-12.5 md:h-13.75 rounded-full p-4">Get Started</Button>
+          <Button
+            as-child
+            class="w-31.5 md:w-48.25 h-12.5 md:h-13.75 rounded-full p-4"
+          >
+            <router-link to="/app/all-bookmarks"> Get Started </router-link>
+          </Button>
         </div>
       </div>
 
