@@ -1,5 +1,7 @@
 import type { IBookmarkCard } from '@/types/app.type';
 
+//TODO: Add a browser property
+
 export const bookmarks: IBookmarkCard[] = [
   {
     id: crypto.randomUUID(),

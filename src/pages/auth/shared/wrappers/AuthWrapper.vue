@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 
 type AuthPages = 'sign_in' | 'sign_up' | 'forgot_password' | 'reset_password';
@@ -77,12 +78,13 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
       </div>
 
       <div class="w-full flex flex-col gap-8">
-        <Button
+        <LoadingButton
           class="w-full py-8.25 rounded-full text-[29px] leading-8.25"
-          :disabled="!isValid || isLoading"
+          :isLoading="isLoading"
+          :disabled="!isValid"
         >
-          {{ pageConfig[page].buttonLabel }}
-        </Button>
+          <span>{{ pageConfig[page].buttonLabel }}</span>
+        </LoadingButton>
 
         <div
           v-if="isSignInOrSignUp"

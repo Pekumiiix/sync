@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useUrlSearchParams } from '@vueuse/core';
+
+import { bookmarks } from '@/mock-data/bookmark';
+import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
@@ -17,9 +20,8 @@ const tabs = [
   }
 ];
 
-const selectedPinnedBookmarks = ref<string[] | null>(null);
-
-const selectedPinnedBookmarksLength = computed(() => selectedPinnedBookmarks.value?.length || 0);
+const { pinnedBookmarks, selectedPinnedBookmarks, selectedPinnedBookmarksLength } =
+  extractPinnedBookmarksData(bookmarks);
 
 const params = useUrlSearchParams('history');
 
@@ -34,13 +36,18 @@ const activeTab = computed({
 <template>
   <AppWrapper page="All Bookmarks">
     <ContentWrapper>
+      <p>{{ selectedPinnedBookmarksLength }}</p>
+
       <BookmarkTabWrapper
-        v-model="activeTab"
         :tabs="tabs"
-        :selectedBookmarksLength="selectedPinnedBookmarksLength"
+        :bookmarks="bookmarks"
+        v-model:activeTab="activeTab"
+        v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
+        :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
+          :pinnedBookmarks="pinnedBookmarks"
           :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>

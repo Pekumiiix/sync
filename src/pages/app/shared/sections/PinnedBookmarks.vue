@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-import { bookmarks } from '@/mock-data/bookmark';
+import type { IBookmarkCard } from '@/types/app.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { GridBookmarkCard } from '../components';
 
 interface Props {
   selectedPinnedBookmarksLength: number;
+  pinnedBookmarks: IBookmarkCard[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
-const pinnedBookmarks = ref(bookmarks.filter((bookmark) => bookmark.isPinned));
-const transformedBookmarks = ref(transformBookmarks(pinnedBookmarks.value));
+const transformedBookmarks = ref(transformBookmarks(props.pinnedBookmarks));
 
 const selectedPinnedBookmarks = defineModel<string[] | null>({ default: null });
 

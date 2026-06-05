@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUrlSearchParams } from '@vueuse/core';
+
+import { bookmarks } from '@/mock-data/bookmark';
+import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
@@ -31,9 +33,8 @@ const activeTab = computed({
   }
 });
 
-const selectedPinnedBookmarks = ref<string[] | null>(null);
-
-const selectedPinnedBookmarksLength = computed(() => selectedPinnedBookmarks.value?.length || 0);
+const { pinnedBookmarks, selectedPinnedBookmarks, selectedPinnedBookmarksLength } =
+  extractPinnedBookmarksData(bookmarks);
 </script>
 
 <template>
@@ -43,12 +44,15 @@ const selectedPinnedBookmarksLength = computed(() => selectedPinnedBookmarks.val
       :folderId="folderId"
     >
       <BookmarkTabWrapper
-        v-model="activeTab"
         :tabs="tabs"
-        :selectedBookmarksLength="selectedPinnedBookmarksLength"
+        :bookmarks="bookmarks"
+        v-model:activeTab="activeTab"
+        v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
+        :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
+          :pinnedBookmarks="pinnedBookmarks"
           :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>

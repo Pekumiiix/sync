@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Upload } from 'lucide-vue-next';
+import { AnimatePresence } from 'motion-v';
 
+import { fadeSlideYConfig } from '@/components/constants/animations';
+import { MotionParagraph } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
+import { bookmarks } from '@/mock-data/bookmark';
+import { transformBookmarks } from '@/utils/bookmarkUtils';
 
-import { SearchInput } from '../components';
+import { ListBookmarkCard, SearchInput } from '../components';
 import { ShareBookmarkDialog } from '../dialogs';
 
 interface Props {
@@ -19,6 +24,20 @@ withDefaults(defineProps<Props>(), {
 
 const query = ref('');
 const showShareDialog = ref(false);
+
+const transformedBookmarks = ref(transformBookmarks(bookmarks));
+
+const isQueryEmpty = computed(() => query.value === '');
+
+const searchResults = computed(() => {
+  if (isQueryEmpty.value) {
+    return [];
+  }
+
+  return transformedBookmarks.value.filter((bookmark) =>
+    bookmark.link.toLowerCase().includes(query.value.toLowerCase())
+  );
+});
 </script>
 
 <template>
@@ -30,15 +49,18 @@ const showShareDialog = ref(false);
       placeholder="Search bookmarks"
     />
 
-    <p
-      v-if="query !== ''"
-      class="text-lg font-medium leading-[100%] text-black-70"
-    >
-      Showing result for “{{ query }}”
-    </p>
+    <AnimatePresence>
+      <MotionParagraph
+        v-if="!isQueryEmpty"
+        :config="fadeSlideYConfig"
+        class="text-sm text-muted-foreground"
+      >
+        Showing result for “{{ query }}”
+      </MotionParagraph>
+    </AnimatePresence>
 
     <div
-      v-else-if="showTabActions && folderId"
+      v-if="isQueryEmpty && showTabActions && folderId"
       class="flex items-center gap-3"
     >
       <router-link
@@ -67,7 +89,28 @@ const showShareDialog = ref(false);
     </div>
   </section>
 
-  <slot />
+  <slot v-if="isQueryEmpty" />
+
+  <div
+    v-else
+    class="w-full flex flex-col"
+  >
+    <ListBookmarkCard
+      v-for="bookmark in searchResults"
+      v-model="bookmark.isSelected"
+      :key="bookmark.id"
+      :id="bookmark.id"
+      :platform="bookmark.platform"
+      :link="bookmark.link"
+      :collection="bookmark.collection"
+      :time="bookmark.time"
+      :image="bookmark.image"
+      :isPinned="bookmark.isPinned"
+      :tags="bookmark.tags"
+      :description="bookmark.description"
+      :showCheckbox="false"
+    />
+  </div>
 
   <ShareBookmarkDialog v-model="showShareDialog" />
 </template>

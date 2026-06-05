@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { AnimatePresence } from 'motion-v';
 
+import { fadeSlideYConfig } from '@/components/constants/animations';
 import { getBrowserImage } from '@/components/constants/browsers';
 import { EyeIcon, TrashIcon, UnpinIcon } from '@/components/icons';
+import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { bookmarks } from '@/mock-data/bookmark';
-import type { DisplayType, SortOrder } from '@/types/app.type';
+import type { DisplayType, IBookmarkCard, SortOrder } from '@/types/app.type';
 
+import { DeleteBookmarkDialog } from '../dialogs';
 import { BookmarkTabContentWrapper } from '.';
 
 interface Props {
@@ -17,7 +20,8 @@ interface Props {
     label: string;
     value: string;
   }[];
-  selectedBookmarksLength: number;
+  bookmarks: IBookmarkCard[];
+  selectedPinnedBookmarksLength: number;
 }
 
 const props = defineProps<Props>();
@@ -44,8 +48,17 @@ const sortOrderOptions: ISortOrderOptions[] = [
   { value: 'oldest', label: 'Oldest' }
 ];
 
+const displayType = ref<DisplayType>('list');
+const sortOrder = ref<SortOrder>('a-z');
+
+const showDeleteBookmarkDialog = ref<boolean>(false);
+
+const isSelectedPinnedBookmarksGreaterThanZero = computed(
+  () => props.selectedPinnedBookmarksLength > 0
+);
+
 const actions = computed(() => [
-  ...(props.selectedBookmarksLength === 1
+  ...(props.selectedPinnedBookmarksLength === 1
     ? [
         {
           label: 'View',
@@ -67,17 +80,15 @@ const actions = computed(() => [
     label: 'Delete',
     icon: TrashIcon,
     onClick: () => {
-      console.log('Deleted');
+      showDeleteBookmarkDialog.value = true;
     }
   }
 ]);
 
-const displayType = ref<DisplayType>('list');
-const sortOrder = ref<SortOrder>('a-z');
-
-const selectedBookmarks = ref<string[] | null>(null);
-
-const activeTab = defineModel<string>();
+const activeTab = defineModel<string>('activeTab', { default: 'all' });
+const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBookmarks', {
+  default: null
+});
 </script>
 
 <template>
@@ -87,12 +98,13 @@ const activeTab = defineModel<string>();
   >
     <div class="w-full flex items-center justify-between py-5 px-6.5 border-b border-stroke-1/10">
       <TabsList class="w-fit h-13.25 flex items-center gap-2 p-2 rounded-full bg-[#F8F8F9]">
+        <!-------------------------------------- Tab Trigger --------------------------------------->
         <TabsTrigger
           v-for="tab in tabs"
           :key="tab.value"
           :value="tab.value"
-          :aria-disabled="selectedBookmarksLength > 0"
-          :disabled="selectedBookmarksLength > 0"
+          :aria-disabled="isSelectedPinnedBookmarksGreaterThanZero"
+          :disabled="isSelectedPinnedBookmarksGreaterThanZero"
           class="min-w-20.75 w-fit flex items-center gap-2 py-2 px-3.5 rounded-full text-xs font-medium leading-[100%] text-black-80 font-dm-sans data-[state=active]:font-inter data-[state=active]:text-white data-[state=active]:bg-black-100 hover:bg-primary-10 transition duration-300 cursor-pointer"
         >
           <img
@@ -105,50 +117,58 @@ const activeTab = defineModel<string>();
         </TabsTrigger>
       </TabsList>
 
-      <div
-        v-if="selectedBookmarksLength > 0"
-        class="flex items-center gap-4"
-      >
-        <Button
-          v-for="action in actions"
-          :key="action.label"
-          variant="ghost"
-          :class="
-            cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
-              'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-[#ff2f00] hover:bg-[#FF2F00]/10':
-                action.label === 'Delete',
-              'text-black-90 stroke-black-90': action.label !== 'Delete'
-            })
-          "
-          @click="action.onClick"
+      <!-------------------------------------- Action Buttons --------------------------------------->
+      <AnimatePresence>
+        <MotionDiv
+          v-if="isSelectedPinnedBookmarksGreaterThanZero"
+          :config="fadeSlideYConfig"
+          class="flex items-center gap-4"
         >
-          <component
-            :is="action.icon"
-            class="size-4 stroke-inherit"
-          />
-          <span class="text-inherit leading-[100%] text-base">{{ action.label }}</span>
-        </Button>
-      </div>
+          <Button
+            v-for="action in actions"
+            :key="action.label"
+            variant="ghost"
+            :class="
+              cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
+                'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-[#ff2f00] hover:bg-[#FF2F00]/10':
+                  action.label === 'Delete',
+                'text-black-90 stroke-black-90': action.label !== 'Delete'
+              })
+            "
+            @click="action.onClick"
+          >
+            <component
+              :is="action.icon"
+              class="size-4 stroke-inherit"
+            />
+            <span class="text-inherit leading-[100%] text-base">{{ action.label }}</span>
+          </Button>
+        </MotionDiv>
+      </AnimatePresence>
 
-      <div
-        v-else
-        class="w-fit h-13.25 flex items-center gap-4"
-      >
-        <BaseSelect
-          v-model="sortOrder"
-          :options="sortOrderOptions"
-          :classNames="{
-            trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
-          }"
-        />
-        <BaseSelect
-          v-model="displayType"
-          :options="displayTypeOptions"
-          :classNames="{
-            trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
-          }"
-        />
-      </div>
+      <!-------------------------------------- Display and Filter selects --------------------------------------->
+      <AnimatePresence>
+        <MotionDiv
+          v-if="!isSelectedPinnedBookmarksGreaterThanZero"
+          :config="fadeSlideYConfig"
+          class="w-fit h-13.25 flex items-center gap-4"
+        >
+          <BaseSelect
+            v-model="sortOrder"
+            :options="sortOrderOptions"
+            :classNames="{
+              trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+            }"
+          />
+          <BaseSelect
+            v-model="displayType"
+            :options="displayTypeOptions"
+            :classNames="{
+              trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+            }"
+          />
+        </MotionDiv>
+      </AnimatePresence>
     </div>
 
     <slot />
@@ -161,10 +181,15 @@ const activeTab = defineModel<string>();
     >
       <BookmarkTabContentWrapper
         :platform="tab.label"
-        v-model="selectedBookmarks"
         :displayType="displayType"
         :bookmarks="bookmarks"
       />
     </TabsContent>
   </Tabs>
+
+  <DeleteBookmarkDialog
+    v-if="selectedPinnedBookmarks && selectedPinnedBookmarks.length > 0"
+    v-model="showDeleteBookmarkDialog"
+    :bookmark-ids="selectedPinnedBookmarks"
+  />
 </template>

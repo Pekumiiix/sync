@@ -4,12 +4,18 @@ import { ref } from 'vue';
 import { EditIcon, EyeIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { IBookmarkCard as Props } from '@/types/app.type';
+import type { IBookmarkCard } from '@/types/app.type';
 
 import { BookmarkDetailsDialog, DeleteBookmarkDialog } from '../dialogs';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 
-const props = defineProps<Props>();
+interface Props extends IBookmarkCard {
+  showCheckbox?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showCheckbox: true
+});
 
 const selectedBool = defineModel<boolean>({ default: false });
 
@@ -62,6 +68,7 @@ function handleEditBookmark(data: BookmarkDetails) {
   >
     <div class="w-fit flex items-center gap-4">
       <Checkbox
+        v-if="props.showCheckbox"
         v-model:model-value="selectedBool"
         class="size-4"
       />
