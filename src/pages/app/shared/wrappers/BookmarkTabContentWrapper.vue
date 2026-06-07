@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { Plus } from 'lucide-vue-next';
+import { AnimatePresence } from 'motion-v';
 
+import { fadeSlideYConfig, fadeSlideYVariant } from '@/components/constants/animations';
 import { EyeIcon, FolderIcon, TrashIcon } from '@/components/icons';
+import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { DisplayType, IBookmarkCard } from '@/types/app.type';
@@ -69,38 +72,52 @@ watch(
       <p class="text-lg font-medium text-black-80 leading-[100%]">{{ platform }} bookmarks</p>
 
       <!-------------------------------------- Action buttons --------------------------------->
-      <div
-        v-if="(selectedBookmarks?.length || 0) > 0"
-        class="flex items-center gap-4"
-      >
-        <Button
-          v-for="action in actions"
-          :key="action.label"
-          variant="ghost"
-          @click="action.acion"
-          :class="
-            cn('flex items-center gap-1 text-base leading-[100%] text-black-90', action.class)
-          "
+      <AnimatePresence>
+        <MotionStaggerContainer
+          v-if="selectedBookmarks?.length > 0"
+          class="flex items-center gap-4"
         >
-          <component :is="action.icon" /> <span>{{ action.label }}</span>
-        </Button>
-      </div>
+          <MotionDiv
+            v-for="action in actions"
+            :key="action.label"
+            :config="{ variants: fadeSlideYVariant }"
+            class="size-fit"
+          >
+            <Button
+              variant="ghost"
+              @click="action.acion"
+              :class="
+                cn('flex items-center gap-1 text-base leading-[100%] text-black-90', action.class)
+              "
+            >
+              <component :is="action.icon" /> <span>{{ action.label }}</span>
+            </Button>
+          </MotionDiv>
+        </MotionStaggerContainer>
+      </AnimatePresence>
 
       <!-------------------------------------- Add bookmark buttons --------------------------------->
-      <Button
-        v-else
-        @click="addBookmarkDisplayBool = true"
-        variant="ghost"
-        class="flex items-center gap-1 hover:bg-primary-100/10"
-      >
-        <Plus
-          :size="20"
-          color="var(--color-primary-100)"
-        />
-        <span class="text-sm leading-[100%] text-primary-100 underline underline-offset-4">
-          Add bookmark
-        </span>
-      </Button>
+      <AnimatePresence>
+        <MotionDiv
+          v-if="selectedBookmarks.length === 0"
+          :config="fadeSlideYConfig"
+          class="size-fit"
+        >
+          <Button
+            @click="addBookmarkDisplayBool = true"
+            variant="ghost"
+            class="flex items-center gap-1 hover:bg-primary-100/10"
+          >
+            <Plus
+              :size="20"
+              color="var(--color-primary-100)"
+            />
+            <span class="text-sm leading-[100%] text-primary-100 underline underline-offset-4">
+              Add bookmark
+            </span>
+          </Button>
+        </MotionDiv>
+      </AnimatePresence>
     </div>
 
     <!------------------------- Bookmark Cards --------------------------->

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NotificationIcon } from '@/components/icons';
 import { BasePopover } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { mockNotifications } from '@/mock-data/notifications';
 import { formatNotificationForUI } from '@/utils/notificationsUtils';
@@ -32,12 +33,14 @@ const transformedNotifications = mockNotifications.map((notification) =>
       <div class="flex items-center justify-between p-3.5 border-b border-stroke-1/10">
         <p class="text-sm font-medium leading-4 text-black-90">Notifications</p>
 
-        <Button
+        <LoadingButton
+          :isLoading="false"
           variant="ghost"
           class="text-xs font-medium leading-[100%] text-primary-100 hover:text-primary-100 hover:bg-primary-10"
+          loader-class="size-5"
         >
-          Mark all as read
-        </Button>
+          <span>Mark all as read</span>
+        </LoadingButton>
       </div>
 
       <NotificationItem

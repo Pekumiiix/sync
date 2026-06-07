@@ -3,6 +3,7 @@ import { Check } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
 import { getBrowserImage } from '@/components/constants/browsers';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { timeAgo } from '@/utils/dateUtils';
 
@@ -86,12 +87,14 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
             </div>
           </div>
 
-          <Button
+          <LoadingButton
+            :isLoading="false"
             variant="outline"
             class="w-18.25 h-6.75 text-[9px] text-black-90 font-medium leading-9.25 py-1.75 px-3 border-black-30 rounded-full bg-transparent"
+            loader-class="size-4"
           >
-            Disconnect
-          </Button>
+            <span>Disconnect</span>
+          </LoadingButton>
         </div>
       </div>
     </SettingsSubSectionWrapper>

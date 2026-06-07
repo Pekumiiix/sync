@@ -5,6 +5,7 @@ import { useForm } from 'vee-validate';
 
 import { LinkIcon } from '@/components/icons';
 import { BaseSelect } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import env from '@/config/env';
@@ -107,12 +108,13 @@ const displayBool = defineModel<boolean>({ default: false });
           </TypedFormField>
         </div>
 
-        <Button
+        <LoadingButton
+          :isLoading="isSubmitting"
           :disabled="isSubmitting || !meta.valid"
           class="w-24.25 h-10.5 py-3 px-4 text-xs font-medium rounded-full disabled:bg-white-90 disabled:bg-black-40"
         >
-          Invite user
-        </Button>
+          <span>Invite user</span>
+        </LoadingButton>
       </form>
     </div>
 

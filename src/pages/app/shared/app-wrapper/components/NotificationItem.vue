@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseAvatar } from '@/components/re-useable';
-import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/shared';
 import { cn } from '@/lib/utils';
 import type { INotificationItem } from '@/types/app.type';
 
@@ -44,18 +44,22 @@ const { title, description, time, user, isRead, isInvitation } = props.notificat
         v-if="isInvitation"
         class="w-full flex items-center justify-end gap-2"
       >
-        <Button
+        <LoadingButton
           variant="ghost"
+          :isLoading="false"
           class="w-31.75 h-7 py-1.5 px-3 rounded-full bg-contemporary-background text-[10px] font-medium leading-[100%] text-black-80 hover:bg-contemporary-background/80 hover:text-black-80"
+          loader-class="size-4"
         >
-          Decline
-        </Button>
+          <span>Decline</span>
+        </LoadingButton>
 
-        <Button
+        <LoadingButton
+          :is-loading="false"
           class="w-31.75 h-7 py-1.5 px-3 rounded-full bg-black-100 text-[10px] font-medium leading-[100%] text-primary-10 hover:bg-black-90"
+          loader-class="size-4"
         >
-          Accept
-        </Button>
+          <span>Accept</span>
+        </LoadingButton>
       </div>
     </div>
   </div>

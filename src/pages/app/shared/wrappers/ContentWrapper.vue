@@ -3,15 +3,16 @@ import { computed, ref } from 'vue';
 import { Upload } from 'lucide-vue-next';
 import { AnimatePresence } from 'motion-v';
 
-import { fadeSlideYConfig } from '@/components/constants/animations';
-import { MotionParagraph } from '@/components/motion-wrappers';
+import { fadeSlideYConfig, fadeSlideYVariant } from '@/components/constants/animations';
+import { MotionParagraph, MotionStaggerContainer } from '@/components/motion-wrappers';
+import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { bookmarks } from '@/mock-data/bookmark';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { ListBookmarkCard, SearchInput } from '../components';
-import { ShareBookmarkDialog } from '../dialogs';
+import { ShareFolderDialog } from '../dialogs';
 
 interface Props {
   showTabActions?: boolean;
@@ -59,34 +60,46 @@ const searchResults = computed(() => {
       </MotionParagraph>
     </AnimatePresence>
 
-    <div
-      v-if="isQueryEmpty && showTabActions && folderId"
-      class="flex items-center gap-3"
-    >
-      <router-link
-        :to="`/app/${folderId}/members`"
-        class="w-20 h-9.5 flex items-center justify-center py-3 px-4 -space-x-1.5 rounded-full bg-tertiary-background"
+    <AnimatePresence>
+      <MotionStaggerContainer
+        v-if="isQueryEmpty && showTabActions && folderId"
+        class="flex items-center gap-3"
       >
-        <BaseAvatar
-          v-for="index in 3"
-          :key="index"
-          src="/images/app/sidebar/avatar.png"
-          fallback="PA"
-          class="size-6 shrink-0 border-2 border-[#F8F8F9]"
-        />
-      </router-link>
+        <MotionDiv
+          :config="{ variants: fadeSlideYVariant }"
+          class="size-fit"
+        >
+          <router-link
+            :to="`/app/${folderId}/members`"
+            class="w-20 h-9.5 flex items-center justify-center py-3 px-4 -space-x-1.5 rounded-full bg-tertiary-background"
+          >
+            <BaseAvatar
+              v-for="index in 3"
+              :key="index"
+              src="/images/app/sidebar/avatar.png"
+              fallback="PA"
+              class="size-6 shrink-0 border-2 border-[#F8F8F9]"
+            />
+          </router-link>
+        </MotionDiv>
 
-      <Button
-        @click="showShareDialog = true"
-        class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full"
-      >
-        <span class="text-xs font-medium">Share</span>
-        <Upload
-          :size="20"
-          class="text-inherit"
-        />
-      </Button>
-    </div>
+        <MotionDiv
+          :config="{ variants: fadeSlideYVariant }"
+          class="size-fit"
+        >
+          <Button
+            @click="showShareDialog = true"
+            class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full"
+          >
+            <span class="text-xs font-medium">Share</span>
+            <Upload
+              :size="20"
+              class="text-inherit"
+            />
+          </Button>
+        </MotionDiv>
+      </MotionStaggerContainer>
+    </AnimatePresence>
   </section>
 
   <slot v-if="isQueryEmpty" />
@@ -112,5 +125,5 @@ const searchResults = computed(() => {
     />
   </div>
 
-  <ShareBookmarkDialog v-model="showShareDialog" />
+  <ShareFolderDialog v-model="showShareDialog" />
 </template>

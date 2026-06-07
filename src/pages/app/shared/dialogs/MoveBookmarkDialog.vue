@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { mockFolders } from '@/mock-data/folders';
@@ -93,13 +94,14 @@ function handleMove() {
       </Button>
 
       <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
-        <Button
-          @click="handleMove"
+        <LoadingButton
+          :action="handleMove"
+          :isLoading="false"
           :disabled="!selectedFolderId"
           class="w-21.75 h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] pt-2 px-4 rounded-full bg-black-100 hover:bg-black-90"
         >
-          Move
-        </Button>
+          <span>Move</span>
+        </LoadingButton>
       </div>
     </div>
   </ActionDialogWrapper>

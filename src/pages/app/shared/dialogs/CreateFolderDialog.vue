@@ -2,6 +2,7 @@
 import { useForm } from 'vee-validate';
 
 import { BaseDialog } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createTypedForm } from '@/utils/formUtils';
@@ -67,12 +68,14 @@ const displayBool = defineModel({ default: false });
         >
           Cancel
         </Button>
-        <Button
-          :disabled="isSubmitting || !meta.valid"
+
+        <LoadingButton
           class="w-full h-11 rounded-full text-base font-medium leading-5.5"
+          :isLoading="isSubmitting"
+          :disabled="!meta.valid"
         >
-          Continue
-        </Button>
+          <span>Continue</span>
+        </LoadingButton>
       </div>
     </form>
   </BaseDialog>

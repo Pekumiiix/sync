@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { LoaderCircle } from 'lucide-vue-next';
-
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 
 interface Props {
@@ -33,19 +32,16 @@ defineProps<Props>();
         >
           Cancel
         </Button>
-        <Button
+
+        <LoadingButton
           v-if="onSave"
           @click="onSave"
+          :isLoading="isLoading"
           :disabled="!isDirty || isLoading"
           class="w-24 h-9.5 rounded-full py-3 px-4 text-xs font-medium leading-[100%]"
         >
-          <LoaderCircle
-            v-if="isLoading"
-            class="size-5 stroke-white animate-spin stroke-2"
-          />
-
-          <span v-else>Save</span>
-        </Button>
+          <span>Save</span>
+        </LoadingButton>
       </div>
     </div>
 

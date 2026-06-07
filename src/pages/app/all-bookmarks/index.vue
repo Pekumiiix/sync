@@ -36,8 +36,6 @@ const activeTab = computed({
 <template>
   <AppWrapper page="All Bookmarks">
     <ContentWrapper>
-      <p>{{ selectedPinnedBookmarksLength }}</p>
-
       <BookmarkTabWrapper
         :tabs="tabs"
         :bookmarks="bookmarks"

@@ -5,4 +5,4 @@ export { default as CreateFolderDialog } from './CreateFolderDialog.vue';
 export { default as DeleteBookmarkDialog } from './DeleteBookmarkDialog.vue';
 export { default as JoinWorkSpaceDialog } from './JoinWorkspaceDialog.vue';
 export { default as MoveBookmarkDialog } from './MoveBookmarkDialog.vue';
-export { default as ShareBookmarkDialog } from './ShareBookmarkDialog.vue';
+export { default as ShareFolderDialog } from './ShareFolderDialog.vue';

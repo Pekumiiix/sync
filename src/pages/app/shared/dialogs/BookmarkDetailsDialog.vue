@@ -4,10 +4,9 @@ import { X } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
 import { BaseSelect } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type BookmarkDetails, bookmarkDetailsSchema } from '../schemas/bookmark-details.schema';
@@ -31,7 +30,7 @@ const props = defineProps<Props>();
 
 const displayBool = defineModel<boolean>({ default: false });
 
-const { handleSubmit, values, setFieldValue } = useForm<BookmarkDetails>({
+const { handleSubmit, values, setFieldValue, isSubmitting, meta } = useForm<BookmarkDetails>({
   validationSchema: bookmarkDetailsSchema,
   initialValues: {
     image: props.data?.image,
@@ -137,12 +136,15 @@ const fieldClassName =
             name="tags"
             label="Tags"
           >
-            <Input
-              v-model="currentTag"
-              @keydown.enter.prevent="handleAddTag"
-              placeholder="Enter tags"
-              :class="fieldClassName"
-            />
+            <template #default="fieldProps">
+              <Input
+                v-bind="fieldProps"
+                v-model="currentTag"
+                @keydown.enter.prevent="handleAddTag"
+                placeholder="Enter tags"
+                :class="fieldClassName"
+              />
+            </template>
           </TypedFormField>
 
           <div class="flex flex-wrap gap-2">
@@ -167,19 +169,28 @@ const fieldClassName =
           </div>
         </div>
 
-        <div class="flex flex-col gap-2">
-          <Label class="text-lg leading-6 text-black-90 font-medium">URL</Label>
-          <p :class="cn('flex items-center', fieldClassName)">{{ values.url }}</p>
-        </div>
+        <TypedFormField
+          name="url"
+          label="URL"
+        >
+          <template #default="fieldProps">
+            <Input
+              v-bind="fieldProps"
+              placeholder="Enter tags"
+              :class="fieldClassName"
+            />
+          </template>
+        </TypedFormField>
       </div>
 
       <div class="flex items-center justify-end p-6 pb-0 border-t border-stroke-1/10">
-        <Button
-          type="submit"
+        <LoadingButton
           class="w-32 h-12 rounded-full text-base font-medium"
+          :isLoading="isSubmitting"
+          :disabled="!meta.valid"
         >
-          Save
-        </Button>
+          <span>Save</span>
+        </LoadingButton>
       </div>
     </form>
   </ActionDialogWrapper>

@@ -2,12 +2,13 @@
 import { useForm } from 'vee-validate';
 
 import { BaseAvatar, BaseDialog, BasePasswordInput } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type JoinWorkspaceData, joinWorkspaceSchema } from '../schemas/join-workspace.schema';
 
-const { handleSubmit, meta } = useForm<JoinWorkspaceData>({
+const { handleSubmit, meta, isSubmitting } = useForm<JoinWorkspaceData>({
   validationSchema: joinWorkspaceSchema,
   initialValues: {
     password: ''
@@ -81,12 +82,13 @@ const displayBool = defineModel<boolean>({ default: false });
           Cancel
         </Button>
 
-        <Button
+        <LoadingButton
+          :isLoading="isSubmitting"
           :disabled="!meta.valid"
           class="w-full h-12 rounded-full py-3.75 px-6 text-sm font-inter-tight font-medium"
         >
-          Join Workspace
-        </Button>
+          <span>Join Workspace</span>
+        </LoadingButton>
       </div>
     </form>
   </BaseDialog>

@@ -2,13 +2,12 @@
 import { useForm } from 'vee-validate';
 
 import { BasePasswordInput } from '@/components/re-useable';
-import { Button } from '@/components/ui/button';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type AddPasswordData, addPasswordSchema } from '../schemas/add-password.schema';
 import { ActionDialogWrapper } from '../wrappers';
 
-const { handleSubmit, meta } = useForm<AddPasswordData>({
+const { handleSubmit, meta, isSubmitting } = useForm<AddPasswordData>({
   validationSchema: addPasswordSchema,
   initialValues: {
     password: '',
@@ -55,12 +54,13 @@ const displayBool = defineModel<boolean>({ default: false });
     </form>
 
     <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
-      <Button
+      <LoadingButton
+        :isLoading="isSubmitting"
         :disabled="!meta.valid"
         class="w-fit h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] bg-black-100 py-2 px-4 rounded-full"
       >
-        Save Password
-      </Button>
+        <span>Save Password</span>
+      </LoadingButton>
     </div>
   </ActionDialogWrapper>
 </template>

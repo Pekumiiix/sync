@@ -2,10 +2,10 @@
 import { computed, ref } from 'vue';
 import { AnimatePresence } from 'motion-v';
 
-import { fadeSlideYConfig } from '@/components/constants/animations';
+import { fadeSlideYVariant } from '@/components/constants/animations';
 import { getBrowserImage } from '@/components/constants/browsers';
 import { EyeIcon, TrashIcon, UnpinIcon } from '@/components/icons';
-import { MotionDiv } from '@/components/motion-wrappers';
+import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -119,55 +119,68 @@ const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBook
 
       <!-------------------------------------- Action Buttons --------------------------------------->
       <AnimatePresence>
-        <MotionDiv
+        <MotionStaggerContainer
           v-if="isSelectedPinnedBookmarksGreaterThanZero"
-          :config="fadeSlideYConfig"
           class="flex items-center gap-4"
         >
-          <Button
+          <MotionDiv
             v-for="action in actions"
             :key="action.label"
-            variant="ghost"
-            :class="
-              cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
-                'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-[#ff2f00] hover:bg-[#FF2F00]/10':
-                  action.label === 'Delete',
-                'text-black-90 stroke-black-90': action.label !== 'Delete'
-              })
-            "
-            @click="action.onClick"
+            :config="{ variants: fadeSlideYVariant }"
+            class="size-fit"
           >
-            <component
-              :is="action.icon"
-              class="size-4 stroke-inherit"
-            />
-            <span class="text-inherit leading-[100%] text-base">{{ action.label }}</span>
-          </Button>
-        </MotionDiv>
+            <Button
+              variant="ghost"
+              :class="
+                cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
+                  'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-[#ff2f00] hover:bg-[#FF2F00]/10':
+                    action.label === 'Delete',
+                  'text-black-90 stroke-black-90': action.label !== 'Delete'
+                })
+              "
+              @click="action.onClick"
+            >
+              <component
+                :is="action.icon"
+                class="size-4 stroke-inherit"
+              />
+              <span class="text-inherit leading-[100%] text-base">{{ action.label }}</span>
+            </Button>
+          </MotionDiv>
+        </MotionStaggerContainer>
       </AnimatePresence>
 
       <!-------------------------------------- Display and Filter selects --------------------------------------->
       <AnimatePresence>
-        <MotionDiv
+        <MotionStaggerContainer
           v-if="!isSelectedPinnedBookmarksGreaterThanZero"
-          :config="fadeSlideYConfig"
           class="w-fit h-13.25 flex items-center gap-4"
         >
-          <BaseSelect
-            v-model="sortOrder"
-            :options="sortOrderOptions"
-            :classNames="{
-              trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
-            }"
-          />
-          <BaseSelect
-            v-model="displayType"
-            :options="displayTypeOptions"
-            :classNames="{
-              trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
-            }"
-          />
-        </MotionDiv>
+          <MotionDiv
+            :config="{ variants: fadeSlideYVariant }"
+            class="size-fit"
+          >
+            <BaseSelect
+              v-model="sortOrder"
+              :options="sortOrderOptions"
+              :classNames="{
+                trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+              }"
+            />
+          </MotionDiv>
+          <MotionDiv
+            :config="{ variants: fadeSlideYVariant }"
+            class="size-fit"
+          >
+            <BaseSelect
+              v-model="displayType"
+              :options="displayTypeOptions"
+              :classNames="{
+                trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+              }"
+            />
+          </MotionDiv>
+        </MotionStaggerContainer>
       </AnimatePresence>
     </div>
 

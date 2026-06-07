@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 
-import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/shared';
 import { Input } from '@/components/ui/input';
 import { createTypedForm } from '@/utils/formUtils';
 
@@ -71,13 +71,14 @@ const bookmarkDetails = ref<Omit<BookmarkDetails, 'collection'> | undefined>(und
         </template>
       </TypedFormField>
 
-      <Button
-        :disabled="isSubmitting || !meta.valid"
-        type="submit"
-        class="w-26.25 h-11 px-4 py-2 rounded-full mt-1.5"
+      <LoadingButton
+        class="w-26.25 h-11 px-4 py-2 rounded-full"
+        :isLoading="isSubmitting"
+        :disabled="!meta.valid"
+        variant="default"
       >
-        Import
-      </Button>
+        <span>Import</span>
+      </LoadingButton>
     </form>
   </AddBookmarkDialogWrapper>
 

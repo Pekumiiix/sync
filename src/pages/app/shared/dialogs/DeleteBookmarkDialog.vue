@@ -13,7 +13,7 @@ const props = defineProps<Props>();
 
 const displayBool = defineModel<boolean>({ default: false });
 
-const isMultiple = computed(() => Array.isArray(props.bookmarkIds));
+const isMultiple = computed(() => Array.isArray(props.bookmarkIds) && props.bookmarkIds.length > 1);
 
 const dialogTitle = computed(() => `Delete bookmark${pluralizeIfArray(props.bookmarkIds)}`);
 
