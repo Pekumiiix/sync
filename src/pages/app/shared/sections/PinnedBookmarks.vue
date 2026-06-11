@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-import type { IBookmarkCard } from '@/types/app.type';
+import type { IBookmark } from '@/types/bookmark.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { GridBookmarkCard } from '../components';
 
 interface Props {
   selectedPinnedBookmarksLength: number;
-  pinnedBookmarks: IBookmarkCard[];
+  pinnedBookmarks: IBookmark[];
 }
 
 const props = defineProps<Props>();

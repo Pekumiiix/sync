@@ -10,7 +10,7 @@ const bookmarkDetailsZodSchema = z.object({
   description: z
     .string({ required_error: 'A description is required.' })
     .max(500, 'Description cannot exceed 500 characters.'),
-  collection: z
+  folder_name: z
     .string({ required_error: 'Please select a collection.' })
     .min(1, 'Please select a collection.'),
   tags: z

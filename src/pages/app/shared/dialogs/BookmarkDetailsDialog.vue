@@ -38,7 +38,7 @@ const { handleSubmit, values, setFieldValue, isSubmitting, meta } = useForm<Book
     description: props.data?.description,
     url: props.data?.url,
     tags: props.data?.tags,
-    collection: props.type === 'edit' ? props.data.collection : 'unsorted'
+    folder_name: props.type === 'edit' ? props.data.folder_name : 'unsorted'
   }
 });
 
@@ -105,8 +105,8 @@ const fieldClassName =
         </div>
 
         <TypedFormField
-          name="collection"
-          label="Collection"
+          name="folder_name"
+          label="Folder"
         >
           <template #default="fieldProps">
             <BaseSelect

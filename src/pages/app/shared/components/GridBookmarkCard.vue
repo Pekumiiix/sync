@@ -13,19 +13,34 @@ import {
 import { BaseDropDownMenu } from '@/components/re-useable';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import type { IBookmarkCard } from '@/types/app.type';
+import type { IBookmark } from '@/types/bookmark.type';
+import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
+import { formatBookmarkTime } from '@/utils/dateUtils';
 
 import { BookmarkDetailsDialog, DeleteBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 
 interface Props {
-  bookmark: IBookmarkCard;
+  bookmark: IBookmark;
   showCheckbox: boolean;
 }
 
 const props = defineProps<Props>();
 
-const { id, platform, link, collection, time, image, isPinned, tags, description } = props.bookmark;
+const {
+  id,
+  url,
+  domain,
+  folderName,
+  createdAt,
+  coverImageUrl,
+  isPinned,
+  tags,
+  faviconUrl,
+  description,
+  title,
+  websiteName
+} = props.bookmark;
 
 const detailsDisplayBool = ref<boolean>(false);
 const moveBookmarkDisplayBool = ref<boolean>(false);
@@ -82,17 +97,20 @@ function handleEditBookmark(data: BookmarkDetails) {
 
 <template>
   <div class="min-w-68.5 w-[32%] 2xl:w-[22%] flex flex-col rounded-xl border border-white-90">
-    <img
-      :src="image"
-      :alt="platform"
-      class="w-full max-h-39.75 h-auto rounded-t-xl"
-    />
+    <div class="w-full h-39.75 overflow-hidden rounded-t-xl">
+      <img
+        :src="coverImageUrl || FALLBACK_IMAGE"
+        :alt="domain"
+        class="w-full max-h-39.75 h-auto rounded-t-xl object-cover"
+        @error="handleImageError"
+      />
+    </div>
 
     <div class="w-full flex justify-between gap-5 py-5 px-3">
-      <div class="flex flex-col gap-1">
-        <p class="text-lg font-medium leading-[100%] text-black-90">{{ platform }}</p>
-        <p class="text-sm leading-4.5 text-black-90">{{ link }} | {{ collection }}</p>
-        <p class="text-sm leading-4.5 text-black-50">{{ time }}</p>
+      <div class="max-w-[80%] flex flex-col gap-1">
+        <p class="text-lg font-medium leading-[100%] text-black-90">{{ websiteName }}</p>
+        <p class="text-sm leading-4.5 text-black-90">{{ domain }} | {{ folderName }}</p>
+        <p class="text-sm leading-4.5 text-black-50">{{ formatBookmarkTime(createdAt) }}</p>
       </div>
 
       <Checkbox
@@ -136,12 +154,12 @@ function handleEditBookmark(data: BookmarkDetails) {
   <BookmarkDetailsDialog
     v-model="detailsDisplayBool"
     :data="{
-      image,
-      title: platform,
-      description,
-      url: link,
-      tags,
-      collection
+      image: faviconUrl || 'https://via.placeholder.com/300x200?text=No+Image',
+      title: title,
+      description: description || '',
+      url: url,
+      tags: tags,
+      folder_name: folderName
     }"
     @save="handleEditBookmark"
     type="edit"

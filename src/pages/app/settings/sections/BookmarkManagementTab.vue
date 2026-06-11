@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
 
+import { useSettings } from '@/contexts/useSettings';
+
 import { SettingsSwitch } from '../components';
 import {
   type BookmarkManagementData,
@@ -8,10 +10,12 @@ import {
 } from '../schemas/bookmark-management.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
+const { settings } = useSettings();
+
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<BookmarkManagementData>({
   validationSchema: bookmarkManagementSchema,
   initialValues: {
-    autoMergeBookmarks: false
+    autoMergeBookmarks: settings.value?.preferences.bookmark.autoMergeDuplicates
   }
 });
 

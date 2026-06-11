@@ -4,12 +4,26 @@ import { ref } from 'vue';
 import { EditIcon, EyeIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { IBookmarkCard } from '@/types/app.type';
+import type { IBookmark } from '@/types/bookmark.type';
+import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
+import { formatBookmarkTime } from '@/utils/dateUtils';
 
 import { BookmarkDetailsDialog, DeleteBookmarkDialog } from '../dialogs';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 
-interface Props extends IBookmarkCard {
+interface Props extends Pick<
+  IBookmark,
+  | 'id'
+  | 'title'
+  | 'description'
+  | 'url'
+  | 'domain'
+  | 'folderName'
+  | 'createdAt'
+  | 'isPinned'
+  | 'tags'
+  | 'faviconUrl'
+> {
   showCheckbox?: boolean;
 }
 
@@ -75,15 +89,16 @@ function handleEditBookmark(data: BookmarkDetails) {
 
       <div class="flex items-center gap-2.5">
         <img
-          :src="image"
-          :alt="platform"
-          class="size-12 rounded-full"
+          :src="faviconUrl || FALLBACK_IMAGE"
+          :alt="domain"
+          class="size-12 rounded-full object-center object-cover"
+          @error="handleImageError"
         />
 
         <div class="flex flex-col gap-1">
-          <p class="text-lg font-medium leading-[100%] text-black-90">{{ platform }}</p>
+          <p class="text-lg font-medium leading-[100%] text-black-90">{{ title }}</p>
           <p class="text-sm leading-4.5 text-black-70">
-            {{ link }} | {{ collection }} | {{ time }}
+            {{ domain }} | {{ folderName }} | {{ formatBookmarkTime(createdAt) }}
           </p>
           <div class="flex items-center gap-1">
             <template
@@ -122,12 +137,12 @@ function handleEditBookmark(data: BookmarkDetails) {
   <BookmarkDetailsDialog
     v-model="detailsDisplayBool"
     :data="{
-      image,
-      title: platform,
-      description,
-      url: link,
-      tags,
-      collection
+      image: faviconUrl || 'https://via.placeholder.com/300x200?text=No+Image',
+      title: title,
+      description: description || '',
+      url: url,
+      tags: tags,
+      folder_name: folderName
     }"
     @save="handleEditBookmark"
     type="edit"

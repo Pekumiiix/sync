@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUrlSearchParams } from '@vueuse/core';
 
-import { bookmarks } from '@/mock-data/bookmark';
+import { mockBookmarksResponse } from '@/mock-data/bookmarks';
 import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
@@ -33,8 +33,7 @@ const activeTab = computed({
   }
 });
 
-const { pinnedBookmarks, selectedPinnedBookmarks, selectedPinnedBookmarksLength } =
-  extractPinnedBookmarksData(bookmarks);
+const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 </script>
 
 <template>
@@ -45,14 +44,14 @@ const { pinnedBookmarks, selectedPinnedBookmarks, selectedPinnedBookmarksLength 
     >
       <BookmarkTabWrapper
         :tabs="tabs"
-        :bookmarks="bookmarks"
+        :bookmarks="mockBookmarksResponse.data"
         v-model:activeTab="activeTab"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
         :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
-          :pinnedBookmarks="pinnedBookmarks"
+          :pinnedBookmarks="mockBookmarksResponse.pinned"
           :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>

@@ -1,55 +1,27 @@
 <script setup lang="ts">
-import { Check } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
 import { getBrowserImage } from '@/components/constants/browsers';
+import { syncFrequency } from '@/components/constants/sync-frequency';
 import { LoadingButton } from '@/components/shared';
-import { Button } from '@/components/ui/button';
+import { useSettings } from '@/contexts/useSettings';
 import { timeAgo } from '@/utils/dateUtils';
 
+import { FrequencyOptionButton } from '../components';
 import { type SyncSettingsData, syncSettingsSchema } from '../schemas/sync-settings.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const connectedBrowsers = [
-  {
-    name: 'Google Chrome',
-    type: 'chrome',
-    connected_at: new Date().toISOString()
-  },
-  {
-    name: 'Mozilla Firefox',
-    type: 'firefox',
-    connected_at: new Date().toISOString()
-  },
-  {
-    name: 'Microsoft Edge',
-    type: 'edge',
-    connected_at: new Date().toISOString()
-  },
-  {
-    name: 'Opera',
-    type: 'opera',
-    connected_at: new Date().toISOString()
-  },
-  {
-    name: 'Arc',
-    type: 'arc',
-    connected_at: new Date().toISOString()
-  },
-  {
-    name: 'Brave',
-    type: 'brave',
-    connected_at: new Date().toISOString()
-  }
-];
+const { settings } = useSettings();
 
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<SyncSettingsData>({
     validationSchema: syncSettingsSchema,
     initialValues: {
-      syncInterval: '3 hours'
+      syncInterval: settings.value?.preferences.sync.frequency
     }
   });
+
+const isUserPro = settings.value?.subscription.isPro || false;
 </script>
 
 <template>
@@ -68,21 +40,24 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
     >
       <div class="w-full flex flex-col gap-5">
         <div
-          v-for="browser in connectedBrowsers"
-          :key="browser.type"
+          v-for="browser in settings?.connections || []"
+          :key="browser.provider"
           class="w-full h-14.5 flex items-center justify-between px-4 py-3.25 rounded-full bg-[#F9F9FB]"
         >
           <div class="flex items-center gap-1.75">
             <img
-              :src="getBrowserImage(browser.type)"
+              :src="getBrowserImage(browser.provider)"
               :alt="browser.name"
               class="size-8 rounded-full"
             />
 
             <div class="flex flex-col gap-1">
               <p class="text-sm font-medium text-black-90 leading-4">{{ browser.name }}</p>
-              <p class="text-xs leading-[100%] text-black-70">
-                Connected {{ timeAgo(browser.connected_at) }}
+              <p
+                v-if="browser.lastSyncAt"
+                class="text-xs leading-[100%] text-black-70"
+              >
+                Connected {{ timeAgo(browser.lastSyncAt) }}
               </p>
             </div>
           </div>
@@ -93,7 +68,7 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
             class="w-18.25 h-6.75 text-[9px] text-black-90 font-medium leading-9.25 py-1.75 px-3 border-black-30 rounded-full bg-transparent"
             loader-class="size-4"
           >
-            <span>Disconnect</span>
+            <span>{{ browser.isConnected ? 'Disconnect' : 'Connect' }}</span>
           </LoadingButton>
         </div>
       </div>
@@ -105,31 +80,31 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
       class="flex-col"
     >
       <div class="grid grid-cols-4 gap-3">
-        <Button
-          class="w-full h-10.5 flex items-center justify-between gap-2 text-xs font-medium leading-5 text-white py-3 px-4 rounded-full bg-black-100 hover:bg-black-90"
+        <FrequencyOptionButton
+          :isSelected="values.syncInterval === 'immediate'"
+          :disabled="!isUserPro"
+          @click="setFieldValue('syncInterval', 'immediate')"
+          class="bg-black-100 hover:bg-black-90 text-white"
         >
           Immediately
-
           <span
+            v-if="!isUserPro"
             class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)]"
           >
             Go Pro
           </span>
-        </Button>
+        </FrequencyOptionButton>
 
-        <Button
-          v-for="option in ['3 hours', '6 hours', '12 hours']"
-          :key="option"
-          @click="setFieldValue('syncInterval', option as SyncSettingsData['syncInterval'])"
+        <FrequencyOptionButton
+          v-for="option in syncFrequency.slice(1)"
+          :key="option.value"
+          :isSelected="values.syncInterval === option.value"
+          @click="setFieldValue('syncInterval', option.value)"
+          class="bg-[#F9F9FB] text-black-90"
           variant="ghost"
-          class="w-full h-10.5 flex items-center gap-2 text-xs font-medium leading-5 text-black-90 py-3 px-4 rounded-full bg-[#F9F9FB]"
         >
-          Every {{ option }}
-          <Check
-            v-if="values.syncInterval === option"
-            class="text-green-500"
-          />
-        </Button>
+          {{ option.label }}
+        </FrequencyOptionButton>
       </div>
     </SettingsSubSectionWrapper>
   </SettingsWrapper>

@@ -8,7 +8,7 @@ import { MotionParagraph, MotionStaggerContainer } from '@/components/motion-wra
 import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
-import { bookmarks } from '@/mock-data/bookmark';
+import { mockBookmarksResponse } from '@/mock-data/bookmarks';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { ListBookmarkCard, SearchInput } from '../components';
@@ -26,7 +26,7 @@ withDefaults(defineProps<Props>(), {
 const query = ref('');
 const showShareDialog = ref(false);
 
-const transformedBookmarks = ref(transformBookmarks(bookmarks));
+const transformedBookmarks = ref(transformBookmarks(mockBookmarksResponse.data));
 
 const isQueryEmpty = computed(() => query.value === '');
 
@@ -35,8 +35,12 @@ const searchResults = computed(() => {
     return [];
   }
 
-  return transformedBookmarks.value.filter((bookmark) =>
-    bookmark.link.toLowerCase().includes(query.value.toLowerCase())
+  return transformedBookmarks.value.filter(
+    (bookmark) =>
+      bookmark.url.toLowerCase().includes(query.value.toLowerCase()) ||
+      bookmark.title.toLowerCase().includes(query.value.toLowerCase()) ||
+      bookmark.description?.toLowerCase().includes(query.value.toLowerCase()) ||
+      bookmark.tags.some((tag) => tag.toLowerCase().includes(query.value.toLowerCase()))
   );
 });
 </script>
@@ -113,11 +117,12 @@ const searchResults = computed(() => {
       v-model="bookmark.isSelected"
       :key="bookmark.id"
       :id="bookmark.id"
-      :platform="bookmark.platform"
-      :link="bookmark.link"
-      :collection="bookmark.collection"
-      :time="bookmark.time"
-      :image="bookmark.image"
+      :title="bookmark.title"
+      :domain="bookmark.domain"
+      :url="bookmark.url"
+      :folderName="bookmark.folderName"
+      :createdAt="bookmark.createdAt"
+      :faviconUrl="bookmark.faviconUrl"
       :isPinned="bookmark.isPinned"
       :tags="bookmark.tags"
       :description="bookmark.description"

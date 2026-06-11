@@ -10,7 +10,8 @@ import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import type { DisplayType, IBookmarkCard, SortOrder } from '@/types/app.type';
+import type { DisplayType, SortOrder } from '@/types/app.type';
+import type { IBookmark } from '@/types/bookmark.type';
 
 import { DeleteBookmarkDialog } from '../dialogs';
 import { BookmarkTabContentWrapper } from '.';
@@ -20,7 +21,7 @@ interface Props {
     label: string;
     value: string;
   }[];
-  bookmarks: IBookmarkCard[];
+  bookmarks: IBookmark[];
   selectedPinnedBookmarksLength: number;
 }
 

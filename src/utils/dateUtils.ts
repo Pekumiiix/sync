@@ -57,3 +57,17 @@ export function timeAgo(dateInput: Date | string | number): string {
   const diffInYears = Math.floor(diffInDays / 365);
   return `${diffInYears}y`;
 }
+
+export function formatBookmarkTime(isoString: string): string {
+  if (!isoString) return '';
+
+  const date = new Date(isoString);
+
+  const formattedTime = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  }).format(date);
+
+  return formattedTime;
+}

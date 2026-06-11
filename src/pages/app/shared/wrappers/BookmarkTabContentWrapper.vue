@@ -8,7 +8,8 @@ import { EyeIcon, FolderIcon, TrashIcon } from '@/components/icons';
 import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import type { DisplayType, IBookmarkCard } from '@/types/app.type';
+import type { DisplayType } from '@/types/app.type';
+import type { IBookmark } from '@/types/bookmark.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { GridBookmarkCard, ListBookmarkCard } from '../components';
@@ -16,7 +17,7 @@ import { AddBookmarkDialog, DeleteBookmarkDialog, MoveBookmarkDialog } from '../
 
 interface Props {
   displayType: DisplayType;
-  bookmarks: IBookmarkCard[];
+  bookmarks: IBookmark[];
   platform: string;
 }
 
@@ -130,11 +131,12 @@ watch(
         v-model="bookmark.isSelected"
         :key="bookmark.id"
         :id="bookmark.id"
-        :platform="bookmark.platform"
-        :link="bookmark.link"
-        :collection="bookmark.collection"
-        :time="bookmark.time"
-        :image="bookmark.image"
+        :title="bookmark.title"
+        :domain="bookmark.domain"
+        :url="bookmark.url"
+        :folderName="bookmark.folderName"
+        :createdAt="bookmark.createdAt"
+        :faviconUrl="bookmark.faviconUrl"
         :isPinned="bookmark.isPinned"
         :tags="bookmark.tags"
         :description="bookmark.description"

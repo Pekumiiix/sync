@@ -1,9 +1,10 @@
 import { computed, ref } from 'vue';
 
-import type { IBookmarkCard, IFolderCard } from '@/types/app.type';
+import type { IFolderCard } from '@/types/app.type';
+import type { IBookmark } from '@/types/bookmark.type';
 import { timeAgo } from '@/utils/dateUtils';
 
-export function transformBookmarks(bookmarks: IBookmarkCard[]) {
+export function transformBookmarks(bookmarks: IBookmark[]) {
   return bookmarks.map((bookmark) => ({
     ...bookmark,
     isSelected: false
@@ -18,16 +19,24 @@ export function transformBookmarkFolders(folders: IFolderCard[]) {
   }));
 }
 
-export function extractPinnedBookmarksData(bookmarks: IBookmarkCard[]) {
-  const pinnedBookmarks = ref(bookmarks.filter((bookmark) => bookmark.isPinned));
-
+export function extractPinnedBookmarksData() {
   const selectedPinnedBookmarks = ref<string[] | null>(null);
 
   const selectedPinnedBookmarksLength = computed(() => selectedPinnedBookmarks.value?.length || 0);
 
   return {
-    pinnedBookmarks,
     selectedPinnedBookmarks,
     selectedPinnedBookmarksLength
   };
+}
+
+export const FALLBACK_IMAGE = '/images/app/bookmarks/placeholder.png';
+
+export function handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
+
+  if (target.src !== FALLBACK_IMAGE) {
+    target.src = FALLBACK_IMAGE;
+    target.onerror = null;
+  }
 }
