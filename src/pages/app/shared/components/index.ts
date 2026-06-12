@@ -1,3 +1,4 @@
+export { default as FolderListItem } from './FolderListItem.vue';
 export { default as FolderThumbnail } from './FolderThumbnail.vue';
 export { default as GridBookmarkCard } from './GridBookmarkCard.vue';
 export { default as ListBookmarkCard } from './ListBookmarkCard.vue';

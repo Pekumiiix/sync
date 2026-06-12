@@ -3,14 +3,15 @@ import { NotificationIcon } from '@/components/icons';
 import { BasePopover } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
-import { mockNotifications } from '@/mock-data/notifications';
-import { formatNotificationForUI } from '@/utils/notificationsUtils';
+import type { INotification } from '@/types/notification.type';
 
 import { NotificationItem } from '../components';
 
-const transformedNotifications = mockNotifications.map((notification) =>
-  formatNotificationForUI(notification)
-);
+interface Props {
+  notifications: INotification[];
+}
+
+defineProps<Props>();
 </script>
 
 <template>
@@ -44,7 +45,7 @@ const transformedNotifications = mockNotifications.map((notification) =>
       </div>
 
       <NotificationItem
-        v-for="notification in transformedNotifications"
+        v-for="notification in notifications"
         :key="notification.id"
         :notification="notification"
       />

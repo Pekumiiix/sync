@@ -2,7 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 interface Props {
-  src: string;
+  src: string | null;
   fallback: string;
 }
 
@@ -12,7 +12,7 @@ defineProps<Props>();
 <template>
   <Avatar>
     <AvatarImage
-      :src="src"
+      :src="src || ''"
       class="object-center object-cover"
     />
     <AvatarFallback class="bg-primary-100 text-primary-10">{{ fallback }}</AvatarFallback>

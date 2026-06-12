@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 
-import type { IFolderCard } from '@/types/app.type';
 import type { IBookmark } from '@/types/bookmark.type';
+import type { IGetFoldersResponse } from '@/types/folder.type';
 import { timeAgo } from '@/utils/dateUtils';
 
 export function transformBookmarks(bookmarks: IBookmark[]) {
@@ -11,12 +11,19 @@ export function transformBookmarks(bookmarks: IBookmark[]) {
   }));
 }
 
-export function transformBookmarkFolders(folders: IFolderCard[]) {
-  return folders.map((folder) => ({
-    ...folder,
-    updated_at: timeAgo(folder.updated_at),
-    isSelected: false
-  }));
+export function transformBookmarkFolders(data: IGetFoldersResponse) {
+  return {
+    systemFolders: data.systemFolders.map((folder) => ({
+      ...folder,
+      updatedAt: timeAgo(folder.updatedAt),
+      isSelected: false
+    })),
+    collections: data.collections.map((folder) => ({
+      ...folder,
+      updatedAt: timeAgo(folder.updatedAt),
+      isSelected: false
+    }))
+  };
 }
 
 export function extractPinnedBookmarksData() {

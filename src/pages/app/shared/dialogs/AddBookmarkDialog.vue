@@ -4,6 +4,7 @@ import { useForm } from 'vee-validate';
 
 import { LoadingButton } from '@/components/shared';
 import { Input } from '@/components/ui/input';
+import { useOpenGraph } from '@/hooks/useOpengrapgh';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type AddBookmarkData, addBookmarkSchema } from '../schemas/add-bookmark.schema';
@@ -15,24 +16,27 @@ const { handleSubmit, meta, isSubmitting } = useForm<AddBookmarkData>({
   validationSchema: addBookmarkSchema
 });
 
+const { mutate, isPending: isLoading } = useOpenGraph();
+
 const onSubmit = handleSubmit(async (values) => {
-  isLoading.value = true;
+  mutate(values.url, {
+    onSuccess(data) {
+      bookmarkDetails.value = {
+        image: data?.image?.url ?? '',
+        title: data?.title ?? '',
+        description: data?.description ?? '',
+        url: values.url,
+        tags: [],
+        folder_name: 'unsorted'
+      };
 
-  console.log(values);
-
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  bookmarkDetails.value = {
-    image: '/images/app/sidebar/avatar.png',
-    title: 'Sync',
-    description: 'Sync your bookmarks with your browsers.',
-    url: 'https://www.shadcn-vue.com/docs/',
-    tags: ['me', 'myself', 'and', 'i']
-  };
-
-  isLoading.value = false;
-  displayBool.value = false;
-  detailsDisplayBool.value = true;
+      displayBool.value = false;
+      detailsDisplayBool.value = true;
+    },
+    onError() {
+      console.error('Failed to fetch Open Graph data');
+    }
+  });
 });
 
 function handleCreateBookmark(data: BookmarkDetails) {
@@ -44,8 +48,6 @@ const TypedFormField = createTypedForm<AddBookmarkData>();
 
 const displayBool = defineModel<boolean>({ default: false });
 const detailsDisplayBool = ref<boolean>(false);
-
-const isLoading = ref<boolean>(false);
 
 const bookmarkDetails = ref<Omit<BookmarkDetails, 'collection'> | undefined>(undefined);
 </script>

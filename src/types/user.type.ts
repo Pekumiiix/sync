@@ -7,4 +7,5 @@ export interface IUser {
   avatar_url: string | null;
   created_at: string;
   updated_at: string;
+  plan: 'free' | 'basic' | 'standard';
 }

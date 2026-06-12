@@ -7,7 +7,9 @@ import { BaseSelect } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { handleImageError } from '@/utils/bookmarkUtils';
 import { createTypedForm } from '@/utils/formUtils';
+import { truncateString } from '@/utils/stringutils';
 
 import { type BookmarkDetails, bookmarkDetailsSchema } from '../schemas/bookmark-details.schema';
 import { ActionDialogWrapper } from '../wrappers';
@@ -38,7 +40,7 @@ const { handleSubmit, values, setFieldValue, isSubmitting, meta } = useForm<Book
     description: props.data?.description,
     url: props.data?.url,
     tags: props.data?.tags,
-    folder_name: props.type === 'edit' ? props.data.folder_name : 'unsorted'
+    folder_name: props.data?.folder_name
   }
 });
 
@@ -95,12 +97,17 @@ const fieldClassName =
           <img
             :src="values.image"
             alt="Logo"
-            class="size-21 rounded-full border border-white-15 p-px"
+            class="size-21 rounded-full border border-white-15 p-px shrink-0"
+            @error="handleImageError"
           />
 
           <div class="flex flex-col">
-            <p class="text-2xl leading-9.5 font-medium text-stroke-1">{{ values.title }}</p>
-            <p class="text-lg leading-[160%] font-inter text-black-70">{{ values.description }}</p>
+            <p class="text-2xl leading-9.5 font-medium text-stroke-1">
+              {{ truncateString(values.title, 30) }}
+            </p>
+            <p class="text-lg leading-[160%] font-inter text-black-70">
+              {{ truncateString(values.description, 100) }}
+            </p>
           </div>
         </div>
 
@@ -176,7 +183,7 @@ const fieldClassName =
           <template #default="fieldProps">
             <Input
               v-bind="fieldProps"
-              placeholder="Enter tags"
+              placeholder="Enter URL"
               :class="fieldClassName"
             />
           </template>

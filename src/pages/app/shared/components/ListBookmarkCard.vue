@@ -137,7 +137,7 @@ function handleEditBookmark(data: BookmarkDetails) {
   <BookmarkDetailsDialog
     v-model="detailsDisplayBool"
     :data="{
-      image: faviconUrl || 'https://via.placeholder.com/300x200?text=No+Image',
+      image: faviconUrl || '',
       title: title,
       description: description || '',
       url: url,

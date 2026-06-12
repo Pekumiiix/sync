@@ -14,7 +14,7 @@ import { FolderThumbnail } from '@/pages/app/shared/components';
 
 interface Props {
   label: string;
-  items: { path: string; name: string; count: number; images?: string[] }[];
+  items: { href: string; name: string; count: number; images?: string[] }[];
 }
 
 defineProps<Props>();
@@ -31,18 +31,18 @@ const router = useRouter();
       <SidebarMenu class="flex flex-col gap-0.5">
         <SidebarMenuItem
           v-for="item in items"
-          :key="item.path"
+          :key="item.href"
         >
           <SidebarMenuButton
             as-child
             :class="
               cn('h-12.25 flex items-center justify-between py-3.5 px-3', {
-                'bg-white hover:bg-white': router.currentRoute.value.path === item.path,
-                'bg-transparent': router.currentRoute.value.path !== item.path
+                'bg-white hover:bg-white': router.currentRoute.value.path === item.href,
+                'bg-transparent': router.currentRoute.value.path !== item.href
               })
             "
           >
-            <router-link :to="item.path">
+            <router-link :to="`/app/${item.href}`">
               <div class="flex items-center gap-1.5">
                 <FolderThumbnail
                   :images="item.images"

@@ -13,25 +13,46 @@ interface Props {
 }
 
 defineProps<Props>();
+
+function handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
+  target.style.opacity = '0';
+}
 </script>
 
 <template>
   <div :class="cn('grid grid-cols-2 gap-0.5 bg-[#E9E9EC80]', classNames?.container)">
-    <img
-      :src="images?.[0]"
-      :class="cn('aspect-square object-cover object-center bg-[#DFDDE4]', classNames?.images?.top)"
-    />
+    <div
+      :class="cn('aspect-square bg-[#DFDDE4] relative overflow-hidden', classNames?.images?.top)"
+    >
+      <img
+        v-if="images?.[0]"
+        :src="images[0]"
+        class="w-full h-full object-cover object-center transition-opacity duration-200"
+        @error="handleImageError"
+      />
+    </div>
 
-    <img
-      :src="images?.[1]"
-      :class="
-        cn('aspect-square object-cover object-center bg-[#DFDDE4]', classNames?.images?.bottom)
-      "
-    />
+    <div
+      :class="cn('aspect-square bg-[#DFDDE4] relative overflow-hidden', classNames?.images?.top)"
+    >
+      <img
+        v-if="images?.[1]"
+        :src="images[1]"
+        class="w-full h-full object-cover object-center transition-opacity duration-200"
+        @error="handleImageError"
+      />
+    </div>
 
-    <img
-      :src="images?.[2]"
-      :class="cn('col-span-2 object-cover object-center bg-[#DFDDE4]', classNames?.images?.bottom)"
-    />
+    <div
+      :class="cn('col-span-2 bg-[#DFDDE4] relative overflow-hidden', classNames?.images?.bottom)"
+    >
+      <img
+        v-if="images?.[2]"
+        :src="images[2]"
+        class="w-full h-full object-cover object-center transition-opacity duration-200"
+        @error="handleImageError"
+      />
+    </div>
   </div>
 </template>

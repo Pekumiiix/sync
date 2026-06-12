@@ -13,6 +13,13 @@ export default defineConfig({
     }
   },
   server: {
-    allowedHosts: ['juliette-habitudinal-sherman.ngrok-free.dev']
+    allowedHosts: ['juliette-habitudinal-sherman.ngrok-free.dev'],
+    proxy: {
+      '/og-api': {
+        target: 'https://www.opengraph.to',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/og-api/, '')
+      }
+    }
   }
 });

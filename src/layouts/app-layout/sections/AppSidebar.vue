@@ -12,10 +12,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
+import { mockFoldersResponse } from '@/mock-data/folders';
 import { CreateFolderDialog } from '@/pages/app/shared/dialogs';
 
 import { AppSidebarGroup } from '../components';
 import { AppSidebarFooter, UserInfo } from '.';
+
+function getSystemFolderHref(folderId: string) {
+  switch (folderId) {
+    case 'system_all':
+      return 'all-bookmarks';
+    case 'system_unsorted':
+      return 'unsorted';
+    default:
+      return '#';
+  }
+}
 
 const displayCreateFolderDialog = ref(false);
 </script>
@@ -39,33 +51,26 @@ const displayCreateFolderDialog = ref(false);
 
       <AppSidebarGroup
         label="General"
-        :items="[
-          {
-            path: '/app/all-bookmarks',
-            name: 'All Bookmarks',
-            count: 0,
-            images: [
-              'https://picsum.photos/seed/1/800/600',
-              'https://picsum.photos/seed/2/800/600',
-              'https://picsum.photos/seed/3/1200/600'
-            ]
-          },
-          {
-            path: '#',
-            name: 'Unsorted',
-            count: 0,
-            images: [
-              'https://picsum.photos/seed/4/800/600',
-              'https://picsum.photos/seed/5/800/600',
-              'https://picsum.photos/seed/6/1200/600'
-            ]
-          }
-        ]"
+        :items="
+          mockFoldersResponse.systemFolders.map((folder) => ({
+            href: getSystemFolderHref(folder.id),
+            name: folder.name,
+            count: folder.bookmarkCount,
+            images: folder.recentBookmarkImages
+          }))
+        "
       />
 
       <AppSidebarGroup
         label="Collections"
-        :items="[{ path: '#', name: 'Collection', count: 0 }]"
+        :items="
+          mockFoldersResponse.collections.map((folder) => ({
+            href: folder.id,
+            name: folder.name,
+            count: folder.bookmarkCount,
+            images: folder.recentBookmarkImages
+          }))
+        "
       />
 
       <SidebarGroup class="flex flex-col border-t border-[#292D321A] p-0">

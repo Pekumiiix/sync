@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import env from '@/config/env';
+import { mockNotificationsResponse } from '@/mock-data/notifications';
 
 import { JoinWorkSpaceDialog } from '../dialogs';
 import { NotificationPanel } from './sections';
@@ -46,9 +47,12 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
 
       <div class="flex items-center justify-between gap-3">
         <div class="size-fit relative">
-          <NotificationPanel />
+          <NotificationPanel :notifications="mockNotificationsResponse.data" />
 
-          <span class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0" />
+          <span
+            v-if="mockNotificationsResponse.meta.unreadCount > 0"
+            class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0"
+          />
         </div>
 
         <Button

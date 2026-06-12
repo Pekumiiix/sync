@@ -2,13 +2,12 @@
 import { ref } from 'vue';
 
 import { LoadingButton } from '@/components/shared';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { mockFolders } from '@/mock-data/folders';
+import { mockFoldersResponse } from '@/mock-data/folders';
+import type { ITransformedFolder } from '@/types/folder.type';
 import { transformBookmarkFolders } from '@/utils/bookmarkUtils';
 import { pluralizeIfArray } from '@/utils/stringutils';
 
-import { FolderThumbnail } from '../../shared/components';
+import { FolderListItem } from '../components';
 import { ActionDialogWrapper } from '../wrappers';
 
 interface Props {
@@ -17,7 +16,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const transformedBookmarks = ref(transformBookmarkFolders(mockFolders));
+const transformedBookmarks = ref(transformBookmarkFolders(mockFoldersResponse));
 const selectedFolderId = ref<string | null>(null);
 
 const displayBool = defineModel<boolean>({ default: false });
@@ -25,10 +24,16 @@ const displayBool = defineModel<boolean>({ default: false });
 function handleSelectFolder(folderId: string) {
   const isDeselecting = selectedFolderId.value === folderId;
 
-  transformedBookmarks.value = transformedBookmarks.value.map((folder) => ({
-    ...folder,
-    isSelected: folder.id === folderId ? !isDeselecting : false
-  }));
+  const updateSelection = (folders: ITransformedFolder[]) =>
+    folders.map((folder) => ({
+      ...folder,
+      isSelected: folder.id === folderId ? !isDeselecting : false
+    }));
+
+  transformedBookmarks.value = {
+    systemFolders: updateSelection(transformedBookmarks.value.systemFolders),
+    collections: updateSelection(transformedBookmarks.value.collections)
+  };
 
   selectedFolderId.value = isDeselecting ? null : folderId;
 }
@@ -55,43 +60,19 @@ function handleMove() {
     :description="`Select the folder you want to move the bookmark${pluralizeIfArray(bookmarkIds)} to.`"
   >
     <div class="flex flex-col gap-0.5 pt-3">
-      <Button
-        v-for="folder in transformedBookmarks"
+      <FolderListItem
+        v-for="folder in transformedBookmarks?.systemFolders || []"
         :key="folder.id"
-        variant="ghost"
-        :class="
-          cn('w-full h-fit flex items-center justify-between py-3.5 px-9 rounded-none', {
-            'bg-accent': folder.isSelected
-          })
-        "
-        @click="handleSelectFolder(folder.id)"
-      >
-        <div class="flex gap-3">
-          <FolderThumbnail
-            :images="[
-              'https://picsum.photos/seed/4/800/600',
-              'https://picsum.photos/seed/5/800/600',
-              'https://picsum.photos/seed/6/1200/600'
-            ]"
-            :class-names="{
-              container: 'size-9 rounded-[6px] py-1 px-0.5',
-              images: {
-                top: 'rounded-tl-[6px] rounded-tr-[6px] rounded-[4px]',
-                bottom: 'w-full h-3.75 rounded-[4px]'
-              }
-            }"
-          />
+        :folder="folder"
+        @select="handleSelectFolder"
+      />
 
-          <div class="flex flex-col items-start gap-1">
-            <p class="text-base font-medium leading-5.5 -tracking-[1%] text-black-80">
-              {{ folder.name }}
-            </p>
-            <p class="text-xs leading-[100%] text-black-50">Updated {{ folder.updated_at }}</p>
-          </div>
-        </div>
-
-        <p class="text-xs leading-[100%] text-black-80">{{ folder.item_count }} items</p>
-      </Button>
+      <FolderListItem
+        v-for="folder in transformedBookmarks?.collections || []"
+        :key="folder.id"
+        :folder="folder"
+        @select="handleSelectFolder"
+      />
 
       <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
         <LoadingButton
