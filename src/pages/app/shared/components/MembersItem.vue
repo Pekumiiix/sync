@@ -2,17 +2,19 @@
 import { ref } from 'vue';
 
 import { BaseAvatar, BaseSelect } from '@/components/re-useable';
+import type { FolderAccessLevel, SystemRole } from '@/types/member.type';
 
 interface IMembersItemProps {
-  avatar_url: string;
+  avatar_url: string | null;
   name: string;
   email: string;
-  role: 'admin' | 'can_edit' | 'can_view';
+  role: SystemRole;
+  accessLevel: FolderAccessLevel;
 }
 
 const props = defineProps<IMembersItemProps>();
 
-const userRole = ref(props.role);
+const userRole = ref(props.accessLevel);
 </script>
 
 <template>
@@ -40,11 +42,12 @@ const userRole = ref(props.role);
     </div>
 
     <BaseSelect
+      v-if="props.accessLevel !== 'owner'"
       v-model="userRole"
       :options="[
-        { label: 'Admin', value: 'admin' },
-        { label: 'Can Edit', value: 'can_edit' },
-        { label: 'Can View', value: 'can_view' }
+        { label: 'Owner', value: 'owner' },
+        { label: 'Editor', value: 'editor' },
+        { label: 'Viewer', value: 'viewer' }
       ]"
       :class-names="{
         trigger: 'h-7.25 flex items-center px-2 bg-[#00000008] rounded-[6px] border-none',

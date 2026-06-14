@@ -1,3 +1,5 @@
+import type { IBrowserConnection } from './app.type';
+
 export interface IUser {
   id: string;
   first_name: string;
@@ -8,4 +10,5 @@ export interface IUser {
   created_at: string;
   updated_at: string;
   plan: 'free' | 'basic' | 'standard';
+  integrations: IBrowserConnection[];
 }

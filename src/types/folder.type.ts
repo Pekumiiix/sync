@@ -1,4 +1,11 @@
+import type { BrowserProvider } from './app.type';
 import type { IBookmark } from './bookmark.type';
+
+export interface IFolderMemberPreview {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+}
 
 export interface IFolder {
   id: string;
@@ -19,9 +26,9 @@ export interface IGetFoldersResponse {
   collections: IFolder[];
 }
 
-export interface GetFolderBookmarksParams {
-  page: number;
-  limit?: number;
+export interface IBookmarkData {
+  pinned: IBookmark[];
+  data: IBookmark[];
 }
 
 export interface IFolderBookmarksResponse {
@@ -29,12 +36,26 @@ export interface IFolderBookmarksResponse {
     id: string;
     name: string;
     isSystem: boolean;
+    recentMembers: IFolderMemberPreview[];
+    totalMemberCount: number;
   };
-  data: IBookmark[];
+  data: IBookmarkData;
   meta: {
     totalCount: number;
     currentPage: number;
     totalPages: number;
     hasNextPage: boolean;
   };
+}
+
+export type DateFilter = 'oldest' | 'newest';
+
+export type OrderFilter = 'asc' | 'desc';
+
+export interface GetFolderBookmarksQueryParams {
+  page: number;
+  limit?: number;
+  browser?: BrowserProvider | 'all';
+  date?: DateFilter;
+  order?: OrderFilter;
 }

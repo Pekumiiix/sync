@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import env from '@/config/env';
+import { mockPendingInvitation } from '@/mock-data/invitation';
 import { mockNotificationsResponse } from '@/mock-data/notifications';
 
 import { JoinWorkSpaceDialog } from '../dialogs';
@@ -77,5 +78,11 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
 
   <slot />
 
-  <JoinWorkSpaceDialog v-model="joinWorkspaceDialogDisplayBool" />
+  <JoinWorkSpaceDialog
+    v-model="joinWorkspaceDialogDisplayBool"
+    :token="mockPendingInvitation.token"
+    :folder="mockPendingInvitation.folder"
+    :inviter="mockPendingInvitation.inviter"
+    :invited-at="mockPendingInvitation.invitedAt"
+  />
 </template>

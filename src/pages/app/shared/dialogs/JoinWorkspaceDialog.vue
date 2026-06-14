@@ -4,9 +4,14 @@ import { useForm } from 'vee-validate';
 import { BaseAvatar, BaseDialog, BasePasswordInput } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
+import type { IInvitationDetails as Props } from '@/types/invitation.type';
+import { timeAgo } from '@/utils/dateUtils';
 import { createTypedForm } from '@/utils/formUtils';
 
+import { FolderThumbnail } from '../components';
 import { type JoinWorkspaceData, joinWorkspaceSchema } from '../schemas/join-workspace.schema';
+
+defineProps<Props>();
 
 const { handleSubmit, meta, isSubmitting } = useForm<JoinWorkspaceData>({
   validationSchema: joinWorkspaceSchema,
@@ -38,25 +43,35 @@ const displayBool = defineModel<boolean>({ default: false });
       <div
         class="w-full h-63 flex flex-col gap-4 items-center justify-center bg-black-100 rounded-[15px] bg-[url('/images/app/placeholders/bg-placeholder.png')] bg-cover bg-center bg-no-repeat"
       >
-        <div class="flex flex-col gap-0.5">
-          <p class="text-xl font-medium leading-7 text-white">Unsorted Workspace</p>
+        <FolderThumbnail
+          :images="folder.images"
+          :class-names="{
+            container: 'size-10 rounded-[7px] bg-white p-1 gap-x-1 gap-y-0.5',
+            images: { top: 'size-3.5 rounded-[4px]', bottom: 'w-full h-3.5 rounded-[4px]' }
+          }"
+        />
+
+        <div class="flex flex-col items-center gap-0.5">
+          <p class="text-xl font-medium leading-7 text-white">{{ folder.name }} Workspace</p>
           <div class="flex items-center gap-1.5 text-xs text-white-70">
             Invited by
             <div class="flex items-center gap-1 text-white-90">
               <BaseAvatar
-                fallback="Johnson"
-                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
+                :fallback="inviter.name"
+                :src="inviter.avatarUrl"
                 class="size-3"
               />
-              Johnson
+
+              {{ inviter.name }}
             </div>
-            <span class="size-1 rounded-full bg-white-70" /> 3 mins ago
+            <span class="size-1 rounded-full bg-white-70" /> {{ timeAgo(invitedAt) }}
           </div>
         </div>
       </div>
     </div>
 
     <form
+      v-if="folder.isPasswordProtected"
       @submit="onSubmit"
       class="w-full flex flex-col gap-6"
     >

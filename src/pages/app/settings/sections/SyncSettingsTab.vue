@@ -54,10 +54,10 @@ const isUserPro = settings.value?.subscription.isPro || false;
             <div class="flex flex-col gap-1">
               <p class="text-sm font-medium text-black-90 leading-4">{{ browser.name }}</p>
               <p
-                v-if="browser.lastSyncAt"
+                v-if="browser.connectedAt"
                 class="text-xs leading-[100%] text-black-70"
               >
-                Connected {{ timeAgo(browser.lastSyncAt) }}
+                Connected {{ timeAgo(browser.connectedAt) }}
               </p>
             </div>
           </div>

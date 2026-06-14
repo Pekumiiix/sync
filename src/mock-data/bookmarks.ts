@@ -1,6 +1,6 @@
-import type { IBookmarksResponse } from '@/types/bookmark.type';
+import type { IBookmarkData } from '@/types/folder.type';
 
-export const mockBookmarksResponse: IBookmarksResponse = {
+export const mockBookmarksResponse: IBookmarkData = {
   pinned: [
     {
       id: 'bm_p001',
@@ -16,6 +16,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['ui', 'ux', 'prototyping'],
       coverImageUrl: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
       faviconUrl: 'https://www.figma.com/favicon.ico',
+      browser: 'chrome',
       addedBy: {
         name: 'Sarah Jenkins',
         avatarUrl: 'https://i.pravatar.cc/150?u=sarah'
@@ -34,6 +35,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['source-control', 'backend', 'release'],
       coverImageUrl: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800&q=80',
       faviconUrl: 'https://github.githubassets.com/favicons/favicon.png',
+      browser: 'arc',
       addedBy: {
         name: 'Alex Chen',
         avatarUrl: 'https://i.pravatar.cc/150?u=alex'
@@ -52,6 +54,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['hosting', 'ci-cd', 'frontend'],
       coverImageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80',
       faviconUrl: 'https://assets.vercel.com/image/upload/q_auto/front/favicon/vercel/favicon.ico',
+      browser: 'firefox',
       addedBy: {
         name: 'Marcus Weaver',
         avatarUrl: 'https://i.pravatar.cc/150?u=marcus'
@@ -70,6 +73,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['planning', 'strategy', 'q4'],
       coverImageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&q=80',
       faviconUrl: 'https://www.notion.so/images/favicon.ico',
+      browser: 'arc',
       addedBy: {
         name: 'Elena Rodriguez',
         avatarUrl: 'https://i.pravatar.cc/150?u=elena'
@@ -88,6 +92,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['tickets', 'sprints', 'agile'],
       coverImageUrl: 'https://images.unsplash.com/photo-1507925922837-326f12d9348d?w=800&q=80',
       faviconUrl: 'https://linear.app/favicon.ico',
+      browser: 'brave',
       addedBy: {
         name: 'Alex Chen',
         avatarUrl: 'https://i.pravatar.cc/150?u=alex'
@@ -108,6 +113,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['vue', 'frontend', 'docs'],
       coverImageUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&q=80',
       faviconUrl: 'https://vuejs.org/logo.svg',
+      browser: 'edge',
       addedBy: {
         name: 'Sarah Jenkins',
         avatarUrl: 'https://i.pravatar.cc/150?u=sarah'
@@ -126,6 +132,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['css', 'styling', 'config'],
       coverImageUrl: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&q=80',
       faviconUrl: 'https://tailwindcss.com/favicons/favicon.ico',
+      browser: 'opera',
       addedBy: {
         name: 'Marcus Weaver',
         avatarUrl: 'https://i.pravatar.cc/150?u=marcus'
@@ -144,6 +151,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['payments', 'api', 'fintech'],
       coverImageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
       faviconUrl: 'https://stripe.com/favicon.ico',
+      browser: 'chrome',
       addedBy: {
         name: 'Elena Rodriguez',
         avatarUrl: 'https://i.pravatar.cc/150?u=elena'
@@ -162,6 +170,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['css', 'layout', 'reference'],
       coverImageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80',
       faviconUrl: 'https://developer.mozilla.org/favicon-48x48.png',
+      browser: 'arc',
       addedBy: {
         name: 'Alex Chen',
         avatarUrl: 'https://i.pravatar.cc/150?u=alex'
@@ -180,6 +189,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['database', 'sql', 'baas'],
       coverImageUrl: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&q=80',
       faviconUrl: 'https://supabase.com/favicon/favicon.ico',
+      browser: 'firefox',
       addedBy: {
         name: 'Sarah Jenkins',
         avatarUrl: 'https://i.pravatar.cc/150?u=sarah'
@@ -199,6 +209,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['typescript', 'types', 'learning'],
       coverImageUrl: 'https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=800&q=80',
       faviconUrl: 'https://www.typescriptlang.org/favicon.ico',
+      browser: 'brave',
       addedBy: {
         name: 'Marcus Weaver',
         avatarUrl: 'https://i.pravatar.cc/150?u=marcus'
@@ -217,6 +228,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['aws', 'cloud', 'budget'],
       coverImageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
       faviconUrl: 'https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico',
+      browser: 'arc',
       addedBy: {
         name: 'Elena Rodriguez',
         avatarUrl: 'https://i.pravatar.cc/150?u=elena'
@@ -235,6 +247,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['docker', 'devops', 'containers'],
       coverImageUrl: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800&q=80',
       faviconUrl: 'https://docs.docker.com/favicon.ico',
+      browser: 'edge',
       addedBy: {
         name: 'Alex Chen',
         avatarUrl: 'https://i.pravatar.cc/150?u=alex'
@@ -253,6 +266,7 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['vue-query', 'state', 'migration'],
       coverImageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
       faviconUrl: 'https://tanstack.com/favicon.ico',
+      browser: 'chrome',
       addedBy: {
         name: 'Sarah Jenkins',
         avatarUrl: 'https://i.pravatar.cc/150?u=sarah'
@@ -271,16 +285,11 @@ export const mockBookmarksResponse: IBookmarksResponse = {
       tags: ['validation', 'typescript', 'library'],
       coverImageUrl: 'https://images.unsplash.com/photo-1526379095098-d400fd0bfce8?w=800&q=80',
       faviconUrl: 'https://zod.dev/favicon.ico',
+      browser: 'opera',
       addedBy: {
         name: 'Marcus Weaver',
         avatarUrl: 'https://i.pravatar.cc/150?u=marcus'
       }
     }
-  ],
-  meta: {
-    totalCount: 15,
-    currentPage: 1,
-    totalPages: 1,
-    hasNextPage: false
-  }
+  ]
 };

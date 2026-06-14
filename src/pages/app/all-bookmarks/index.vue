@@ -9,17 +9,6 @@ import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper } from '../shared/wrappers';
 
-const tabs = [
-  {
-    label: 'All',
-    value: 'all'
-  },
-  {
-    label: 'Chrome',
-    value: 'chrome'
-  }
-];
-
 const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 
 const params = useUrlSearchParams('history');
@@ -36,7 +25,6 @@ const activeTab = computed({
   <AppWrapper page="All Bookmarks">
     <ContentWrapper>
       <BookmarkTabWrapper
-        :tabs="tabs"
         :bookmarks="mockBookmarksResponse.data"
         v-model:activeTab="activeTab"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"

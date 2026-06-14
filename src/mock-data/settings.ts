@@ -6,37 +6,43 @@ export const mockUserSettingsResponse: ISettingsResponse = {
       provider: 'chrome',
       name: 'Google Chrome',
       isConnected: true,
-      lastSyncAt: new Date().toISOString() // "Connected now"
+      lastSyncAt: new Date().toISOString(),
+      connectedAt: new Date().toISOString()
     },
     {
       provider: 'firefox',
       name: 'Mozilla Firefox',
       isConnected: true,
-      lastSyncAt: new Date().toISOString()
+      lastSyncAt: new Date().toISOString(),
+      connectedAt: new Date().toISOString()
     },
     {
       provider: 'edge',
       name: 'Microsoft Edge',
       isConnected: true,
-      lastSyncAt: new Date().toISOString()
+      lastSyncAt: new Date().toISOString(),
+      connectedAt: new Date().toISOString()
     },
     {
       provider: 'opera',
       name: 'Opera',
       isConnected: true,
-      lastSyncAt: new Date().toISOString()
+      lastSyncAt: new Date().toISOString(),
+      connectedAt: new Date().toISOString()
     },
     {
       provider: 'arc',
       name: 'Arc',
       isConnected: true,
-      lastSyncAt: new Date().toISOString()
+      lastSyncAt: new Date().toISOString(),
+      connectedAt: new Date().toISOString()
     },
     {
       provider: 'brave',
       name: 'Brave',
       isConnected: true,
-      lastSyncAt: new Date().toISOString()
+      lastSyncAt: new Date().toISOString(),
+      connectedAt: new Date().toISOString()
     }
   ],
   subscription: {

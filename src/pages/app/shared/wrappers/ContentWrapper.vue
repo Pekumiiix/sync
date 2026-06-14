@@ -9,6 +9,7 @@ import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { mockBookmarksResponse } from '@/mock-data/bookmarks';
+import type { IFolderBookmarksResponse } from '@/types/folder.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { ListBookmarkCard, SearchInput } from '../components';
@@ -16,7 +17,7 @@ import { ShareFolderDialog } from '../dialogs';
 
 interface Props {
   showTabActions?: boolean;
-  folderId?: string;
+  folder?: Omit<IFolderBookmarksResponse['folder'], 'name'>;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -66,25 +67,32 @@ const searchResults = computed(() => {
 
     <AnimatePresence>
       <MotionStaggerContainer
-        v-if="isQueryEmpty && showTabActions && folderId"
+        v-if="isQueryEmpty && showTabActions && folder?.id"
         class="flex items-center gap-3"
       >
         <MotionDiv
           :config="{ variants: fadeSlideYVariant }"
-          class="size-fit"
+          class="size-fit flex items-center gap-1.5 bg-tertiary-background py-2.25 px-4 rounded-full"
         >
           <router-link
-            :to="`/app/${folderId}/members`"
-            class="w-20 h-9.5 flex items-center justify-center py-3 px-4 -space-x-1.5 rounded-full bg-tertiary-background"
+            :to="`/app/${folder?.id}/members`"
+            class="flex items-center justify-center -space-x-1.5"
           >
             <BaseAvatar
-              v-for="index in 3"
-              :key="index"
-              src="/images/app/sidebar/avatar.png"
-              fallback="PA"
-              class="size-6 shrink-0 border-2 border-[#F8F8F9]"
+              v-for="member in folder.recentMembers"
+              :key="member.id"
+              :src="member.avatarUrl"
+              :fallback="member.name"
+              class="size-6 shrink-0 outline-2 outline-[#F8F8F9]"
             />
           </router-link>
+
+          <p
+            v-if="folder.totalMemberCount > 3"
+            class="text-xs font-medium leading-[100%] text-black-80"
+          >
+            {{ folder?.totalMemberCount }} members
+          </p>
         </MotionDiv>
 
         <MotionDiv

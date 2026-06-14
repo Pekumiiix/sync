@@ -10,17 +10,13 @@ import { BaseSelect } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import type { DisplayType, SortOrder } from '@/types/app.type';
+import type { BrowserProvider, DisplayType, SortOrder } from '@/types/app.type';
 import type { IBookmark } from '@/types/bookmark.type';
 
 import { DeleteBookmarkDialog } from '../dialogs';
 import { BookmarkTabContentWrapper } from '.';
 
 interface Props {
-  tabs: {
-    label: string;
-    value: string;
-  }[];
   bookmarks: IBookmark[];
   selectedPinnedBookmarksLength: number;
 }
@@ -36,6 +32,37 @@ interface ISortOrderOptions {
   value: SortOrder;
   label: string;
 }
+
+const tabs: { label: string; value: BrowserProvider | 'all' }[] = [
+  {
+    label: 'All',
+    value: 'all'
+  },
+  {
+    label: 'Chrome',
+    value: 'chrome'
+  },
+  {
+    label: 'Firefox',
+    value: 'firefox'
+  },
+  {
+    label: 'Edge',
+    value: 'edge'
+  },
+  {
+    label: 'Opera',
+    value: 'opera'
+  },
+  {
+    label: 'Arc',
+    value: 'arc'
+  },
+  {
+    label: 'Brave',
+    value: 'brave'
+  }
+];
 
 const displayTypeOptions: IDisplayTypeOptions[] = [
   { value: 'list', label: 'List' },
@@ -165,7 +192,7 @@ const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBook
               v-model="sortOrder"
               :options="sortOrderOptions"
               :classNames="{
-                trigger: 'w-32 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+                trigger: 'w-32 min-h-13.25 h-13.25 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
               }"
             />
           </MotionDiv>
@@ -177,7 +204,8 @@ const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBook
               v-model="displayType"
               :options="displayTypeOptions"
               :classNames="{
-                trigger: 'w-27.5 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+                trigger:
+                  'w-27.5 min-h-13.25 h-13.25 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
               }"
             />
           </MotionDiv>

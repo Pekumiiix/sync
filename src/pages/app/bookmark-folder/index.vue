@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUrlSearchParams } from '@vueuse/core';
 
-import { mockBookmarksResponse } from '@/mock-data/bookmarks';
+import { mockFolderBookmarksResponse } from '@/mock-data/bookmark-folder';
 import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
@@ -14,17 +14,6 @@ const route = useRoute();
 const params = useUrlSearchParams('history');
 
 const folderId = computed(() => route.params.folderId as string);
-
-const tabs = [
-  {
-    label: 'All',
-    value: 'all'
-  },
-  {
-    label: 'Chrome',
-    value: 'chrome'
-  }
-];
 
 const activeTab = computed({
   get: () => (params.tab as string) || 'all',
@@ -37,21 +26,21 @@ const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinned
 </script>
 
 <template>
-  <AppWrapper page="Bookmark Folder">
+  <AppWrapper :page="`${mockFolderBookmarksResponse.folder.name} Folder`">
     <ContentWrapper
       showTabActions
       :folderId="folderId"
+      :folder="mockFolderBookmarksResponse.folder"
     >
       <BookmarkTabWrapper
-        :tabs="tabs"
-        :bookmarks="mockBookmarksResponse.data"
+        :bookmarks="mockFolderBookmarksResponse.data.data"
         v-model:activeTab="activeTab"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
         :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
-          :pinnedBookmarks="mockBookmarksResponse.pinned"
+          :pinnedBookmarks="mockFolderBookmarksResponse.data.pinned"
           :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>

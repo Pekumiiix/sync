@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import env from '@/config/env';
 import { useClipboard } from '@/hooks/useClipboard';
+import { mockFolderMembersResponse } from '@/mock-data/member';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { MembersItem } from '../components';
@@ -76,7 +77,7 @@ const displayBool = defineModel<boolean>({ default: false });
         class="flex items-center gap-2.5 pt-5"
       >
         <div
-          class="w-full h-10.5 flex items-center justify-between p-1 pl-4 border-2 border-[#E8E8E8] rounded-full"
+          class="w-full h-10.5 flex items-center justify-between p-1 pl-4 outline-2 outline-[#E8E8E8] rounded-full"
         >
           <TypedFormField
             name="email"
@@ -119,10 +120,13 @@ const displayBool = defineModel<boolean>({ default: false });
     </div>
 
     <MembersItem
-      avatar_url="https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
-      name="Pelumi Amao"
-      email="pelumi@amao.com"
-      role="admin"
+      v-for="member in mockFolderMembersResponse.data"
+      :key="member.id"
+      :avatar_url="member.avatarUrl"
+      :name="member.name"
+      :email="member.email"
+      :role="member.systemRole"
+      :accessLevel="member.accessLevel"
     />
 
     <div class="w-full flex items-center justify-between p-6 border-t border-[#292D321A]">
