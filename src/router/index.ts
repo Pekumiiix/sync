@@ -14,9 +14,11 @@ import ForgotPasswordPage from '@/pages/auth/forgot-password/index.vue';
 import ResetPasswordPage from '@/pages/auth/reset-paasword/index.vue';
 import SignInPage from '@/pages/auth/sign-in/index.vue';
 import SignUpPage from '@/pages/auth/sign-up/index.vue';
+import VerifyEmailPage from '@/pages/auth/verify-email/index.vue';
 // -- Marketing Pages --------
 import HomePage from '@/pages/marketing/home/index.vue';
 import PricingPage from '@/pages/marketing/pricing/index.vue';
+// import { useAuthStore } from '@/stores/auth.store';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +47,7 @@ const router = createRouter({
       path: '/auth',
       name: 'Auth',
       component: AuthLayout,
+      meta: { requiresGuest: true },
       children: [
         {
           path: 'sign-in',
@@ -65,6 +68,11 @@ const router = createRouter({
           path: 'reset-password',
           name: 'Reset Password',
           component: ResetPasswordPage
+        },
+        {
+          path: 'verify-email',
+          name: 'Verify Email',
+          component: VerifyEmailPage
         }
       ]
     },
@@ -74,6 +82,7 @@ const router = createRouter({
       path: '/app',
       name: 'App',
       component: AppLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: 'all-bookmarks',
@@ -99,5 +108,31 @@ const router = createRouter({
     }
   ]
 });
+
+// router.beforeEach((to, from, next) => {
+//   const authStore = useAuthStore();
+
+//   if (to.query.invite_token) {
+//     localStorage.setItem('pending_invite', to.query.invite_token as string);
+
+//     const query = { ...to.query };
+//     delete query.invite_token;
+
+//     return next({ ...to, query });
+//   }
+
+//   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+//     return next({
+//       name: 'Sign In',
+//       query: { redirect: to.fullPath }
+//     });
+//   }
+
+//   if (to.meta.requiresGuest && authStore.isAuthenticated) {
+//     return next({ name: 'All Bookmarks' });
+//   }
+
+//   next();
+// });
 
 export default router;

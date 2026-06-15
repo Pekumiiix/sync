@@ -7,6 +7,12 @@ import { createTypedForm } from '@/utils/formUtils';
 import { type AddPasswordData, addPasswordSchema } from '../schemas/add-password.schema';
 import { ActionDialogWrapper } from '../wrappers';
 
+interface Props {
+  folderId: string;
+}
+
+const props = defineProps<Props>();
+
 const { handleSubmit, meta, isSubmitting } = useForm<AddPasswordData>({
   validationSchema: addPasswordSchema,
   initialValues: {
@@ -16,7 +22,7 @@ const { handleSubmit, meta, isSubmitting } = useForm<AddPasswordData>({
 });
 
 const onSubmit = handleSubmit((data: AddPasswordData) => {
-  console.log(data);
+  console.log(data, props.folderId);
 });
 
 const TypedFormField = createTypedForm<AddPasswordData>();

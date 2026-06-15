@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 
+import { useForgotPassword } from '@/hooks/useAuth';
 import { createAuthTypedForm } from '@/utils/formUtils';
 
 import { AuthInput } from '../shared/components';
@@ -13,8 +14,12 @@ const { handleSubmit, meta, isSubmitting } = useForm<ForgotPasswordData>({
   validationSchema: forgotPasswordSchema
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+const { mutate, isPending } = useForgotPassword();
+
+const onSubmit = handleSubmit((values) => {
+  mutate({
+    email: values.email
+  });
 });
 </script>
 
@@ -23,7 +28,7 @@ const onSubmit = handleSubmit(async (values) => {
     page="forgot_password"
     :onSubmit="onSubmit"
     :isValid="meta.valid"
-    :isLoading="isSubmitting"
+    :isLoading="isSubmitting || isPending"
   >
     <TypedFormField
       name="email"

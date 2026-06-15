@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
 
-import { useSettings } from '@/contexts/useSettings';
+import { useSettingsStore } from '@/stores/settings.store';
 
 import { SettingsSwitch } from '../components';
 import { type NotificationData, notificationSchema } from '../schemas/notification.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { settings } = useSettings();
+const { settings } = useSettingsStore();
 
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<NotificationData>({
   validationSchema: notificationSchema,
   initialValues: {
-    notify_on_new_bookmark: settings.value?.preferences.notifications.newBookmark || false,
-    notify_on_new_member: settings.value?.preferences.notifications.newMember || false
+    notify_on_new_bookmark: settings.preferences.notifications.newBookmark || false,
+    notify_on_new_member: settings.preferences.notifications.newMember || false
   }
 });
 

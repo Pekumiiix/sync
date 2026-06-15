@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 
+import { useSignUp } from '@/hooks/useAuth';
 import { createAuthTypedForm } from '@/utils/formUtils';
 
 import { AuthInput, AuthPasswordInput } from '../shared/components';
@@ -13,8 +14,20 @@ const { handleSubmit, meta, isSubmitting } = useForm<SignUpData>({
   validationSchema: signUpSchema
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+const { mutate, isPending } = useSignUp();
+
+const onSubmit = handleSubmit((values) => {
+  const names = values.name.trim().split(' ');
+
+  const first_name = names[0] || '';
+  const last_name = names.slice(1).join(' ') || '';
+
+  mutate({
+    first_name,
+    last_name,
+    email: values.email,
+    password: values.password
+  });
 });
 </script>
 
@@ -23,7 +36,7 @@ const onSubmit = handleSubmit(async (values) => {
     page="sign_up"
     :onSubmit="onSubmit"
     :isValid="meta.valid"
-    :isLoading="isSubmitting"
+    :isLoading="isSubmitting || isPending"
   >
     <TypedFormField
       name="name"

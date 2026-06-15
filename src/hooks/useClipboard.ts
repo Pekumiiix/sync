@@ -1,5 +1,7 @@
 import { ref } from 'vue';
 
+import { toaster } from '@/utils/toastUtils';
+
 export function useClipboard(resetDelay = 2000) {
   const hasCopied = ref(false);
 
@@ -7,7 +9,10 @@ export function useClipboard(resetDelay = 2000) {
     try {
       if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
+
         hasCopied.value = true;
+
+        toaster.success('Text copied to clipboard!');
 
         setTimeout(() => {
           hasCopied.value = false;
@@ -16,6 +21,8 @@ export function useClipboard(resetDelay = 2000) {
         throw new Error('Clipboard API not supported');
       }
     } catch (error) {
+      toaster.error('Failed to copy text.');
+
       console.error('Failed to copy text:', error);
     }
   };

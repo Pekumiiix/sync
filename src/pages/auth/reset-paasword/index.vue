@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router';
 import { useForm } from 'vee-validate';
 
+import { useResetPassword } from '@/hooks/useAuth';
 import { createAuthTypedForm } from '@/utils/formUtils';
 
 import { AuthPasswordInput } from '../shared/components';
@@ -13,8 +15,17 @@ const { handleSubmit, meta, isSubmitting } = useForm<ResetPasswordData>({
   validationSchema: resetPasswordSchema
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+const { mutate, isPending } = useResetPassword();
+
+const route = useRoute();
+
+const refreshToken = route.query.reset_token as string;
+
+const onSubmit = handleSubmit((values) => {
+  mutate({
+    token: refreshToken,
+    new_password: values.password
+  });
 });
 </script>
 
@@ -23,7 +34,7 @@ const onSubmit = handleSubmit(async (values) => {
     page="reset_password"
     :onSubmit="onSubmit"
     :isValid="meta.valid"
-    :isLoading="isSubmitting"
+    :isLoading="isSubmitting || isPending"
   >
     <TypedFormField
       name="password"

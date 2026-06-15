@@ -138,5 +138,9 @@ const searchResults = computed(() => {
     />
   </div>
 
-  <ShareFolderDialog v-model="showShareDialog" />
+  <ShareFolderDialog
+    v-if="folder"
+    v-model="showShareDialog"
+    :folder-id="folder?.id"
+  />
 </template>

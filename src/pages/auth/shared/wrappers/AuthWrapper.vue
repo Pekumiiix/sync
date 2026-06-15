@@ -4,7 +4,7 @@ import { computed } from 'vue';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 
-type AuthPages = 'sign_in' | 'sign_up' | 'forgot_password' | 'reset_password';
+type AuthPages = 'sign_in' | 'sign_up' | 'forgot_password' | 'reset_password' | 'verify_email';
 
 interface Props {
   page: AuthPages;
@@ -47,6 +47,10 @@ const pageConfig: Record<AuthPages, IPageConfig> = {
   reset_password: {
     message: 'Set a new password for your account',
     buttonLabel: 'Reset password'
+  },
+  verify_email: {
+    message: 'Verify your email address to complete your registration',
+    buttonLabel: 'Verify email'
   }
 };
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
 import { useForm } from 'vee-validate';
 
 import { LinkIcon } from '@/components/icons';
@@ -18,7 +17,11 @@ import { type ShareBookmarkData, shareBookmarkSchema } from '../schemas/share-bo
 import { ActionDialogWrapper } from '../wrappers';
 import { AddPasswordDialog } from '.';
 
-const route = useRoute();
+interface Props {
+  folderId: string;
+}
+
+const props = defineProps<Props>();
 
 const { copy, hasCopied } = useClipboard();
 
@@ -26,12 +29,12 @@ const { handleSubmit, meta, isSubmitting } = useForm<ShareBookmarkData>({
   validationSchema: shareBookmarkSchema,
   initialValues: {
     email: '',
-    action: 'edit'
+    action: 'editor'
   }
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+  console.log(values, props.folderId);
 });
 
 const TypedFormField = createTypedForm<ShareBookmarkData>();
@@ -63,12 +66,12 @@ const displayBool = defineModel<boolean>({ default: false });
         </div>
 
         <Button
-          @click="copy(`${env.frontendUrl}${route.path}`)"
+          @click="copy(`${env.frontendUrl}/app/all-bookmarks?invite_token=${new Date().getTime()}`)"
           :disabled="hasCopied"
           variant="outline"
           class="w-21.25 h-9.5 text-xs font-medium leading-[100%] py-3 px-4 rounded-full bg-white border-stroke-1/10"
         >
-          Copy link
+          {{ hasCopied ? 'Link copied' : 'Copy link' }}
         </Button>
       </div>
 
@@ -97,8 +100,8 @@ const displayBool = defineModel<boolean>({ default: false });
               <BaseSelect
                 v-bind="fieldProps"
                 :options="[
-                  { value: 'edit', label: 'Can edit' },
-                  { value: 'view', label: 'Can view' }
+                  { value: 'editor', label: 'Can edit' },
+                  { value: 'viewer', label: 'Can view' }
                 ]"
                 :class-names="{
                   trigger:
@@ -148,5 +151,8 @@ const displayBool = defineModel<boolean>({ default: false });
     </div>
   </ActionDialogWrapper>
 
-  <AddPasswordDialog v-model="showAddPasswordDialog" />
+  <AddPasswordDialog
+    v-model="showAddPasswordDialog"
+    :folder-id="folderId"
+  />
 </template>

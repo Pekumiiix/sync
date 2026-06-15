@@ -4,24 +4,24 @@ import { useForm } from 'vee-validate';
 import { getBrowserImage } from '@/components/constants/browsers';
 import { syncFrequency } from '@/components/constants/sync-frequency';
 import { LoadingButton } from '@/components/shared';
-import { useSettings } from '@/contexts/useSettings';
+import { useSettingsStore } from '@/stores/settings.store';
 import { timeAgo } from '@/utils/dateUtils';
 
 import { FrequencyOptionButton } from '../components';
 import { type SyncSettingsData, syncSettingsSchema } from '../schemas/sync-settings.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { settings } = useSettings();
+const { settings } = useSettingsStore();
 
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<SyncSettingsData>({
     validationSchema: syncSettingsSchema,
     initialValues: {
-      syncInterval: settings.value?.preferences.sync.frequency
+      syncInterval: settings.preferences.sync.frequency
     }
   });
 
-const isUserPro = settings.value?.subscription.isPro || false;
+const isUserPro = settings.subscription.isPro || false;
 </script>
 
 <template>

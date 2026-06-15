@@ -45,7 +45,6 @@ const userRole = ref(props.accessLevel);
       v-if="props.accessLevel !== 'owner'"
       v-model="userRole"
       :options="[
-        { label: 'Owner', value: 'owner' },
         { label: 'Editor', value: 'editor' },
         { label: 'Viewer', value: 'viewer' }
       ]"

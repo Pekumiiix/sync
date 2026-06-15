@@ -5,7 +5,13 @@ import { emailBaseSchema, passwordBaseSchema } from '@/components/constants/sche
 
 const signUpZodSchema = z
   .object({
-    name: z.string().min(2, 'Name must be at least 2 characters long'),
+    name: z
+      .string({ required_error: 'Name is required' })
+      .trim()
+      .min(2, 'Name must be at least 2 characters long')
+      .refine((name) => name.includes(' '), {
+        message: 'Please enter your full name (first and last name)'
+      }),
     email: emailBaseSchema,
     password: passwordBaseSchema,
     confirmPassword: z

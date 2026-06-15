@@ -59,3 +59,17 @@ export interface GetFolderBookmarksQueryParams {
   date?: DateFilter;
   order?: OrderFilter;
 }
+
+export interface SearchFolderBookmarksQueryParams extends GetFolderBookmarksQueryParams {
+  query: string;
+}
+
+export interface ISearchFolderBookmarksResponse {
+  data: IBookmark[];
+  meta: {
+    totalCount: number;
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+  };
+}

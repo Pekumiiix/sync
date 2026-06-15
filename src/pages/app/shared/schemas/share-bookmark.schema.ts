@@ -5,7 +5,7 @@ import { emailBaseSchema } from '@/components/constants/schema';
 
 export const shareBookmarkZodSchema = z.object({
   email: emailBaseSchema,
-  action: z.enum(['view', 'edit'], { required_error: 'Action is required' })
+  action: z.enum(['viewer', 'editor'], { required_error: 'Action is required' })
 });
 
 export type ShareBookmarkData = z.infer<typeof shareBookmarkZodSchema>;

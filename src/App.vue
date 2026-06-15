@@ -3,6 +3,10 @@ import { computed } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { useSeoMeta } from '@vueuse/head';
 
+import { Toaster } from '@/components/ui/sonner';
+
+import 'vue-sonner/style.css';
+
 const route = useRoute();
 
 const pageTitle = computed(() => {
@@ -36,6 +40,8 @@ useSeoMeta({
 </script>
 
 <template>
+  <Toaster />
+
   <RouterView />
 </template>
 

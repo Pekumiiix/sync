@@ -3,6 +3,7 @@ import { Check } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
 import { Checkbox } from '@/components/ui/checkbox';
+import { useAuthStore } from '@/stores/auth.store';
 import { createAuthTypedForm } from '@/utils/formUtils';
 
 import { AuthInput, AuthPasswordInput } from '../shared/components';
@@ -15,8 +16,15 @@ const { handleSubmit, meta, isSubmitting } = useForm<SignInData>({
   validationSchema: signInSchema
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+const { signIn } = useAuthStore();
+
+const { mutate, isPending } = signIn;
+
+const onSubmit = handleSubmit((values) => {
+  mutate({
+    email: values.email,
+    password: values.password
+  });
 });
 </script>
 
@@ -25,7 +33,7 @@ const onSubmit = handleSubmit(async (values) => {
     page="sign_in"
     :onSubmit="onSubmit"
     :isValid="meta.valid"
-    :isLoading="isSubmitting"
+    :isLoading="isSubmitting || isPending"
   >
     <TypedFormField
       name="email"

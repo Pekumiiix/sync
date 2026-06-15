@@ -1,8 +1,9 @@
 import type { AxiosError } from 'axios';
 
 import api from '@/services/http.service';
+import type { IApiResponse } from '@/types/api.type';
 
-export async function apiRequest<TResponse, TData = unknown>(
+export async function apiClient<TResponse, TData = unknown>(
   method: 'get' | 'post' | 'put' | 'delete' | 'patch',
   endpoint: string,
   data?: TData
@@ -15,13 +16,14 @@ export async function apiRequest<TResponse, TData = unknown>(
     });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError<{ message: string }>;
+    const err = error as AxiosError<IApiResponse<unknown>>;
 
-    const customError = new Error(
-      err.response?.data?.message || err.message || 'An unexpected error occurred'
-    );
+    const errorMessage =
+      err.response?.data?.message || err.message || 'An unexpected error occurred';
 
-    (customError as unknown as { cause: unknown }).cause = error;
+    const customError = new Error(errorMessage);
+
+    Object.assign(customError, { cause: error });
 
     throw customError;
   }

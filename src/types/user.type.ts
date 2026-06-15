@@ -5,6 +5,7 @@ export interface IUser {
   first_name: string;
   last_name: string;
   email: string;
+  is_email_verified: boolean;
   location: string | null;
   avatar_url: string | null;
   created_at: string;
