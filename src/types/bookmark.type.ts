@@ -1,4 +1,11 @@
 import type { BrowserProvider } from './app.type';
+import type { FolderId } from './folder.type';
+
+// ==========================================
+// 1. CORE MODELS & ENTITIES
+// ==========================================
+
+export type BookmarkId = string;
 
 export interface BookmarkCreator {
   name: string;
@@ -6,7 +13,8 @@ export interface BookmarkCreator {
 }
 
 export interface IBookmark {
-  id: string;
+  id: BookmarkId;
+  folderId: FolderId;
   title: string;
   description: string | null;
   websiteName: string;
@@ -20,4 +28,37 @@ export interface IBookmark {
   faviconUrl: string | null;
   addedBy: BookmarkCreator | null;
   browser: BrowserProvider;
+}
+
+// ==========================================
+// 2. REQUEST PAYLOADS (Mutations)
+// ==========================================
+
+export interface IBaseBookmarkPayload {
+  folderId: FolderId;
+  title: string;
+  description: string;
+  tags: string[];
+  url: string;
+}
+
+export interface ICreateBookmarkPayload extends IBaseBookmarkPayload {
+  coverImageUrl: string;
+}
+
+export interface IEditBookmarkPayload extends IBaseBookmarkPayload {
+  bookmarkId: BookmarkId;
+}
+
+export interface IMoveBookmarkPayload {
+  bookmarkId: BookmarkId;
+  folderId: FolderId;
+}
+
+export interface IDeleteBookmarkPayload {
+  bookmarkId: BookmarkId;
+}
+
+export interface TogglePinBookmarkPayload {
+  bookmarkId: BookmarkId;
 }

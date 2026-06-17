@@ -8,6 +8,8 @@ import { JoinWorkSpaceDialog } from '@/pages/app/shared/dialogs';
 
 import { AppSidebar } from './sections';
 
+// const inviteToken = useLocalStorage<string | null>('invite_token', null);
+
 const pendingInviteToken = ref<string | null>(null);
 const isInviteDialogOpen = ref(false);
 

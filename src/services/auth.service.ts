@@ -10,27 +10,27 @@ import type { IUser } from '@/types/user.type';
 import { apiClient } from '@/utils/apiUtils';
 
 class AuthService {
-  async signUp(payload: ISignUpPayload) {
+  signUp(payload: ISignUpPayload) {
     return apiClient<IApiResponse, ISignUpPayload>('post', '/auth/signup', payload);
   }
 
-  async signIn(payload: ISignInPayload) {
+  signIn(payload: ISignInPayload) {
     return apiClient<IApiResponse<IUser>, ISignInPayload>('post', '/auth/signin', payload);
   }
 
-  async signOut() {
+  signOut() {
     return apiClient<IApiResponse>('post', '/auth/signout');
   }
 
-  async verifyEmail(payload: IVerifyEmailPayload) {
+  verifyEmail(payload: IVerifyEmailPayload) {
     return apiClient<IApiResponse>('get', '/auth/verify-email', payload);
   }
 
-  async forgotPassword(payload: IResetPasswordPayload) {
+  forgotPassword(payload: IResetPasswordPayload) {
     return apiClient<IApiResponse, IResetPasswordPayload>('post', '/auth/forgot-password', payload);
   }
 
-  async resetPassword(payload: ICreateNewPasswordPayload) {
+  resetPassword(payload: ICreateNewPasswordPayload) {
     return apiClient<IApiResponse, ICreateNewPasswordPayload>(
       'post',
       '/auth/reset-password',
@@ -38,7 +38,7 @@ class AuthService {
     );
   }
 
-  async currentUser() {
+  currentUser() {
     return apiClient<IApiResponse<IUser>>('get', '/auth/me');
   }
 }

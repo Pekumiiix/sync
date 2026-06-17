@@ -1,3 +1,5 @@
+import type { FolderId } from './folder.type';
+
 export interface IInvitationFolder {
   id: string;
   name: string;
@@ -15,4 +17,14 @@ export interface IInvitationDetails {
   invitedAt: string;
   folder: IInvitationFolder;
   inviter: IInvitationInviter;
+}
+
+export interface IBaseInvitationPayload {
+  token: string;
+}
+
+export interface IUserInvitationPayload {
+  email: string;
+  folderId: FolderId;
+  access: 'editor' | 'viewer';
 }
