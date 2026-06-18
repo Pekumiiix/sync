@@ -109,7 +109,7 @@ const router = createRouter({
   ]
 });
 
-// router.beforeEach((to, from, next) => {
+// router.beforeEach(async (to, from, next) => {
 //   const authStore = useAuthStore();
 
 //   if (to.query.invite_token) {
@@ -119,6 +119,10 @@ const router = createRouter({
 //     delete query.invite_token;
 
 //     return next({ ...to, query });
+//   }
+
+//   if (authStore.isLoading) {
+//     await authStore.checkAuthStatus();
 //   }
 
 //   if (to.meta.requiresAuth && !authStore.isAuthenticated) {

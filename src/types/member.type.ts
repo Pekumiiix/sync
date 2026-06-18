@@ -22,3 +22,12 @@ export interface IFolderMembersResponse {
     totalCount: number;
   };
 }
+
+export interface IChangeMemberAccessLevelPayload {
+  accessLevel: FolderAccessLevel;
+  memberId: string;
+}
+
+export interface IKickMemberPayload {
+  memberId: string;
+}

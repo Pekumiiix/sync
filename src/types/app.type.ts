@@ -1,8 +1,3 @@
-export interface ISelectedBookmark {
-  id: string;
-  isPinned: boolean;
-}
-
 export interface IBrowserConnection {
   provider: BrowserProvider;
   name: string;

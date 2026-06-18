@@ -48,10 +48,6 @@ export interface GetFolderBookmarksQueryParams {
   order?: OrderFilter;
 }
 
-export interface SearchFolderBookmarksQueryParams extends GetFolderBookmarksQueryParams {
-  query: string;
-}
-
 // ==========================================
 // 3. REQUEST PAYLOADS (Mutations)
 // ==========================================
@@ -91,16 +87,6 @@ export interface IFolderBookmarksResponse {
     totalMemberCount: number;
   };
   data: IBookmarkData;
-  meta: {
-    totalCount: number;
-    currentPage: number;
-    totalPages: number;
-    hasNextPage: boolean;
-  };
-}
-
-export interface ISearchFolderBookmarksResponse {
-  data: IBookmark[];
   meta: {
     totalCount: number;
     currentPage: number;

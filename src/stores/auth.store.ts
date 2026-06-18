@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { useCurrentUser, useSignIn, useSignOut } from '@/hooks/useAuth';
@@ -10,16 +10,33 @@ export const useAuthStore = defineStore('auth', () => {
   const signOut = useSignOut();
 
   const isLoading = computed(
-    () => signIn.isPending || signOut.isPending || isFetchingCurrentUser.value
+    () => signIn.isPending.value || signOut.isPending.value || isFetchingCurrentUser.value
   );
   const user = computed(() => data.value || null);
   const isAuthenticated = computed(() => !!user.value);
+
+  const checkAuthStatus = async () => {
+    return new Promise((resolve) => {
+      if (!isFetchingCurrentUser.value) {
+        resolve(true);
+        return;
+      }
+
+      const unwatch = watch(isFetchingCurrentUser, (isFetching) => {
+        if (!isFetching) {
+          unwatch();
+          resolve(true);
+        }
+      });
+    });
+  };
 
   return {
     user,
     isLoading,
     isAuthenticated,
     signIn,
-    signOut
+    signOut,
+    checkAuthStatus
   };
 });
