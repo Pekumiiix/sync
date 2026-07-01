@@ -4,8 +4,10 @@ import type {
   IDeleteFolderPayload,
   IEditFolderPayload,
   IFolderBookmarksResponse,
+  IFolderResponse,
   IGetFolderBookmarksPayload,
-  IGetFoldersResponse
+  IGetFoldersResponse,
+  IJoinFolderPayload
 } from '@/types/folder.type';
 import { apiClient } from '@/utils/apiUtils';
 
@@ -15,11 +17,13 @@ class FolderService {
   }
 
   createFolder(payload: ICreateFolderPayload) {
-    return apiClient<IApiResponse>('post', '/folders', payload);
+    return apiClient<IApiResponse<IFolderResponse>>('post', '/folders', payload);
   }
 
   editFolder(payload: IEditFolderPayload) {
-    return apiClient<IApiResponse>('put', `/folders/${payload.folderId}`, payload.name);
+    return apiClient<IApiResponse<IFolderResponse>>('patch', `/folders/${payload.folderId}`, {
+      name: payload.name
+    });
   }
 
   deleteFolder(payload: IDeleteFolderPayload) {
@@ -34,6 +38,14 @@ class FolderService {
       `/folders/${folderId}/bookmarks`,
       param
     );
+  }
+
+  joinFolder(payload: IJoinFolderPayload) {
+    const { folderId, password } = payload;
+
+    return apiClient<IApiResponse>('post', `/folders/${folderId}/join`, {
+      password
+    });
   }
 }
 

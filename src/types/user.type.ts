@@ -1,15 +1,24 @@
-import type { IBrowserConnection } from './app.type';
+export interface UserSettingsResponse {
+  autoMergeDuplicate: boolean;
+  notification: {
+    notifyOnNewMember: boolean;
+    notifyOnNewBookmark: boolean;
+  };
+  sync: {
+    frequency: string;
+  };
+}
 
 export interface IUser {
   id: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  is_email_verified: boolean;
+  isEmailVerified: boolean;
   location: string | null;
-  avatar_url: string | null;
-  created_at: string;
-  updated_at: string;
-  plan: 'free' | 'basic' | 'standard';
-  integrations: IBrowserConnection[];
+  avatarUrl: string | null;
+  plan: string;
+  createdAt: string;
+  updatedAt: string;
+  settings: UserSettingsResponse;
 }

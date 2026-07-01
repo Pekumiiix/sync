@@ -23,10 +23,15 @@ export const QUERY_KEYS = {
       [
         ...QUERY_KEYS.folder.folderBookmarksBase(payload.folderId),
         { params: payload.param }
-      ] as const
+      ] as const,
+    bookmarkBrowsersBase: () => [...QUERY_KEYS.folder.all, 'bookmark-browsers'] as const,
+    getBookmarkBrowsers: (folderId?: string) =>
+      [...QUERY_KEYS.folder.bookmarkBrowsersBase(), { folderId }] as const
   },
   invitation: {
     all: ['invitations'] as const,
+    lists: () => [...QUERY_KEYS.invitation.all, 'list'] as const,
+    getInvitations: () => [...QUERY_KEYS.invitation.lists()] as const,
     detail: (token: string) => [...QUERY_KEYS.invitation.all, 'detail', token] as const
   },
   notification: {
@@ -43,5 +48,9 @@ export const QUERY_KEYS = {
     all: ['search'] as const,
     bookmarks: (params: SearchFolderBookmarksQueryParams) =>
       [...QUERY_KEYS.search.all, 'bookmarks', { ...params }] as const
+  },
+  browserIntegration: {
+    all: ['browser-integrations'] as const,
+    lists: () => [...QUERY_KEYS.browserIntegration.all, 'list'] as const
   }
 } as const;

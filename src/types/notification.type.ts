@@ -1,70 +1,56 @@
-type NotificationType = 'member_joined' | 'member_request' | 'invite_request' | 'entry_added';
+// Core models
+
+type NotificationType =
+  | 'member_joined'
+  | 'member_left'
+  | 'member_removed'
+  | 'new_bookmark'
+  | 'bookmark_updated'
+  | 'bookmark_deleted'
+  | 'folder_updated'
+  | 'folder_deleted';
 
 export type ActionStatus = 'pending' | 'accepted' | 'declined';
 
 interface NotificationActor {
-  id: string;
   name: string;
   avatarUrl: string | null;
 }
 
-interface BaseNotification {
+export interface NotificationFolder {
+  folderName: string;
+  folderId: string;
+}
+
+export interface INotification {
   id: string;
   type: NotificationType;
+  createdAt: string;
+  actor: NotificationActor;
+  folder: NotificationFolder;
+  isRead: boolean;
   title: string;
   message: string;
-  createdAt: string;
-  isRead: boolean;
-  actor: NotificationActor;
 }
 
-// --- Specific Notification Interfaces ---
+// Request payloads for notification-related operations
 
-export interface MemberJoinedNotification extends BaseNotification {
-  type: 'member_joined';
-  metadata: {
-    workspaceId: string;
-  };
+export interface IBaseNotificationPayload {
+  notificationId: string;
 }
 
-export interface MemberRequestNotification extends BaseNotification {
-  type: 'member_request';
-  actionStatus: ActionStatus;
-  metadata: {
-    requestId: string;
-    workspaceId: string;
-  };
+export interface IGetNotificationsParam {
+  page?: number;
+  limit?: number;
 }
 
-export interface InviteRequestNotification extends BaseNotification {
-  type: 'invite_request';
-  actionStatus: ActionStatus;
-  metadata: {
-    inviteId: string;
-    folderId: string;
-  };
-}
-
-export interface EntryAddedNotification extends BaseNotification {
-  type: 'entry_added';
-  metadata: {
-    entryId: string;
-    folderId: string;
-  };
-}
-
-export type INotification =
-  | MemberJoinedNotification
-  | MemberRequestNotification
-  | InviteRequestNotification
-  | EntryAddedNotification;
+// Response objects for notification-related operations
 
 export interface INotificationsResponse {
-  data: INotification[];
+  notifications: INotification[];
   meta: {
     unreadCount: number;
     totalCount: number;
     currentPage: number;
-    hasNextPage: boolean;
   };
 }

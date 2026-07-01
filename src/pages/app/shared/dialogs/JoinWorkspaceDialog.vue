@@ -4,7 +4,7 @@ import { useForm } from 'vee-validate';
 import { BaseAvatar, BaseDialog, BasePasswordInput } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
-import type { IInvitationDetails as Props } from '@/types/invitation.type';
+import type { Invitation as Props } from '@/types/invitation.type';
 import { timeAgo } from '@/utils/dateUtils';
 import { createTypedForm } from '@/utils/formUtils';
 
@@ -44,7 +44,7 @@ const displayBool = defineModel<boolean>({ default: false });
         class="w-full h-63 flex flex-col gap-4 items-center justify-center bg-black-100 rounded-[15px] bg-[url('/images/app/placeholders/bg-placeholder.png')] bg-cover bg-center bg-no-repeat"
       >
         <FolderThumbnail
-          :images="folder.images"
+          :images="folder.recentBookmarkImages"
           :class-names="{
             container: 'size-10 rounded-[7px] bg-white p-1 gap-x-1 gap-y-0.5',
             images: { top: 'size-3.5 rounded-[4px]', bottom: 'w-full h-3.5 rounded-[4px]' }
@@ -57,21 +57,20 @@ const displayBool = defineModel<boolean>({ default: false });
             Invited by
             <div class="flex items-center gap-1 text-white-90">
               <BaseAvatar
-                :fallback="inviter.name"
+                :fallback="inviter.firstName + ' ' + inviter.lastName"
                 :src="inviter.avatarUrl"
                 class="size-3"
               />
 
-              {{ inviter.name }}
+              {{ inviter.firstName }} {{ inviter.lastName }}
             </div>
-            <span class="size-1 rounded-full bg-white-70" /> {{ timeAgo(invitedAt) }}
+            <span class="size-1 rounded-full bg-white-70" /> {{ timeAgo(createdAt) }}
           </div>
         </div>
       </div>
     </div>
 
     <form
-      v-if="folder.isPasswordProtected"
       @submit="onSubmit"
       class="w-full flex flex-col gap-6"
     >

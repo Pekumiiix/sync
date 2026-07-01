@@ -1,14 +1,14 @@
 import type { BrowserProvider } from './app.type';
 import type { FolderId } from './folder.type';
 
-// ==========================================
-// 1. CORE MODELS & ENTITIES
-// ==========================================
+// Core models
 
 export type BookmarkId = string;
 
 export interface BookmarkCreator {
-  name: string;
+  id: string;
+  firstName: string;
+  lastName: string;
   avatarUrl: string | null;
 }
 
@@ -28,11 +28,14 @@ export interface IBookmark {
   faviconUrl: string | null;
   addedBy: BookmarkCreator | null;
   browser: BrowserProvider;
+  updatedAt: string;
 }
 
-// ==========================================
-// 2. REQUEST PAYLOADS (Mutations)
-// ==========================================
+export interface IBrowser {
+  browser: BrowserProvider;
+}
+
+// Request payloads for bookmark related operations
 
 export interface IBaseBookmarkPayload {
   folderId: FolderId;
@@ -61,4 +64,48 @@ export interface IDeleteBookmarkPayload {
 
 export interface TogglePinBookmarkPayload {
   bookmarkId: BookmarkId;
+}
+
+export interface IPreviewBookmarkPayload {
+  url: string;
+}
+
+export interface IBrowserPayload {
+  folder?: FolderId;
+}
+
+// Response objects for bookmark related operations
+
+export interface IBookmarkResponse {
+  bookmark: IBookmark;
+}
+
+export interface IPreviewBookmarkResponse {
+  openGraphhData: {
+    title: string | null;
+    description: string | null;
+    coverImageUrl: string | null;
+    faviconUrl: string | null;
+    websiteName: string | null;
+    domain: string;
+    url: string;
+  };
+}
+
+export interface IAllBookmarkResponse {
+  bookmarks: IBookmark[];
+  pinnedBookmarks: IBookmark[];
+  meta: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+  };
+}
+
+export interface IBookmarkResponse {
+  bookmark: IBookmark;
+}
+
+export interface IBrowserResponse {
+  browsers: IBrowser[];
 }

@@ -1,7 +1,8 @@
 import { computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { useCurrentUser, useSignIn, useSignOut } from '@/hooks/useAuth';
+import { useCurrentUser } from '@/hooks/useAccount';
+import { useSignIn, useSignOut } from '@/hooks/useAuth';
 
 export const useAuthStore = defineStore('auth', () => {
   const { data, isLoading: isFetchingCurrentUser } = useCurrentUser();

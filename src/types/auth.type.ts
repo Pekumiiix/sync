@@ -1,6 +1,9 @@
+import type { IUser } from './user.type';
+
+// Request payloads for authentication-related operations
 export interface ISignUpPayload {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
@@ -8,6 +11,7 @@ export interface ISignUpPayload {
 export interface ISignInPayload {
   email: string;
   password: string;
+  rememberMe?: boolean;
 }
 
 export interface IResetPasswordPayload {
@@ -16,9 +20,19 @@ export interface IResetPasswordPayload {
 
 export interface ICreateNewPasswordPayload {
   token: string;
-  new_password: string;
+  password: string;
 }
 
 export interface IVerifyEmailPayload {
+  token: string;
+}
+
+export interface IResendVerificationEmailPayload {
+  email: string;
+}
+
+// Response objects for authentication-related operations
+export interface IAuthResponse {
+  user: IUser;
   token: string;
 }

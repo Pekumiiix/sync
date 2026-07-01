@@ -19,12 +19,12 @@ const { mutate, isPending } = useSignUp();
 const onSubmit = handleSubmit((values) => {
   const names = values.name.trim().split(' ');
 
-  const first_name = names[0] || '';
-  const last_name = names.slice(1).join(' ') || '';
+  const firstName = names[0] || '';
+  const lastName = names.slice(1).join(' ') || '';
 
   mutate({
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     email: values.email,
     password: values.password
   });

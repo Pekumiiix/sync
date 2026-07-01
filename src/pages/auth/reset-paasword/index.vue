@@ -24,7 +24,7 @@ const refreshToken = route.query.reset_token as string;
 const onSubmit = handleSubmit((values) => {
   mutate({
     token: refreshToken,
-    new_password: values.password
+    password: values.password
   });
 });
 </script>

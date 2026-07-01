@@ -1,33 +1,43 @@
-export type SystemRole = 'admin' | 'member' | 'guest';
+import type { FolderId, IFolderPermission } from './folder.type';
 
-export type FolderAccessLevel = 'owner' | 'editor' | 'viewer';
+export type MemberRole = 'editor' | 'viewer';
+export type MemberAccessLevel = 'member' | 'viewer';
 
-export interface IFolderMember {
-  id: string;
-  name: string;
-  email: string;
-  avatarUrl: string | null;
-  systemRole: SystemRole;
-  accessLevel: FolderAccessLevel;
-  canEditAccess: boolean;
-}
-
-export interface IFolderMembersResponse {
-  folder: {
-    id: string;
-    name: string;
-  };
-  data: IFolderMember[];
-  meta: {
-    totalCount: number;
-  };
-}
+// Request payloads for member-related operations
 
 export interface IChangeMemberAccessLevelPayload {
-  accessLevel: FolderAccessLevel;
+  accessLevel: MemberAccessLevel;
   memberId: string;
+  folderId: string;
 }
 
 export interface IKickMemberPayload {
   memberId: string;
+  folderId: FolderId;
+}
+
+export interface IFolderMembersPayload {
+  folderId: FolderId;
+}
+
+// Response objects for member-related operations
+
+export interface IMemberResponse {
+  member: {
+    id: string;
+    role: MemberRole;
+    accessLevel: MemberAccessLevel;
+    folderId: string;
+    user: {
+      firstName: string;
+      lastName: string;
+      avatarUrl: string | null;
+    };
+  };
+}
+
+export interface IFolderMembersResponse {
+  members: IMemberResponse[];
+  permission: IFolderPermission;
+  meta: { totalMemberCount: number };
 }

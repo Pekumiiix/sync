@@ -2,8 +2,9 @@ import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
-import { bookmarkService } from '@/services/bookmarks.services';
+import { bookmarkService } from '@/services/bookmark.service';
 import type {
+  IBrowserPayload,
   ICreateBookmarkPayload,
   IDeleteBookmarkPayload,
   IEditBookmarkPayload,
@@ -50,7 +51,7 @@ export function useEditBookmark() {
   return useMutation({
     mutationFn: (payload: IEditBookmarkPayload) => bookmarkService.editBookmark(payload),
     onSuccess: (response) => {
-      const updatedBookmark = response.data;
+      const updatedBookmark = response.data.bookmark;
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
@@ -69,7 +70,7 @@ export function usePinBookmark() {
   return useMutation({
     mutationFn: (payload: TogglePinBookmarkPayload) => bookmarkService.pinBookmark(payload),
     onSuccess: (response) => {
-      const bookmark = response.data;
+      const bookmark = response.data.bookmark;
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
@@ -88,7 +89,7 @@ export function useUnpinBookmark() {
   return useMutation({
     mutationFn: (payload: TogglePinBookmarkPayload) => bookmarkService.unpinBookmark(payload),
     onSuccess: (response) => {
-      const bookmark = response.data;
+      const bookmark = response.data.bookmark;
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
@@ -125,5 +126,13 @@ export function useDeleteBookmark() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarks() });
     }
+  });
+}
+
+export function useGetBookmarkBrowsers(payload: IBrowserPayload) {
+  return useQuery({
+    queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(payload.folder),
+    queryFn: () => bookmarkService.getBookmarkBrowsers(payload),
+    staleTime: 1000 * 60 * 5
   });
 }

@@ -6,7 +6,8 @@ import type {
   ICreateFolderPayload,
   IDeleteFolderPayload,
   IEditFolderPayload,
-  IGetFolderBookmarksPayload
+  IGetFolderBookmarksPayload,
+  IJoinFolderPayload
 } from '@/types/folder.type';
 
 /**
@@ -19,17 +20,6 @@ export function useGetFolders() {
     staleTime: 1000 * 60 * 5 // 5 minutes cache fresh time
   });
 }
-
-/**
- * Fetches an aggregated global view of all bookmarks across all folders.
- */
-// export function useGetAllBookmarks(params: GetFolderBookmarksQueryParams) {
-//   return useQuery({
-//     queryKey: QUERY_KEYS.folder.getAllBookmarks(params),
-//     queryFn: () => folderService.getAllBookmarks(params),
-//     staleTime: 1000 * 60 * 5
-//   });
-// }
 
 /**
  * Fetches bookmarks restricted to a single specific folder.
@@ -94,6 +84,22 @@ export function useDeleteFolder() {
 
       queryClient.invalidateQueries({
         queryKey: [...QUERY_KEYS.folder.bookmarks(), 'all']
+      });
+    }
+  });
+}
+
+/**
+ * Joins a folder
+ */
+export function useJoinFolder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IJoinFolderPayload) => folderService.joinFolder(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.getFolders()
       });
     }
   });

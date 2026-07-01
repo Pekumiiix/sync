@@ -8,6 +8,13 @@ export interface IBrowserConnection {
 
 export type DisplayType = 'list' | 'grid';
 
-export type SortOrder = 'a-z' | 'z-a' | 'newest' | 'oldest';
-
-export type BrowserProvider = 'chrome' | 'firefox' | 'edge' | 'opera' | 'arc' | 'brave';
+export type BrowserProvider =
+  | 'chrome'
+  | 'firefox'
+  | 'edge'
+  | 'opera'
+  | 'arc'
+  | 'brave'
+  | 'safari'
+  | 'manual'
+  | 'other';

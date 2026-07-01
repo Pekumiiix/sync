@@ -1,34 +1,32 @@
-import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { invitationService } from '@/services/invitation.service';
-import type { IBaseInvitationPayload, IUserInvitationPayload } from '@/types/invitation.type';
+import type { IBaseInvitationPayload, ICreateInvitationPayload } from '@/types/invitation.type';
 
 /**
  * Hook to retrieve invitation details (used on the "You have been invited" landing page).
  */
-export function useGetInvitationDetails(payload: MaybeRefOrGetter<IBaseInvitationPayload>) {
-  return useQuery(
-    computed(() => {
-      const unwrappedPayload = toValue(payload);
-
-      return {
-        queryKey: QUERY_KEYS.invitation.detail(unwrappedPayload.token),
-        queryFn: () => invitationService.getInvitationDetails(unwrappedPayload),
-        enabled: !!unwrappedPayload.token,
-        staleTime: 1000 * 60 * 5
-      };
-    })
-  );
+export function useGetInvitations() {
+  return useQuery({
+    queryKey: QUERY_KEYS.invitation.getInvitations(),
+    queryFn: () => invitationService.getInvitations(),
+    staleTime: 1000 * 60 * 5
+  });
 }
 
 /**
- * Hook to send an invitation email to a new user.
+ * Hook to send an invitation to a user.
  */
-export function useInviteUser() {
+export function useCreateInvitation() {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: (payload: IUserInvitationPayload) => invitationService.inviteUser(payload)
+    mutationFn: (payload: ICreateInvitationPayload) =>
+      invitationService.createInvitationLink(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.invitation.lists() });
+    }
   });
 }
 
@@ -46,6 +44,8 @@ export function useAcceptInvitation() {
       queryClient.removeQueries({
         queryKey: QUERY_KEYS.invitation.detail(variables.token)
       });
+
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.invitation.lists() });
     }
   });
 }
@@ -62,6 +62,8 @@ export function useDeclineInvitation() {
       queryClient.removeQueries({
         queryKey: QUERY_KEYS.invitation.detail(variables.token)
       });
+
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.invitation.lists() });
     }
   });
 }

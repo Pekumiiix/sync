@@ -1,34 +1,31 @@
 import type { IApiResponse } from '@/types/api.type';
 import type {
   IBaseInvitationPayload,
-  IInvitationDetails,
-  IUserInvitationPayload
+  ICreateInvitationPayload,
+  IGetInvitationsResponse,
+  IInvitationResponse
 } from '@/types/invitation.type';
 import { apiClient } from '@/utils/apiUtils';
 
 class InvitationService {
-  inviteUser(payload: IUserInvitationPayload) {
-    const { folderId, ...data } = payload;
+  getInvitations() {
+    return apiClient<IApiResponse<IGetInvitationsResponse>>('get', '/invitations');
+  }
 
-    return apiClient<IApiResponse>('post', `/folders/${folderId}/members`, data);
+  createInvitationLink(payload: ICreateInvitationPayload) {
+    return apiClient<IApiResponse<IInvitationResponse>>('post', '/invitations', payload);
   }
 
   acceptInvitation(payload: IBaseInvitationPayload) {
     const { token } = payload;
 
-    return apiClient<IApiResponse>('post', `/invitations/${token}/accept`);
+    return apiClient<IApiResponse<IInvitationResponse>>('post', `/invitations/${token}/accept`);
   }
 
   declineInvitation(payload: IBaseInvitationPayload) {
     const { token } = payload;
 
-    return apiClient<IApiResponse>('post', `/invitations/${token}/decline`);
-  }
-
-  getInvitationDetails(payload: IBaseInvitationPayload) {
-    const { token } = payload;
-
-    return apiClient<IApiResponse<IInvitationDetails>>('get', `/invitations/${token}`);
+    return apiClient<IApiResponse<IInvitationResponse>>('post', `/invitations/${token}/decline`);
   }
 }
 

@@ -1,15 +1,14 @@
 import type { BrowserProvider } from './app.type';
 import type { IBookmark } from './bookmark.type';
+import type { MemberAccessLevel, MemberRole } from './member.type';
 
-// ==========================================
-// 1. CORE MODELS & ENTITIES
-// ==========================================
+// Core Models
 
 export type FolderId = string;
-
 export interface IFolderMemberPreview {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   avatarUrl: string | null;
 }
 
@@ -18,6 +17,7 @@ export interface IFolder {
   name: string;
   bookmarkCount: number;
   recentBookmarkImages: string[];
+  isProtected: boolean;
   isSystem: boolean;
   createdAt: string | null;
   updatedAt: string;
@@ -32,25 +32,26 @@ export interface IBookmarkData {
   data: IBookmark[];
 }
 
-// ==========================================
-// 2. QUERY PARAMS (URL / GET Variables)
-// ==========================================
+export interface IFolderPermission {
+  role: MemberRole;
+  accessLevel: MemberAccessLevel;
+}
+
+// Query params
 
 export type DateFilter = 'oldest' | 'newest';
 
 export type OrderFilter = 'asc' | 'desc';
 
 export interface GetFolderBookmarksQueryParams {
-  page: number;
+  page?: number;
   limit?: number;
-  browser?: BrowserProvider | 'all';
-  date?: DateFilter;
-  order?: OrderFilter;
+  sortByBrowser?: BrowserProvider;
+  sortByDate?: DateFilter;
+  sortByTitle?: OrderFilter;
 }
 
-// ==========================================
-// 3. REQUEST PAYLOADS (Mutations)
-// ==========================================
+// Request payloads for folder related operations
 
 export interface IGetFolderBookmarksPayload {
   folderId: FolderId;
@@ -69,13 +70,21 @@ export interface IDeleteFolderPayload {
   folderId: FolderId;
 }
 
-// ==========================================
-// 4. API RESPONSES
-// ==========================================
+export interface IJoinFolderPayload {
+  password?: string;
+  folderId: FolderId;
+}
+
+// Response objects for folder related operations
+
+export interface IFolderResponse {
+  folder: IFolder;
+}
 
 export interface IGetFoldersResponse {
   systemFolders: IFolder[];
-  collections: IFolder[];
+  ownedFolders: IFolder[];
+  sharedFolders: IFolder[];
 }
 
 export interface IFolderBookmarksResponse {
@@ -83,14 +92,15 @@ export interface IFolderBookmarksResponse {
     id: FolderId;
     name: string;
     isSystem: boolean;
-    recentMembers: IFolderMemberPreview[];
-    totalMemberCount: number;
+    memberCount: number;
+    bookmarkCount: number;
   };
-  data: IBookmarkData;
+  permission: IFolderPermission;
+  previewMembers: IFolderMemberPreview[];
+  pinnedBookmarks: IBookmark[];
+  bookmarks: IBookmark[];
   meta: {
-    totalCount: number;
     currentPage: number;
     totalPages: number;
-    hasNextPage: boolean;
   };
 }

@@ -23,7 +23,8 @@ const { mutate, isPending } = signIn;
 const onSubmit = handleSubmit((values) => {
   mutate({
     email: values.email,
-    password: values.password
+    password: values.password,
+    rememberMe: values.rememberMe
   });
 });
 </script>
