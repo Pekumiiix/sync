@@ -2,7 +2,7 @@ import type { BrowserProvider } from './app.type';
 
 // Core models
 
-interface Integration {
+export interface Integration {
   id: string;
   browser: BrowserProvider;
   lastSyncedAt: string;

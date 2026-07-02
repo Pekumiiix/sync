@@ -18,7 +18,8 @@ import VerifyEmailPage from '@/pages/auth/verify-email/index.vue';
 // -- Marketing Pages --------
 import HomePage from '@/pages/marketing/home/index.vue';
 import PricingPage from '@/pages/marketing/pricing/index.vue';
-// import { useAuthStore } from '@/stores/auth.store';
+// -- Stores --------
+import { useAuthStore } from '@/stores/auth.store';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -109,34 +110,34 @@ const router = createRouter({
   ]
 });
 
-// router.beforeEach(async (to, from, next) => {
-//   const authStore = useAuthStore();
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
 
-//   if (to.query.invite_token) {
-//     localStorage.setItem('pending_invite', to.query.invite_token as string);
+  if (to.query.invite_token) {
+    localStorage.setItem('pending_invite', to.query.invite_token as string);
 
-//     const query = { ...to.query };
-//     delete query.invite_token;
+    const query = { ...to.query };
+    delete query.invite_token;
 
-//     return next({ ...to, query });
-//   }
+    return next({ ...to, query });
+  }
 
-//   if (authStore.isLoading) {
-//     await authStore.checkAuthStatus();
-//   }
+  if (authStore.isLoading) {
+    await authStore.checkAuthStatus();
+  }
 
-//   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-//     return next({
-//       name: 'Sign In',
-//       query: { redirect: to.fullPath }
-//     });
-//   }
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return next({
+      name: 'Sign In',
+      query: { redirect: to.fullPath }
+    });
+  }
 
-//   if (to.meta.requiresGuest && authStore.isAuthenticated) {
-//     return next({ name: 'All Bookmarks' });
-//   }
+  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    return next({ name: 'All Bookmarks' });
+  }
 
-//   next();
-// });
+  next();
+});
 
 export default router;

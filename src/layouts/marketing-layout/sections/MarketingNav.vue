@@ -10,6 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useAuthStore } from '@/stores/auth.store';
+
+const { isAuthenticated } = useAuthStore();
 </script>
 
 <template>
@@ -44,9 +47,12 @@ import {
       <div class="h-10 w-0.5 shrink-0 bg-[#0000000F]" />
 
       <Button
+        as-child
         class="hidden md:flex h-11.75 py-4 px-6 rounded-[30px] text-xs font-semibold leading-[100%] font-instrument-sans"
       >
-        Get Started
+        <router-link :to="isAuthenticated ? '/app/all-bookmarks' : '/auth/sign-in'">
+          {{ isAuthenticated ? 'Dashboard' : 'Get Started' }}
+        </router-link>
       </Button>
 
       <DropdownMenu>
@@ -66,9 +72,12 @@ import {
         >
           <DropdownMenuGroup className="flex flex-col gap-3">
             <DropdownMenuItem
+              as-child
               className="w-full h-12.5 flex items-center justify-center rounded-full py-3 px-4 bg-primary-100 text-sm font-medium leading-[100%] text-white cursor-pointer"
             >
-              Get Started
+              <router-link :to="isAuthenticated ? '/app/all-bookmarks' : '/auth/sign-in'">
+                {{ isAuthenticated ? 'Dashboard' : 'Get Started' }}
+              </router-link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

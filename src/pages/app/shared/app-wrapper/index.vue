@@ -5,10 +5,9 @@ import { useRouter } from 'vue-router';
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import env from '@/config/env';
-import { mockPendingInvitation } from '@/mock-data/invitation';
-import { mockNotificationsResponse } from '@/mock-data/notifications';
+import { useGetAllNotifications } from '@/hooks/useNotification';
 
-import { JoinWorkSpaceDialog } from '../dialogs';
+// import { JoinWorkSpaceDialog } from '../dialogs';
 import { NotificationPanel } from './sections';
 
 interface Props {
@@ -16,6 +15,8 @@ interface Props {
 }
 
 defineProps<Props>();
+
+const { data, isLoading } = useGetAllNotifications({ page: 1, limit: 10 });
 
 const router = useRouter();
 
@@ -48,10 +49,14 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
 
       <div class="flex items-center justify-between gap-3">
         <div class="size-fit relative">
-          <NotificationPanel :notifications="mockNotificationsResponse.data" />
+          <NotificationPanel
+            :is-loading="isLoading"
+            :notifications="data?.data.notifications || []"
+            :unread-count="data?.data.meta.unreadCount || 0"
+          />
 
           <span
-            v-if="mockNotificationsResponse.meta.unreadCount > 0"
+            v-if="(data?.data.meta.unreadCount || 0) > 0"
             class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0"
           />
         </div>
@@ -78,11 +83,11 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
 
   <slot />
 
-  <JoinWorkSpaceDialog
+  <!-- <JoinWorkSpaceDialog
     v-model="joinWorkspaceDialogDisplayBool"
     :token="mockPendingInvitation.token"
     :folder="mockPendingInvitation.folder"
     :inviter="mockPendingInvitation.inviter"
     :invited-at="mockPendingInvitation.invitedAt"
-  />
+  /> -->
 </template>

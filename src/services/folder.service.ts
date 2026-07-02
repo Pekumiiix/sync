@@ -13,7 +13,7 @@ import { apiClient } from '@/utils/apiUtils';
 
 class FolderService {
   getFolders() {
-    return apiClient<IApiResponse<IGetFoldersResponse[]>>('get', '/folders');
+    return apiClient<IApiResponse<IGetFoldersResponse>>('get', '/folders');
   }
 
   createFolder(payload: ICreateFolderPayload) {

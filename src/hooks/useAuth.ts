@@ -21,7 +21,7 @@ export function useSignUp() {
     onSuccess: (response) => {
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
 
-      localStorage.setItem('pending_invite', response.data.token);
+      localStorage.setItem('auth_token', response.data.token);
 
       router.push('/auth/verify-email');
     },
@@ -40,7 +40,7 @@ export function useSignIn() {
     onSuccess: (response) => {
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
 
-      localStorage.setItem('pending_invite', response.data.token);
+      localStorage.setItem('auth_token', response.data.token);
 
       const redirectPath = router.currentRoute.value.query.redirect as string;
 

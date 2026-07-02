@@ -7,8 +7,8 @@ interface Props {
   description: string;
   isDirty?: boolean;
   isLoading?: boolean;
-  onCancel?: () => void;
-  onSave?: () => void;
+  onCancel: () => void;
+  onSave: () => void;
 }
 
 defineProps<Props>();

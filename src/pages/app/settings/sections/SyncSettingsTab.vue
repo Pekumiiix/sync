@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 
-import { getBrowserImage } from '@/components/constants/browsers';
 import { syncFrequency } from '@/components/constants/sync-frequency';
-import { LoadingButton } from '@/components/shared';
+import { useGetBrowserIntegrations } from '@/hooks/useBrowserIntegration';
 import { useSettingsStore } from '@/stores/settings.store';
-import { timeAgo } from '@/utils/dateUtils';
 
-import { FrequencyOptionButton } from '../components';
+import { BrowserIntegegrations, FrequencyOptionButton } from '../components';
 import { type SyncSettingsData, syncSettingsSchema } from '../schemas/sync-settings.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
 const { settings } = useSettingsStore();
+
+const { data, isLoading } = useGetBrowserIntegrations();
 
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<SyncSettingsData>({
@@ -39,38 +39,10 @@ const isUserPro = settings.subscription.isPro || false;
       class="pt-0! flex-col border-t-0!"
     >
       <div class="w-full flex flex-col gap-5">
-        <div
-          v-for="browser in settings?.connections || []"
-          :key="browser.provider"
-          class="w-full h-14.5 flex items-center justify-between px-4 py-3.25 rounded-full bg-[#F9F9FB]"
-        >
-          <div class="flex items-center gap-1.75">
-            <img
-              :src="getBrowserImage(browser.provider)"
-              :alt="browser.name"
-              class="size-8 rounded-full"
-            />
-
-            <div class="flex flex-col gap-1">
-              <p class="text-sm font-medium text-black-90 leading-4">{{ browser.name }}</p>
-              <p
-                v-if="browser.connectedAt"
-                class="text-xs leading-[100%] text-black-70"
-              >
-                Connected {{ timeAgo(browser.connectedAt) }}
-              </p>
-            </div>
-          </div>
-
-          <LoadingButton
-            :isLoading="false"
-            variant="outline"
-            class="w-18.25 h-6.75 text-[9px] text-black-90 font-medium leading-9.25 py-1.75 px-3 border-black-30 rounded-full bg-transparent"
-            loader-class="size-4"
-          >
-            <span>{{ browser.isConnected ? 'Disconnect' : 'Connect' }}</span>
-          </LoadingButton>
-        </div>
+        <BrowserIntegegrations
+          :integrations="data?.data.integrations"
+          :isLoading="isLoading"
+        />
       </div>
     </SettingsSubSectionWrapper>
 

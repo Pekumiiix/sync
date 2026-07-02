@@ -6,7 +6,10 @@ import { useForm } from 'vee-validate';
 
 import { BaseAvatar } from '@/components/re-useable';
 import { Input } from '@/components/ui/input';
+import { useUpdateProfile } from '@/hooks/useAccount';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/auth.store';
+import { getChangedValues } from '@/utils/formUtils';
 
 import { SettingsInputField } from '../components';
 import {
@@ -23,31 +26,41 @@ const isUploading = ref(false);
 
 const selectedFile = ref<File | null>(null);
 
+const { user } = useAuthStore();
+const { mutate, isPending } = useUpdateProfile();
+
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<AccountInformationData>({
     validationSchema: accountInformationSchema,
     initialValues: {
-      avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'john.doe@example.com',
-      location: 'New York, USA'
+      avatarUrl: user?.avatarUrl || undefined,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      location: user?.location || undefined
     }
   });
 
-const processFile = (file: File) => {
-  selectedFile.value = file;
+const onSubmit = handleSubmit((values) => {
+  const initial = meta.value.initialValues as Partial<AccountInformationData>;
 
-  console.log('File ready for upload:', file.name);
-};
+  const payload = getChangedValues(values, initial);
+
+  if (!payload) return;
+
+  mutate(payload.changedValues);
+});
 
 function onDrop(files: File[] | null) {
   if (files && files.length > 0) {
     const file = files[0];
 
     if (file) {
-      processFile(file);
-      setFieldValue('avatar_url', URL.createObjectURL(file));
+      selectedFile.value = file;
+
+      console.log('File ready for upload:', file.name);
+
+      setFieldValue('avatarUrl', URL.createObjectURL(file));
     }
   }
 }
@@ -74,8 +87,8 @@ function onInputChange(event: Event) {
     const file = target.files[0];
 
     if (file) {
-      processFile(file);
-      setFieldValue('avatar_url', URL.createObjectURL(file));
+      selectedFile.value = file;
+      setFieldValue('avatarUrl', URL.createObjectURL(file));
     }
   }
 }
@@ -86,9 +99,9 @@ function onInputChange(event: Event) {
     title="Account information"
     description="Manage your personal details, login credentials, and security settings"
     :isDirty="meta.dirty"
-    :is-loading="isSubmitting"
-    @cancel="() => resetForm()"
-    @save="() => handleSubmit(() => {})()"
+    :is-loading="isSubmitting || isPending"
+    :on-cancel="() => resetForm()"
+    :on-save="() => onSubmit()"
   >
     <SettingsSubSectionWrapper
       title="Profile picture"
@@ -110,8 +123,8 @@ function onInputChange(event: Event) {
         "
       >
         <BaseAvatar
-          :src="values.avatar_url"
-          fallback="User Avatar"
+          :src="values.avatarUrl"
+          :fallback="user?.firstName || user?.lastName || 'User'"
           :class="
             cn('size-35', {
               'cursor-not-allowed opacity-50': disabled || isUploading
@@ -151,13 +164,13 @@ function onInputChange(event: Event) {
     >
       <div class="max-w-139 w-full grid grid-cols-2 gap-6">
         <SettingsInputField
-          name="first_name"
+          name="firstName"
           label="First name"
           placeholder="Enter your first name"
         />
 
         <SettingsInputField
-          name="last_name"
+          name="lastName"
           label="Last name"
           placeholder="Enter your last name"
         />

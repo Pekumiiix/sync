@@ -3,9 +3,9 @@ import { onMounted, ref } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { mockPendingInvitation } from '@/mock-data/invitation';
-import { JoinWorkSpaceDialog } from '@/pages/app/shared/dialogs';
 
+// import { mockPendingInvitation } from '@/mock-data/invitation';
+// import { JoinWorkSpaceDialog } from '@/pages/app/shared/dialogs';
 import { AppSidebar } from './sections';
 
 // const inviteToken = useLocalStorage<string | null>('invite_token', null);
@@ -27,14 +27,11 @@ onMounted(() => {
   <SidebarProvider class="w-full min-h-screen flex justify-center">
     <AppSidebar />
 
-    <JoinWorkSpaceDialog
+    <!-- <JoinWorkSpaceDialog
       v-if="pendingInviteToken"
       v-model="isInviteDialogOpen"
-      :token="mockPendingInvitation.token"
-      :folder="mockPendingInvitation.folder"
-      :inviter="mockPendingInvitation.inviter"
-      :invited-at="mockPendingInvitation.invitedAt"
-    />
+      :invitation="mockPendingInvitation"
+    /> -->
 
     <main class="flex-1 max-w-384 min-w-0 min-h-screen flex flex-col">
       <RouterView />

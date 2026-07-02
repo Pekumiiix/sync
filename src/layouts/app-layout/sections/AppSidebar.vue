@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Plus } from 'lucide-vue-next';
 
 import {
@@ -12,24 +12,38 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
-import { mockFoldersResponse } from '@/mock-data/folders';
+import { useGetFolders } from '@/hooks/useFolder';
 import { CreateFolderDialog } from '@/pages/app/shared/dialogs';
+import { useAuthStore } from '@/stores/auth.store';
 
 import { AppSidebarGroup } from '../components';
 import { AppSidebarFooter, UserInfo } from '.';
 
-function getSystemFolderHref(folderId: string) {
-  switch (folderId) {
-    case 'system_all':
-      return 'all-bookmarks';
-    case 'system_unsorted':
-      return 'unsorted';
-    default:
-      return '#';
-  }
-}
+const { data: folders } = useGetFolders();
+
+const generalSidebarItems = computed(() => {
+  if (!folders.value?.data) return [];
+
+  const allBookmarksItem = {
+    href: '/app/all-bookmarks',
+    name: 'All Bookmarks',
+    count: 0,
+    images: []
+  };
+
+  const systemItems = (folders.value.data.systemFolders || []).map((folder) => ({
+    href: `/app/${folder.id}`,
+    name: folder.name,
+    count: folder.bookmarkCount,
+    images: folder.recentBookmarkImages
+  }));
+
+  return [allBookmarksItem, ...systemItems];
+});
 
 const displayCreateFolderDialog = ref(false);
+
+const { user } = useAuthStore();
 </script>
 
 <template>
@@ -50,10 +64,17 @@ const displayCreateFolderDialog = ref(false);
       <UserInfo />
 
       <AppSidebarGroup
+        v-if="folders?.data.systemFolders"
         label="General"
+        :items="generalSidebarItems"
+      />
+
+      <AppSidebarGroup
+        v-if="folders?.data.ownedFolders"
+        label="Owned folders"
         :items="
-          mockFoldersResponse.systemFolders.map((folder) => ({
-            href: getSystemFolderHref(folder.id),
+          folders.data.ownedFolders.map((folder) => ({
+            href: `/app/${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
             images: folder.recentBookmarkImages
@@ -62,10 +83,11 @@ const displayCreateFolderDialog = ref(false);
       />
 
       <AppSidebarGroup
-        label="Collections"
+        v-if="folders?.data.sharedFolders"
+        label="Shared folders"
         :items="
-          mockFoldersResponse.collections.map((folder) => ({
-            href: folder.id,
+          folders.data.sharedFolders.map((folder) => ({
+            href: `/app/${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
             images: folder.recentBookmarkImages
@@ -93,7 +115,7 @@ const displayCreateFolderDialog = ref(false);
       </SidebarGroup>
     </SidebarContent>
 
-    <AppSidebarFooter />
+    <AppSidebarFooter v-if="user?.plan === 'free'" />
   </Sidebar>
 
   <CreateFolderDialog v-model="displayCreateFolderDialog" />

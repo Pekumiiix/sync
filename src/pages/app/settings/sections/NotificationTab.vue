@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
 
-import { useSettingsStore } from '@/stores/settings.store';
+import { useAuthStore } from '@/stores/auth.store';
 
 import { SettingsSwitch } from '../components';
 import { type NotificationData, notificationSchema } from '../schemas/notification.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { settings } = useSettingsStore();
+const { user } = useAuthStore();
 
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<NotificationData>({
   validationSchema: notificationSchema,
   initialValues: {
-    notify_on_new_bookmark: settings.preferences.notifications.newBookmark || false,
-    notify_on_new_member: settings.preferences.notifications.newMember || false
+    notify_on_new_bookmark: user?.settings.notification.notifyOnNewBookmark || false,
+    notify_on_new_member: user?.settings.notification.notifyOnNewMember || false
   }
+});
+
+const onSubmit = handleSubmit((values) => {
+  console.log('Form submitted with values:', values);
 });
 
 const { value: notifyOnNewBookmark } = useField<boolean>('notify_on_new_bookmark');
@@ -28,7 +32,7 @@ const { value: notifyOnNewMember } = useField<boolean>('notify_on_new_member');
     :isDirty="meta.dirty"
     :is-loading="isSubmitting"
     @cancel="resetForm()"
-    @save="handleSubmit(() => {})()"
+    @save="onSubmit"
   >
     <SettingsSubSectionWrapper
       title="New member notifications"

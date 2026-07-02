@@ -7,6 +7,7 @@ export interface IUpdateProfilePayload {
   lastName?: string;
   location?: string;
   email?: string;
+  avatarUrl?: string;
 }
 
 // Response objects for account related operations

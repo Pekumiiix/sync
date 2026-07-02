@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = computed(
     () => signIn.isPending.value || signOut.isPending.value || isFetchingCurrentUser.value
   );
-  const user = computed(() => data.value || null);
+  const user = computed(() => data.value?.data.user || null);
   const isAuthenticated = computed(() => !!user.value);
 
   const checkAuthStatus = async () => {

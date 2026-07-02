@@ -2,16 +2,17 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
 export const accountInformationZodSchema = z.object({
-  avatar_url: z
+  avatarUrl: z
     .string({ required_error: 'Avatar is required' })
     .url({ message: 'Please enter a valid URL for the avatar' })
-    .max(2048, { message: 'URL exceeds maximum length of 2048 characters' }),
-  first_name: z
+    .max(2048, { message: 'URL exceeds maximum length of 2048 characters' })
+    .optional(),
+  firstName: z
     .string({ required_error: 'First name is required' })
     .trim()
     .min(1, { message: 'First name cannot be empty' })
     .max(50, { message: 'First name cannot exceed 50 characters' }),
-  last_name: z
+  lastName: z
     .string({ required_error: 'Last name is required' })
     .trim()
     .min(1, { message: 'Last name cannot be empty' })
@@ -28,6 +29,7 @@ export const accountInformationZodSchema = z.object({
     .trim()
     .min(2, { message: 'Location must be at least 2 characters' })
     .max(100, { message: 'Location cannot exceed 100 characters' })
+    .optional()
 });
 
 export type AccountInformationData = z.infer<typeof accountInformationZodSchema>;

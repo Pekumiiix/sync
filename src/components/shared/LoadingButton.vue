@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 
 interface Props {
   isLoading: boolean;
-  action?: () => void;
   disabled?: boolean;
   loaderClass?: string;
   strokeWidth?: number;
@@ -29,7 +28,6 @@ const isButtonDisabled = computed(() => props.isLoading || props.disabled);
     v-bind="$attrs"
     :disabled="isButtonDisabled"
     :variant="props.variant"
-    @click="props.action"
   >
     <LoaderCircle
       v-if="isLoading"
