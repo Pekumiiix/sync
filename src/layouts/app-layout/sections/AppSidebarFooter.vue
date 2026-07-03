@@ -10,7 +10,9 @@ import { SidebarFooter } from '@/components/ui/sidebar';
     />
 
     <div class="flex flex-col gap-1">
-      <p class="text-base font-medium leading-5.5 text-white -tracking-[1%]">Step Into Pro Mode</p>
+      <p class="text-base font-medium leading-5.5 text-white -tracking-[1%]">
+        Step Into Basic Plan
+      </p>
       <p class="text-sm text-white-90">
         Level up with tools and benefits designed to help you do more, faster.
       </p>
@@ -24,9 +26,9 @@ import { SidebarFooter } from '@/components/ui/sidebar';
         alt="Sparkle"
         class="size-10"
       />
-      <span class="text-xs font-inter-tight font-semibold text-primary-100 leading-[100%]"
-        >Upgrade to pro</span
-      >
+      <span class="text-xs font-inter-tight font-semibold text-primary-100 leading-[100%]">
+        Upgrade to basic
+      </span>
     </Button>
   </SidebarFooter>
 </template>

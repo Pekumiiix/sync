@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { accountService } from '@/services/account.service';
-import type { IUpdateProfilePayload } from '@/types/account.type';
+import type { IUpdateProfilePayload, IUpdateSettingsPayload } from '@/types/account.type';
 import { toaster } from '@/utils/toastUtils';
 
 export function useCurrentUser() {
@@ -22,6 +22,19 @@ export function useUpdateProfile() {
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
 
       toaster.success('Profile updated successfully');
+    }
+  });
+}
+
+export function useUpdateSettings() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IUpdateSettingsPayload) => accountService.updateSettings(payload),
+    onSuccess: (response) => {
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
+
+      toaster.success(response.message);
     }
   });
 }

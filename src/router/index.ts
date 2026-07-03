@@ -110,7 +110,7 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore();
 
   if (to.query.invite_token) {
@@ -119,7 +119,7 @@ router.beforeEach(async (to, from, next) => {
     const query = { ...to.query };
     delete query.invite_token;
 
-    return next({ ...to, query });
+    return { ...to, query };
   }
 
   if (authStore.isLoading) {
@@ -127,17 +127,15 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return next({
+    return {
       name: 'Sign In',
       query: { redirect: to.fullPath }
-    });
+    };
   }
 
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    return next({ name: 'All Bookmarks' });
+    return { name: 'All Bookmarks' };
   }
-
-  next();
 });
 
 export default router;

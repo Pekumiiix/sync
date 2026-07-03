@@ -9,9 +9,11 @@ import type {
   IDeleteBookmarkPayload,
   IEditBookmarkPayload,
   IMoveBookmarkPayload,
+  IPreviewBookmarkPayload,
   TogglePinBookmarkPayload
 } from '@/types/bookmark.type';
 import type { GetFolderBookmarksQueryParams } from '@/types/folder.type';
+import { toaster } from '@/utils/toastUtils';
 
 export function useGetAllBookmarks(params: MaybeRefOrGetter<GetFolderBookmarksQueryParams>) {
   return useQuery(
@@ -31,7 +33,7 @@ export function useCreateBookmark() {
 
   return useMutation({
     mutationFn: (payload: ICreateBookmarkPayload) => bookmarkService.createBookmark(payload),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
@@ -41,6 +43,8 @@ export function useCreateBookmark() {
           queryKey: QUERY_KEYS.folder.folderBookmarksBase(variables.folderId)
         });
       }
+
+      toaster.success(response.message);
     }
   });
 }
@@ -55,9 +59,9 @@ export function useEditBookmark() {
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
-      if (updatedBookmark?.folderId) {
+      if (updatedBookmark?.folder.id) {
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(updatedBookmark.folderId)
+          queryKey: QUERY_KEYS.folder.folderBookmarksBase(updatedBookmark.folder.id)
         });
       }
     }
@@ -74,9 +78,9 @@ export function usePinBookmark() {
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
-      if (bookmark?.folderId) {
+      if (bookmark?.folder.id) {
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(bookmark.folderId)
+          queryKey: QUERY_KEYS.folder.folderBookmarksBase(bookmark.folder.id)
         });
       }
     }
@@ -93,9 +97,9 @@ export function useUnpinBookmark() {
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
-      if (bookmark?.folderId) {
+      if (bookmark?.folder.id) {
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(bookmark.folderId)
+          queryKey: QUERY_KEYS.folder.folderBookmarksBase(bookmark.folder.id)
         });
       }
     }
@@ -129,10 +133,16 @@ export function useDeleteBookmark() {
   });
 }
 
-export function useGetBookmarkBrowsers(payload: IBrowserPayload) {
+export function useGetBookmarkBrowsers(payload?: IBrowserPayload) {
   return useQuery({
-    queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(payload.folder),
+    queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(payload?.folder),
     queryFn: () => bookmarkService.getBookmarkBrowsers(payload),
     staleTime: 1000 * 60 * 5
+  });
+}
+
+export function useGetBookmarkPreview() {
+  return useMutation({
+    mutationFn: (payload: IPreviewBookmarkPayload) => bookmarkService.previewBookmark(payload)
   });
 }

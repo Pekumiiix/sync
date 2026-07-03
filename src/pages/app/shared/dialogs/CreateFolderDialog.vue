@@ -5,6 +5,7 @@ import { BaseDialog } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useCreateFolder } from '@/hooks/useFolder';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type CreateFolderData, createFolderSchema } from '../schemas/create-folder.schema';
@@ -13,8 +14,14 @@ const { handleSubmit, meta, isSubmitting } = useForm<CreateFolderData>({
   validationSchema: createFolderSchema
 });
 
+const { mutate, isPending } = useCreateFolder();
+
 const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+  mutate(values, {
+    onSuccess: () => {
+      displayBool.value = false;
+    }
+  });
 });
 
 const TypedFormField = createTypedForm<CreateFolderData>();
@@ -71,8 +78,8 @@ const displayBool = defineModel({ default: false });
 
         <LoadingButton
           class="w-full h-11 rounded-full text-base font-medium leading-5.5"
-          :isLoading="isSubmitting"
-          :disabled="!meta.valid"
+          :isLoading="isSubmitting || isPending"
+          :disabled="!meta.valid || isSubmitting || isPending"
         >
           <span>Continue</span>
         </LoadingButton>

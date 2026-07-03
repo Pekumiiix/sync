@@ -19,6 +19,7 @@ import { BookmarkTabContentWrapper } from '.';
 interface Props {
   bookmarks: IBookmark[];
   selectedPinnedBookmarksLength: number;
+  tabs: { label: string; value: BrowserProvider | 'all' }[];
 }
 
 const props = defineProps<Props>();
@@ -32,37 +33,6 @@ interface ISortOrderOptions {
   value: SortOrder;
   label: string;
 }
-
-const tabs: { label: string; value: BrowserProvider | 'all' }[] = [
-  {
-    label: 'All',
-    value: 'all'
-  },
-  {
-    label: 'Chrome',
-    value: 'chrome'
-  },
-  {
-    label: 'Firefox',
-    value: 'firefox'
-  },
-  {
-    label: 'Edge',
-    value: 'edge'
-  },
-  {
-    label: 'Opera',
-    value: 'opera'
-  },
-  {
-    label: 'Arc',
-    value: 'arc'
-  },
-  {
-    label: 'Brave',
-    value: 'brave'
-  }
-];
 
 const displayTypeOptions: IDisplayTypeOptions[] = [
   { value: 'list', label: 'List' },
@@ -133,7 +103,7 @@ const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBook
           :value="tab.value"
           :aria-disabled="isSelectedPinnedBookmarksGreaterThanZero"
           :disabled="isSelectedPinnedBookmarksGreaterThanZero"
-          class="min-w-20.75 w-fit flex items-center gap-2 py-2 px-3.5 rounded-full text-xs font-medium leading-[100%] text-black-80 font-dm-sans data-[state=active]:font-inter data-[state=active]:text-white data-[state=active]:bg-black-100 hover:bg-primary-10 transition duration-300 cursor-pointer"
+          class="min-w-20.75 w-fit flex items-center gap-2 py-2 px-3.5 rounded-full text-xs font-medium leading-[100%] capitalize text-black-80 font-dm-sans data-[state=active]:font-inter data-[state=active]:text-white data-[state=active]:bg-black-100 hover:bg-primary-10 transition duration-300 cursor-pointer"
         >
           <img
             v-if="getBrowserImage(tab.value)"

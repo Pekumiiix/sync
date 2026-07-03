@@ -33,11 +33,7 @@ class FolderService {
   getFolderBookmarks(payload: IGetFolderBookmarksPayload) {
     const { folderId, param } = payload;
 
-    return apiClient<IApiResponse<IFolderBookmarksResponse[]>>(
-      'get',
-      `/folders/${folderId}/bookmarks`,
-      param
-    );
+    return apiClient<IApiResponse<IFolderBookmarksResponse>>('get', `/folders/${folderId}`, param);
   }
 
   joinFolder(payload: IJoinFolderPayload) {

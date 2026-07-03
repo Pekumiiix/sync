@@ -1,3 +1,5 @@
+import type { TSyncFrequency } from '@/types/settings.type';
+
 export interface UserSettingsResponse {
   autoMergeDuplicate: boolean;
   notification: {
@@ -5,7 +7,7 @@ export interface UserSettingsResponse {
     notifyOnNewBookmark: boolean;
   };
   sync: {
-    frequency: string;
+    frequency: TSyncFrequency;
   };
 }
 

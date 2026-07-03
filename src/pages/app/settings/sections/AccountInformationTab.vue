@@ -7,6 +7,7 @@ import { useForm } from 'vee-validate';
 import { BaseAvatar } from '@/components/re-useable';
 import { Input } from '@/components/ui/input';
 import { useUpdateProfile } from '@/hooks/useAccount';
+import { useUploadMedia } from '@/hooks/useCloudinary';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { getChangedValues } from '@/utils/formUtils';
@@ -21,13 +22,11 @@ import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 const dropZoneRef = ref<HTMLDivElement>();
 const fileInputRef = ref<HTMLInputElement>();
 
-const disabled = ref(false);
-const isUploading = ref(false);
-
 const selectedFile = ref<File | null>(null);
 
 const { user } = useAuthStore();
 const { mutate, isPending } = useUpdateProfile();
+const { mutate: uploadMedia, isPending: isUploading } = useUploadMedia();
 
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<AccountInformationData>({
@@ -48,26 +47,39 @@ const onSubmit = handleSubmit((values) => {
 
   if (!payload) return;
 
-  mutate(payload.changedValues);
+  mutate(payload.changedValues, {
+    onSuccess: () => {
+      resetForm({ values: values });
+    }
+  });
 });
+
+function handleFileUpload(file: File) {
+  selectedFile.value = file;
+
+  setFieldValue('avatarUrl', URL.createObjectURL(file));
+
+  uploadMedia(file, {
+    onSuccess: (response) => {
+      setFieldValue('avatarUrl', response);
+    }
+  });
+}
 
 function onDrop(files: File[] | null) {
   if (files && files.length > 0) {
     const file = files[0];
 
     if (file) {
-      selectedFile.value = file;
-
-      console.log('File ready for upload:', file.name);
-
-      setFieldValue('avatarUrl', URL.createObjectURL(file));
+      handleFileUpload(file);
     }
   }
 }
 
 const { isOverDropZone } = useDropZone(dropZoneRef, {
   onDrop,
-  dataTypes: ['image/jpeg', 'image/png']
+  dataTypes: ['image/jpeg', 'image/png'],
+  multiple: false
 });
 
 function triggerFilePicker() {
@@ -87,8 +99,7 @@ function onInputChange(event: Event) {
     const file = target.files[0];
 
     if (file) {
-      selectedFile.value = file;
-      setFieldValue('avatarUrl', URL.createObjectURL(file));
+      handleFileUpload(file);
     }
   }
 }
@@ -110,7 +121,7 @@ function onInputChange(event: Event) {
     >
       <div
         ref="dropZoneRef"
-        :aria-disabled="disabled || isUploading"
+        :aria-disabled="isUploading"
         @click="triggerFilePicker"
         :class="
           cn(
@@ -127,13 +138,13 @@ function onInputChange(event: Event) {
           :fallback="user?.firstName || user?.lastName || 'User'"
           :class="
             cn('size-35', {
-              'cursor-not-allowed opacity-50': disabled || isUploading
+              'cursor-not-allowed opacity-50': isUploading
             })
           "
         />
 
         <div
-          class="absolute right-0 bottom-0 size-9 rounded-full flex items-center justify-center bg-primary-100 z-10"
+          class="absolute right-0 bottom-0 size-9 rounded-full flex items-center justify-center bg-primary-100 z-10 border-2 border-primary-10"
         >
           <LoaderCircle
             v-if="isUploading"

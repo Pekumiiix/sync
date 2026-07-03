@@ -26,7 +26,7 @@ defineEmits<{
   >
     <div class="flex gap-3">
       <FolderThumbnail
-        :images="folder.recentBookmarkImages"
+        :images="folder.recentBookmarksImages"
         :class-names="{
           container: 'size-9 rounded-[6px] py-1 px-0.5 gap-1',
           images: {

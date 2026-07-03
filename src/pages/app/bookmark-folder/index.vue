@@ -3,7 +3,10 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUrlSearchParams } from '@vueuse/core';
 
+import { useGetBookmarkBrowsers } from '@/hooks/useBookmark';
+import { useGetFolderBookmarks } from '@/hooks/useFolder';
 import { mockFolderBookmarksResponse } from '@/mock-data/bookmark-folder';
+import type { BrowserProvider } from '@/types/app.type';
 import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
@@ -22,6 +25,34 @@ const activeTab = computed({
   }
 });
 
+const queryParams = computed(() => ({
+  page: 1,
+  limit: 10,
+  filter: activeTab.value as BrowserProvider | 'all'
+}));
+
+const { data: folderBookmarksData } = useGetFolderBookmarks({
+  folderId: folderId.value,
+  param: queryParams.value
+});
+const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers();
+
+const folderData = computed(() => folderBookmarksData.value?.data?.folder);
+
+const tabs = computed(() => {
+  const browsers = bookmarkBrowsersData.value?.data.browsers || [];
+  return [
+    {
+      label: 'All',
+      value: 'all' as const
+    },
+    ...browsers.map((browser) => ({
+      label: browser.browser,
+      value: browser.browser
+    }))
+  ];
+});
+
 const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 </script>
 
@@ -30,17 +61,23 @@ const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinned
     <ContentWrapper
       showTabActions
       :folderId="folderId"
-      :folder="mockFolderBookmarksResponse.folder"
+      :folder="{
+        id: folderData?.id || '',
+        previewMembers: folderBookmarksData?.data.previewMembers || [],
+        memberCount: folderData?.memberCount || 0
+      }"
     >
       <BookmarkTabWrapper
-        :bookmarks="mockFolderBookmarksResponse.data.data"
         v-model:activeTab="activeTab"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
+        :tabs="tabs"
+        :bookmarks="folderBookmarksData?.data.bookmarks || []"
         :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
+        >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
-          :pinnedBookmarks="mockFolderBookmarksResponse.data.pinned"
+          :pinnedBookmarks="folderBookmarksData?.data.pinnedBookmarks || []"
           :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
 
+import { useUpdateSettings } from '@/hooks/useAccount';
 import { useAuthStore } from '@/stores/auth.store';
+import { getChangedValues } from '@/utils/formUtils';
 
 import { SettingsSwitch } from '../components';
 import { type NotificationData, notificationSchema } from '../schemas/notification.schema';
@@ -9,20 +11,28 @@ import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
 const { user } = useAuthStore();
 
+const { mutate, isPending } = useUpdateSettings();
+
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<NotificationData>({
   validationSchema: notificationSchema,
   initialValues: {
-    notify_on_new_bookmark: user?.settings.notification.notifyOnNewBookmark || false,
-    notify_on_new_member: user?.settings.notification.notifyOnNewMember || false
+    notifyOnNewBookmark: user?.settings.notification.notifyOnNewBookmark,
+    notifyOnNewMember: user?.settings.notification.notifyOnNewMember
   }
 });
 
 const onSubmit = handleSubmit((values) => {
-  console.log('Form submitted with values:', values);
+  const initial = meta.value.initialValues as Partial<NotificationData>;
+
+  const payload = getChangedValues(values, initial);
+
+  if (!payload) return;
+
+  mutate(payload.changedValues);
 });
 
-const { value: notifyOnNewBookmark } = useField<boolean>('notify_on_new_bookmark');
-const { value: notifyOnNewMember } = useField<boolean>('notify_on_new_member');
+const { value: notifyOnNewBookmark } = useField<boolean>('notifyOnNewBookmark');
+const { value: notifyOnNewMember } = useField<boolean>('notifyOnNewMember');
 </script>
 
 <template>
@@ -30,9 +40,9 @@ const { value: notifyOnNewMember } = useField<boolean>('notify_on_new_member');
     title="Notifications"
     description="Manage your notification preferences"
     :isDirty="meta.dirty"
-    :is-loading="isSubmitting"
+    :is-loading="isSubmitting || isPending"
     @cancel="resetForm()"
-    @save="onSubmit"
+    @save="() => onSubmit()"
   >
     <SettingsSubSectionWrapper
       title="New member notifications"

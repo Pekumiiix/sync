@@ -9,6 +9,7 @@ import type {
   IGetFolderBookmarksPayload,
   IJoinFolderPayload
 } from '@/types/folder.type';
+import { toaster } from '@/utils/toastUtils';
 
 /**
  * Fetches all folders belonging to the authenticated user.
@@ -41,10 +42,12 @@ export function useCreateFolder() {
 
   return useMutation({
     mutationFn: (payload: ICreateFolderPayload) => folderService.createFolder(payload),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
       });
+
+      toaster.success(response.message);
     }
   });
 }

@@ -25,17 +25,17 @@ const generalSidebarItems = computed(() => {
   if (!folders.value?.data) return [];
 
   const allBookmarksItem = {
-    href: '/app/all-bookmarks',
+    href: 'all-bookmarks',
     name: 'All Bookmarks',
     count: 0,
     images: []
   };
 
   const systemItems = (folders.value.data.systemFolders || []).map((folder) => ({
-    href: `/app/${folder.id}`,
+    href: `${folder.id}`,
     name: folder.name,
     count: folder.bookmarkCount,
-    images: folder.recentBookmarkImages
+    images: folder.recentBookmarksImages
   }));
 
   return [allBookmarksItem, ...systemItems];
@@ -74,10 +74,10 @@ const { user } = useAuthStore();
         label="Owned folders"
         :items="
           folders.data.ownedFolders.map((folder) => ({
-            href: `/app/${folder.id}`,
+            href: `${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
-            images: folder.recentBookmarkImages
+            images: folder.recentBookmarksImages
           }))
         "
       />
@@ -87,10 +87,10 @@ const { user } = useAuthStore();
         label="Shared folders"
         :items="
           folders.data.sharedFolders.map((folder) => ({
-            href: `/app/${folder.id}`,
+            href: `${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
-            images: folder.recentBookmarkImages
+            images: folder.recentBookmarksImages
           }))
         "
       />

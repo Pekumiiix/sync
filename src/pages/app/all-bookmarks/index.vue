@@ -2,14 +2,13 @@
 import { computed } from 'vue';
 import { useUrlSearchParams } from '@vueuse/core';
 
-import { mockBookmarksResponse } from '@/mock-data/bookmarks';
+import { useGetAllBookmarks, useGetBookmarkBrowsers } from '@/hooks/useBookmark';
+import type { BrowserProvider } from '@/types/app.type';
 import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper } from '../shared/wrappers';
-
-const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 
 const params = useUrlSearchParams('history');
 
@@ -19,20 +18,46 @@ const activeTab = computed({
     params.tab = newValue;
   }
 });
+
+const queryParams = computed(() => ({
+  page: 1,
+  limit: 10,
+  filter: activeTab.value as BrowserProvider | 'all'
+}));
+
+const { data: bookmarksData } = useGetAllBookmarks(queryParams);
+const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers();
+
+const tabs = computed(() => {
+  const browsers = bookmarkBrowsersData.value?.data.browsers || [];
+  return [
+    {
+      label: 'All',
+      value: 'all' as const
+    },
+    ...browsers.map((browser) => ({
+      label: browser.browser,
+      value: browser.browser
+    }))
+  ];
+});
+
+const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 </script>
 
 <template>
   <AppWrapper page="All Bookmarks">
     <ContentWrapper>
       <BookmarkTabWrapper
-        :bookmarks="mockBookmarksResponse.data"
         v-model:activeTab="activeTab"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
+        :tabs="tabs"
+        :bookmarks="bookmarksData?.data.bookmarks || []"
         :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
-          :pinnedBookmarks="mockBookmarksResponse.pinned"
+          :pinnedBookmarks="bookmarksData?.data.pinnedBookmarks || []"
           :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>

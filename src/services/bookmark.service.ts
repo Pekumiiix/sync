@@ -60,7 +60,7 @@ class BookmarkService {
     return apiClient<IApiResponse>('delete', `/bookmarks/${bookmarkId}`);
   }
 
-  getBookmarkBrowsers(payload: IBrowserPayload) {
+  getBookmarkBrowsers(payload?: IBrowserPayload) {
     return apiClient<IApiResponse<IBrowserResponse>>('get', `/bookmarks/browsers`, payload);
   }
 }

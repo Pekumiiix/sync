@@ -2,7 +2,9 @@
 import { useForm } from 'vee-validate';
 
 import { syncFrequency } from '@/components/constants/sync-frequency';
+import { useUpdateSettings } from '@/hooks/useAccount';
 import { useGetBrowserIntegrations } from '@/hooks/useBrowserIntegration';
+import { useAuthStore } from '@/stores/auth.store';
 import { useSettingsStore } from '@/stores/settings.store';
 
 import { BrowserIntegegrations, FrequencyOptionButton } from '../components';
@@ -10,16 +12,24 @@ import { type SyncSettingsData, syncSettingsSchema } from '../schemas/sync-setti
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
 const { settings } = useSettingsStore();
+const { user } = useAuthStore();
 
 const { data, isLoading } = useGetBrowserIntegrations();
+const { mutate, isPending } = useUpdateSettings();
 
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<SyncSettingsData>({
     validationSchema: syncSettingsSchema,
     initialValues: {
-      syncInterval: settings.preferences.sync.frequency
+      syncInterval: user?.settings.sync.frequency
     }
   });
+
+const onSubmit = handleSubmit((values) => {
+  mutate({
+    frequency: values.syncInterval
+  });
+});
 
 const isUserPro = settings.subscription.isPro || false;
 </script>
@@ -29,9 +39,9 @@ const isUserPro = settings.subscription.isPro || false;
     title="Sync settings"
     description="Control how your bookmarks sync across browsers."
     :isDirty="meta.dirty"
-    :is-loading="isSubmitting"
+    :is-loading="isSubmitting || isPending || isLoading"
     @cancel="() => resetForm()"
-    @save="() => handleSubmit(() => {})()"
+    @save="() => onSubmit()"
   >
     <SettingsSubSectionWrapper
       title="Browsers connected"

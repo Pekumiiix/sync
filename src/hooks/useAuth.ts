@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/stores/auth.store';
 import type {
   ICreateNewPasswordPayload,
   IResetPasswordPayload,
@@ -16,12 +17,15 @@ export function useSignUp() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const { setCredentials } = useAuthStore();
+
   return useMutation({
     mutationFn: (payload: ISignUpPayload) => authService.signUp(payload),
     onSuccess: (response) => {
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
 
       localStorage.setItem('auth_token', response.data.token);
+      setCredentials(response.data.token);
 
       router.push('/auth/verify-email');
     },
@@ -35,12 +39,15 @@ export function useSignIn() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const { setCredentials } = useAuthStore();
+
   return useMutation({
     mutationFn: (payload: ISignInPayload) => authService.signIn(payload),
     onSuccess: (response) => {
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
 
       localStorage.setItem('auth_token', response.data.token);
+      setCredentials(response.data.token);
 
       const redirectPath = router.currentRoute.value.query.redirect as string;
 
@@ -60,6 +67,8 @@ export function useSignOut() {
     mutationFn: () => authService.signOut(),
     onSettled: () => {
       queryClient.clear();
+
+      localStorage.removeItem('auth_token');
 
       toaster.success('You have been signed out.');
 

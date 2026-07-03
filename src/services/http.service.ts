@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 import env from '@/config/env';
+import router from '@/router';
+import { useAuthStore } from '@/stores/auth.store';
 
 const api = axios.create({
   baseURL: env.apiUrl,
@@ -25,6 +27,26 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      const authStore = useAuthStore();
+
+      authStore.clearCredentials();
+
+      router.replace({
+        name: 'Sign In',
+        query: { redirect: router.currentRoute.value.fullPath }
+      });
+    }
+
     return Promise.reject(error);
   }
 );

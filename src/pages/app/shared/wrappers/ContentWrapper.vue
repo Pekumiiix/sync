@@ -8,7 +8,6 @@ import { MotionParagraph, MotionStaggerContainer } from '@/components/motion-wra
 import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
-import { mockBookmarksResponse } from '@/mock-data/bookmarks';
 import type { IFolderBookmarksResponse } from '@/types/folder.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
@@ -17,7 +16,11 @@ import { ShareFolderDialog } from '../dialogs';
 
 interface Props {
   showTabActions?: boolean;
-  folder?: Omit<IFolderBookmarksResponse['folder'], 'name'>;
+  folder?: {
+    id: IFolderBookmarksResponse['folder']['id'];
+    previewMembers: IFolderBookmarksResponse['previewMembers'];
+    memberCount: IFolderBookmarksResponse['folder']['memberCount'];
+  };
 }
 
 withDefaults(defineProps<Props>(), {
@@ -27,7 +30,7 @@ withDefaults(defineProps<Props>(), {
 const query = ref('');
 const showShareDialog = ref(false);
 
-const transformedBookmarks = ref(transformBookmarks(mockBookmarksResponse.data));
+const transformedBookmarks = ref(transformBookmarks([]));
 
 const isQueryEmpty = computed(() => query.value === '');
 
@@ -79,19 +82,19 @@ const searchResults = computed(() => {
             class="flex items-center justify-center -space-x-1.5"
           >
             <BaseAvatar
-              v-for="member in folder.recentMembers"
+              v-for="member in folder.previewMembers"
               :key="member.id"
               :src="member.avatarUrl"
-              :fallback="member.name"
+              :fallback="member.lastName"
               class="size-6 shrink-0 outline-2 outline-[#F8F8F9]"
             />
           </router-link>
 
           <p
-            v-if="folder.totalMemberCount > 3"
+            v-if="folder.memberCount > 3"
             class="text-xs font-medium leading-[100%] text-black-80"
           >
-            {{ folder?.totalMemberCount }} members
+            {{ folder?.memberCount }} members
           </p>
         </MotionDiv>
 
@@ -124,16 +127,7 @@ const searchResults = computed(() => {
       v-for="bookmark in searchResults"
       v-model="bookmark.isSelected"
       :key="bookmark.id"
-      :id="bookmark.id"
-      :title="bookmark.title"
-      :domain="bookmark.domain"
-      :url="bookmark.url"
-      :folderName="bookmark.folderName"
-      :createdAt="bookmark.createdAt"
-      :faviconUrl="bookmark.faviconUrl"
-      :isPinned="bookmark.isPinned"
-      :tags="bookmark.tags"
-      :description="bookmark.description"
+      :bookmark="bookmark"
       :showCheckbox="false"
     />
   </div>

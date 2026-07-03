@@ -4,30 +4,39 @@ import { useForm } from 'vee-validate';
 
 import { LoadingButton } from '@/components/shared';
 import { Input } from '@/components/ui/input';
-import { useOpenGraph } from '@/hooks/useOpengrapgh';
+import { useCreateBookmark, useGetBookmarkPreview } from '@/hooks/useBookmark';
+import type { BrowserProvider } from '@/types/app.type';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type AddBookmarkData, addBookmarkSchema } from '../schemas/add-bookmark.schema';
-import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
+import { type CreateBookmarkData } from '../schemas/create-bookmark.schema';
 import { AddBookmarkDialogWrapper } from '../wrappers';
-import { BookmarkDetailsDialog } from '.';
+import { CreateBookmarkDialog } from '.';
 
 const { handleSubmit, meta, isSubmitting } = useForm<AddBookmarkData>({
   validationSchema: addBookmarkSchema
 });
 
-const { mutate, isPending: isLoading } = useOpenGraph();
+const { mutate: getBookmarkPreview, isPending: isLoading } = useGetBookmarkPreview();
+const { mutate: createBookmark, isPending: isCreating } = useCreateBookmark();
+
+const bookmarkDetails = ref<Omit<CreateBookmarkData, 'tags' | 'folderId' | 'browser'> | undefined>(
+  undefined
+);
 
 const onSubmit = handleSubmit(async (values) => {
-  mutate(values.url, {
+  getBookmarkPreview(values, {
     onSuccess(data) {
+      const previewData = data?.data.openGraphData;
+
       bookmarkDetails.value = {
-        image: data?.image?.url ?? '',
-        title: data?.title ?? '',
-        description: data?.description ?? '',
+        title: previewData?.title ?? '',
+        description: previewData?.description ?? '',
+        coverImageUrl: previewData?.coverImageUrl ?? '',
+        favIconUrl: previewData?.faviconUrl ?? '',
         url: values.url,
-        tags: [],
-        folder_name: 'unsorted'
+        domain: previewData?.domain ?? '',
+        websiteName: previewData?.websiteName ?? ''
       };
 
       displayBool.value = false;
@@ -39,17 +48,35 @@ const onSubmit = handleSubmit(async (values) => {
   });
 });
 
-function handleCreateBookmark(data: BookmarkDetails) {
-  console.log('Bookmark created:', data);
-  detailsDisplayBool.value = false;
+function handleCreateBookmark(data: CreateBookmarkData) {
+  createBookmark(
+    {
+      folderId: data.folderId,
+      title: data.title,
+      description: data.description,
+      url: data.url,
+      tags: data.tags,
+      faviconUrl: data.favIconUrl,
+      coverImageUrl: data.coverImageUrl,
+      browser: data.browser as BrowserProvider,
+      websiteName: data.websiteName,
+      domain: data.domain
+    },
+    {
+      onSuccess() {
+        detailsDisplayBool.value = false;
+      },
+      onError() {
+        console.error('Failed to create bookmark');
+      }
+    }
+  );
 }
 
 const TypedFormField = createTypedForm<AddBookmarkData>();
 
 const displayBool = defineModel<boolean>({ default: false });
 const detailsDisplayBool = ref<boolean>(false);
-
-const bookmarkDetails = ref<Omit<BookmarkDetails, 'collection'> | undefined>(undefined);
 </script>
 
 <template>
@@ -84,11 +111,11 @@ const bookmarkDetails = ref<Omit<BookmarkDetails, 'collection'> | undefined>(und
     </form>
   </AddBookmarkDialogWrapper>
 
-  <BookmarkDetailsDialog
+  <CreateBookmarkDialog
     v-if="bookmarkDetails"
     v-model="detailsDisplayBool"
     :data="bookmarkDetails"
+    :isCreating="isCreating"
     @save="handleCreateBookmark"
-    type="add"
   />
 </template>

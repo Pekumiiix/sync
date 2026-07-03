@@ -2,8 +2,9 @@
 import { ref } from 'vue';
 
 import { EditIcon, EyeIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
-import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/shared';
 import { Checkbox } from '@/components/ui/checkbox';
+import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
 import type { IBookmark } from '@/types/bookmark.type';
 import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
 import { formatBookmarkTime } from '@/utils/dateUtils';
@@ -11,19 +12,8 @@ import { formatBookmarkTime } from '@/utils/dateUtils';
 import { BookmarkDetailsDialog, DeleteBookmarkDialog } from '../dialogs';
 import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
 
-interface Props extends Pick<
-  IBookmark,
-  | 'id'
-  | 'title'
-  | 'description'
-  | 'url'
-  | 'domain'
-  | 'folderName'
-  | 'createdAt'
-  | 'isPinned'
-  | 'tags'
-  | 'faviconUrl'
-> {
+interface Props {
+  bookmark: IBookmark;
   showCheckbox?: boolean;
 }
 
@@ -36,6 +26,9 @@ const selectedBool = defineModel<boolean>({ default: false });
 const detailsDisplayBool = ref<boolean>(false);
 const deleteDisplayOpen = ref<boolean>(false);
 
+const { mutate: pinBookmark, isPending: isPinning } = usePinBookmark();
+const { mutate: unpinBookmark, isPending: isUnpinning } = useUnpinBookmark();
+
 const actions = [
   {
     icon: EyeIcon,
@@ -44,16 +37,24 @@ const actions = [
       console.log('Viewed this bookmark.');
     }
   },
-  props.isPinned
+  props.bookmark.isPinned
     ? {
         icon: UnpinIcon,
         label: 'Unpin',
-        action: () => console.log('Unpinned')
+        isLoading: isUnpinning,
+        action: () =>
+          unpinBookmark({
+            bookmarkId: props.bookmark.id
+          })
       }
     : {
         icon: PinIcon,
         label: 'Pin',
-        action: () => console.log('Pinned')
+        isLoading: isPinning,
+        action: () =>
+          pinBookmark({
+            bookmarkId: props.bookmark.id
+          })
       },
   {
     icon: EditIcon,
@@ -89,26 +90,27 @@ function handleEditBookmark(data: BookmarkDetails) {
 
       <div class="flex items-center gap-2.5">
         <img
-          :src="faviconUrl || FALLBACK_IMAGE"
-          :alt="domain"
+          :src="props.bookmark.faviconUrl || FALLBACK_IMAGE"
+          :alt="props.bookmark.domain"
           class="size-12 rounded-full object-center object-cover"
           @error="handleImageError"
         />
 
         <div class="flex flex-col gap-1">
-          <p class="text-lg font-medium leading-[100%] text-black-90">{{ title }}</p>
+          <p class="text-lg font-medium leading-[100%] text-black-90">{{ props.bookmark.title }}</p>
           <p class="text-sm leading-4.5 text-black-70">
-            {{ domain }} | {{ folderName }} | {{ formatBookmarkTime(createdAt) }}
+            {{ props.bookmark.domain }} | {{ props.bookmark.folder.name }} |
+            {{ formatBookmarkTime(props.bookmark.createdAt) }}
           </p>
           <div class="flex items-center gap-1">
             <template
-              v-for="(tag, index) in tags"
+              v-for="(tag, index) in props.bookmark.tags"
               :key="tag"
             >
               <p class="text-xs leading-[100%] text-primary-90">#{{ tag }}</p>
 
               <div
-                v-if="index < tags.length - 1"
+                v-if="index < props.bookmark.tags.length - 1"
                 class="w-px h-2 bg-primary-90 shrink-0"
               />
             </template>
@@ -118,38 +120,39 @@ function handleEditBookmark(data: BookmarkDetails) {
     </div>
 
     <div class="hidden group-hover:flex items-center gap-5">
-      <Button
+      <LoadingButton
         v-for="action in actions"
         :key="action.label"
         size="icon"
         variant="ghost"
         class="size-fit! p-1! stroke-black-70"
+        :is-loading="action.isLoading?.value || false"
         @click="action.action"
       >
         <component
           :is="action.icon"
           class="size-4"
         />
-      </Button>
+      </LoadingButton>
     </div>
   </div>
 
   <BookmarkDetailsDialog
     v-model="detailsDisplayBool"
     :data="{
-      image: faviconUrl || '',
-      title: title,
-      description: description || '',
-      url: url,
-      tags: tags,
-      folder_name: folderName
+      image: props.bookmark.faviconUrl || '',
+      title: props.bookmark.title,
+      description: props.bookmark.description || '',
+      url: props.bookmark.url,
+      tags: props.bookmark.tags,
+      folder_name: props.bookmark.folder.name
     }"
     @save="handleEditBookmark"
     type="edit"
   />
 
   <DeleteBookmarkDialog
-    :bookmark-ids="props.id"
+    :bookmark-ids="props.bookmark.id"
     v-model="deleteDisplayOpen"
   />
 </template>

@@ -70,7 +70,9 @@ watch(
 <template>
   <section class="flex flex-col gap-5 pt-7">
     <div class="w-full flex items-center justify-between px-6.5">
-      <p class="text-lg font-medium text-black-80 leading-[100%]">{{ platform }} bookmarks</p>
+      <p class="text-lg font-medium text-black-80 leading-[100%] capitalize">
+        {{ platform }} bookmarks
+      </p>
 
       <!-------------------------------------- Action buttons --------------------------------->
       <AnimatePresence>
@@ -130,16 +132,7 @@ watch(
         v-for="bookmark in transformedBookmarks"
         v-model="bookmark.isSelected"
         :key="bookmark.id"
-        :id="bookmark.id"
-        :title="bookmark.title"
-        :domain="bookmark.domain"
-        :url="bookmark.url"
-        :folderName="bookmark.folderName"
-        :createdAt="bookmark.createdAt"
-        :faviconUrl="bookmark.faviconUrl"
-        :isPinned="bookmark.isPinned"
-        :tags="bookmark.tags"
-        :description="bookmark.description"
+        :bookmark="bookmark"
       />
     </div>
 

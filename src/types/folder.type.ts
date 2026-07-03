@@ -16,7 +16,7 @@ export interface IFolder {
   id: FolderId;
   name: string;
   bookmarkCount: number;
-  recentBookmarkImages: string[];
+  recentBookmarksImages: string[];
   isProtected: boolean;
   isSystem: boolean;
   createdAt: string | null;
@@ -39,16 +39,13 @@ export interface IFolderPermission {
 
 // Query params
 
-export type DateFilter = 'oldest' | 'newest';
-
-export type OrderFilter = 'asc' | 'desc';
+export type SortBookmarks = 'title_desc' | 'title_asc' | 'newest' | 'oldest';
 
 export interface GetFolderBookmarksQueryParams {
   page?: number;
   limit?: number;
-  sortByBrowser?: BrowserProvider;
-  sortByDate?: DateFilter;
-  sortByTitle?: OrderFilter;
+  sort?: SortBookmarks;
+  filter?: BrowserProvider | 'all';
 }
 
 // Request payloads for folder related operations

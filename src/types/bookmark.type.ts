@@ -14,13 +14,15 @@ export interface BookmarkCreator {
 
 export interface IBookmark {
   id: BookmarkId;
-  folderId: FolderId;
+  folder: {
+    id: FolderId;
+    name: string;
+  };
   title: string;
   description: string | null;
   websiteName: string;
   url: string;
   domain: string;
-  folderName: string;
   createdAt: string;
   isPinned: boolean;
   tags: string[];
@@ -39,14 +41,18 @@ export interface IBrowser {
 
 export interface IBaseBookmarkPayload {
   folderId: FolderId;
-  title: string;
-  description: string;
-  tags: string[];
+  title?: string;
+  description?: string;
+  tags?: string[];
   url: string;
 }
 
 export interface ICreateBookmarkPayload extends IBaseBookmarkPayload {
-  coverImageUrl: string;
+  coverImageUrl?: string;
+  faviconUrl?: string;
+  browser: BrowserProvider;
+  websiteName?: string;
+  domain: string;
 }
 
 export interface IEditBookmarkPayload extends IBaseBookmarkPayload {
@@ -81,7 +87,7 @@ export interface IBookmarkResponse {
 }
 
 export interface IPreviewBookmarkResponse {
-  openGraphhData: {
+  openGraphData: {
     title: string | null;
     description: string | null;
     coverImageUrl: string | null;

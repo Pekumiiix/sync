@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
 
-import { useSettingsStore } from '@/stores/settings.store';
+import { useUpdateSettings } from '@/hooks/useAccount';
+import { useAuthStore } from '@/stores/auth.store';
 
 import { SettingsSwitch } from '../components';
 import {
@@ -10,13 +11,21 @@ import {
 } from '../schemas/bookmark-management.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { settings } = useSettingsStore();
+const { user } = useAuthStore();
+
+const { mutate, isPending } = useUpdateSettings();
 
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<BookmarkManagementData>({
   validationSchema: bookmarkManagementSchema,
   initialValues: {
-    autoMergeBookmarks: settings.preferences.bookmark.autoMergeDuplicates
+    autoMergeBookmarks: user?.settings.autoMergeDuplicate
   }
+});
+
+const onSubmit = handleSubmit((values) => {
+  mutate({
+    autoMergeDuplicate: values.autoMergeBookmarks
+  });
 });
 
 const { value: autoMerge } = useField<boolean>('autoMergeBookmarks');
@@ -27,9 +36,9 @@ const { value: autoMerge } = useField<boolean>('autoMergeBookmarks');
     title="Bookmark management"
     description="Bookmark management"
     :isDirty="meta.dirty"
-    :is-loading="isSubmitting"
+    :is-loading="isSubmitting || isPending"
     @cancel="resetForm()"
-    @save="handleSubmit(() => {})()"
+    @save="() => onSubmit()"
   >
     <SettingsSubSectionWrapper
       title="Auto merge duplicate"

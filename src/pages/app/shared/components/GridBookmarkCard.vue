@@ -12,6 +12,7 @@ import {
 } from '@/components/icons';
 import { BaseDropDownMenu } from '@/components/re-useable';
 import { Checkbox } from '@/components/ui/checkbox';
+import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
 import { cn } from '@/lib/utils';
 import type { IBookmark } from '@/types/bookmark.type';
 import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
@@ -31,7 +32,7 @@ const {
   id,
   url,
   domain,
-  folderName,
+  folder,
   createdAt,
   coverImageUrl,
   isPinned,
@@ -48,17 +49,20 @@ const moveBookmarkDisplayBool = ref<boolean>(false);
 const selectBool = defineModel<boolean>({ default: false });
 const deleteDisplayBool = ref<boolean>(false);
 
+const { mutate: pinBookmark } = usePinBookmark();
+const { mutate: unpinBookmark } = useUnpinBookmark();
+
 const actions = computed(() => [
   isPinned
     ? {
         icon: UnpinIcon,
         label: 'Unpin',
-        action: () => console.log('Unpinned')
+        action: () => unpinBookmark({ bookmarkId: id })
       }
     : {
         icon: PinIcon,
         label: 'Pin',
-        action: () => console.log('Pinned')
+        action: () => pinBookmark({ bookmarkId: id })
       },
   {
     icon: EditIcon,
@@ -109,7 +113,7 @@ function handleEditBookmark(data: BookmarkDetails) {
     <div class="w-full flex justify-between gap-5 py-5 px-3">
       <div class="max-w-[80%] flex flex-col gap-1">
         <p class="text-lg font-medium leading-[100%] text-black-90">{{ websiteName }}</p>
-        <p class="text-sm leading-4.5 text-black-90">{{ domain }} | {{ folderName }}</p>
+        <p class="text-sm leading-4.5 text-black-90">{{ domain }} | {{ folder.name }}</p>
         <p class="text-sm leading-4.5 text-black-50">{{ formatBookmarkTime(createdAt) }}</p>
       </div>
 
@@ -159,7 +163,7 @@ function handleEditBookmark(data: BookmarkDetails) {
       description: description || '',
       url: url,
       tags: tags,
-      folder_name: folderName
+      folder_name: folder.name
     }"
     @save="handleEditBookmark"
     type="edit"

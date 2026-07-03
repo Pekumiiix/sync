@@ -1,4 +1,4 @@
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { useCurrentUser } from '@/hooks/useAccount';
@@ -10,11 +10,24 @@ export const useAuthStore = defineStore('auth', () => {
   const signIn = useSignIn();
   const signOut = useSignOut();
 
+  const token = ref<string | null>(localStorage.getItem('auth_token'));
+
   const isLoading = computed(
     () => signIn.isPending.value || signOut.isPending.value || isFetchingCurrentUser.value
   );
+
   const user = computed(() => data.value?.data.user || null);
-  const isAuthenticated = computed(() => !!user.value);
+  const isAuthenticated = computed(() => !!token.value || !!user.value);
+
+  const setCredentials = (newToken: string) => {
+    token.value = newToken;
+  };
+
+  const clearCredentials = () => {
+    token.value = null;
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('pending_invite');
+  };
 
   const checkAuthStatus = async () => {
     return new Promise((resolve) => {
@@ -38,6 +51,8 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     signIn,
     signOut,
-    checkAuthStatus
+    checkAuthStatus,
+    setCredentials,
+    clearCredentials
   };
 });
