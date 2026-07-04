@@ -9,10 +9,12 @@ export async function apiClient<TResponse, TData = unknown>(
   data?: TData
 ): Promise<TResponse> {
   try {
+    const requestPayload = data && method === 'get' ? { params: data } : data ? { data } : {};
+
     const res = await api.request<TResponse>({
       method,
       url: endpoint,
-      ...(data ? { data } : {})
+      ...requestPayload
     });
     return res.data;
   } catch (error) {

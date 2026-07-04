@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,8 @@ interface IPageConfig {
 }
 
 const props = defineProps<Props>();
+
+const router = useRouter();
 
 const pageConfig: Record<AuthPages, IPageConfig> = {
   sign_in: {
@@ -107,6 +110,7 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
           v-if="page === 'forgot_password'"
           type="button"
           variant="outline"
+          @click="router.back()"
           class="w-full flex items-center gap-4 py-8.25 rounded-full text-[29px] leading-8.25 text-black-100 border-stroke-1/10"
         >
           Go back

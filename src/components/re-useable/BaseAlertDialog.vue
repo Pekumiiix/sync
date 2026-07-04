@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { LoaderCircle } from 'lucide-vue-next';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +17,7 @@ import { cn } from '@/lib/utils';
 interface Props {
   title: string;
   description: string;
+  isLoading?: boolean;
   confirm: { label: string; action: () => void };
   cancel: { label: string; action: () => void };
   classNames?: {
@@ -52,14 +55,23 @@ const displayBool = defineModel<boolean>({ default: false });
       <AlertDialogFooter :class="cn(classNames?.footer)">
         <AlertDialogCancel
           :class="cn(classNames?.cancel)"
+          :disabled="isLoading"
           @click="cancel.action"
-          >{{ cancel.label }}</AlertDialogCancel
         >
+          {{ cancel.label }}
+        </AlertDialogCancel>
         <AlertDialogAction
           :class="cn(classNames?.confirm)"
+          :disabled="isLoading"
           @click="confirm.action"
-          >{{ confirm.label }}</AlertDialogAction
         >
+          <LoaderCircle
+            v-if="isLoading"
+            stroke-width="3.5"
+            class="animate-spin"
+          />
+          <span v-else>{{ confirm.label }}</span>
+        </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>

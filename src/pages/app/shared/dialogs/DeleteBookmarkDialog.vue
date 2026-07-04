@@ -3,6 +3,7 @@ import { computed } from 'vue';
 
 import { TrashIcon } from '@/components/icons';
 import { BaseAlertDialog } from '@/components/re-useable';
+import { useDeleteBookmark } from '@/hooks/useBookmark';
 import { pluralizeIfArray } from '@/utils/stringutils';
 
 interface Props {
@@ -26,8 +27,22 @@ const dialogDescription = computed(
     } after this action has been completed.`
 );
 
+const { mutate: deleteBookmark, isPending } = useDeleteBookmark();
+
 function handleDelete() {
-  console.log('Deleting bookmark(s) with id(s):', props.bookmarkIds);
+  if (typeof props.bookmarkIds === 'string') {
+    deleteBookmark(
+      { bookmarkId: props.bookmarkIds },
+      {
+        onSuccess: () => {
+          displayBool.value = false;
+        }
+      }
+    );
+
+    return;
+  }
+
   displayBool.value = false;
 }
 
@@ -39,6 +54,7 @@ function handleCancel() {
 <template>
   <BaseAlertDialog
     v-model:open="displayBool"
+    :isLoading="isPending"
     :title="dialogTitle"
     :description="dialogDescription"
     :confirm="{ label: 'Yes, delete', action: handleDelete }"

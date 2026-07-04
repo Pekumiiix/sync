@@ -18,10 +18,14 @@ const transformedBookmarks = ref(transformBookmarks(props.pinnedBookmarks));
 const selectedPinnedBookmarks = defineModel<string[] | null>({ default: null });
 
 watch(
-  transformedBookmarks,
+  [() => props.pinnedBookmarks, transformedBookmarks],
+  ([newPinnedBookmarks, newTransformedBookmarks], [oldPinnedBookmarks]) => {
+    if (newPinnedBookmarks !== oldPinnedBookmarks) {
+      transformedBookmarks.value = transformBookmarks(newPinnedBookmarks);
+      return;
+    }
 
-  (newBookmarks) => {
-    const selected = newBookmarks.filter((bookmark) => bookmark.isSelected);
+    const selected = newTransformedBookmarks.filter((bookmark) => bookmark.isSelected);
 
     selectedPinnedBookmarks.value = selected.length > 0 ? selected.map((b) => b.id) : null;
   },

@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 
 import type { IBookmark } from '@/types/bookmark.type';
-import type { IGetFoldersResponse } from '@/types/folder.type';
+import type { IFolder, IGetFoldersResponse } from '@/types/folder.type';
 import { timeAgo } from '@/utils/dateUtils';
 
 export function transformBookmarks(bookmarks: IBookmark[]) {
@@ -11,14 +11,23 @@ export function transformBookmarks(bookmarks: IBookmark[]) {
   }));
 }
 
+export function sumBookmarksCount(folderList: IFolder[] = []) {
+  return folderList.reduce((acc, folder) => acc + (folder?.bookmarkCount || 0), 0);
+}
+
 export function transformBookmarkFolders(data: IGetFoldersResponse) {
   return {
-    systemFolders: data.systemFolders.map((folder) => ({
+    systemFolders: (data.systemFolders || []).map((folder) => ({
       ...folder,
       updatedAt: timeAgo(folder.updatedAt),
       isSelected: false
     })),
-    collections: data.collections.map((folder) => ({
+    ownedFolders: (data.ownedFolders || []).map((folder) => ({
+      ...folder,
+      updatedAt: timeAgo(folder.updatedAt),
+      isSelected: false
+    })),
+    sharedFolders: (data.sharedFolders || []).map((folder) => ({
       ...folder,
       updatedAt: timeAgo(folder.updatedAt),
       isSelected: false

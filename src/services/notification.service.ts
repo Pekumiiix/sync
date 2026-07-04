@@ -9,7 +9,7 @@ import { apiClient } from '@/utils/apiUtils';
 
 class NotificationService {
   getAllNotifications(params: IGetNotificationsParam) {
-    return apiClient<IApiResponse<INotificationsResponse>>('get', '/notifications', { params });
+    return apiClient<IApiResponse<INotificationsResponse>>('get', '/notifications', params);
   }
 
   deleteAllNotifications() {

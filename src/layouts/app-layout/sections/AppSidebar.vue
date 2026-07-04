@@ -15,6 +15,7 @@ import {
 import { useGetFolders } from '@/hooks/useFolder';
 import { CreateFolderDialog } from '@/pages/app/shared/dialogs';
 import { useAuthStore } from '@/stores/auth.store';
+import { sumBookmarksCount } from '@/utils/bookmarkUtils';
 
 import { AppSidebarGroup } from '../components';
 import { AppSidebarFooter, UserInfo } from '.';
@@ -27,7 +28,10 @@ const generalSidebarItems = computed(() => {
   const allBookmarksItem = {
     href: 'all-bookmarks',
     name: 'All Bookmarks',
-    count: 0,
+    count:
+      sumBookmarksCount(folders.value.data.systemFolders) +
+      sumBookmarksCount(folders.value.data.ownedFolders) +
+      sumBookmarksCount(folders.value.data.sharedFolders),
     images: []
   };
 
@@ -60,7 +64,7 @@ const { user } = useAuthStore();
       <p class="text-lg text-black-100 font-instrument-sans font-semibold">SYNC</p>
     </SidebarHeader>
 
-    <SidebarContent class="flex flex-col gap-4">
+    <SidebarContent class="flex flex-col gap-5">
       <UserInfo />
 
       <AppSidebarGroup
@@ -70,7 +74,7 @@ const { user } = useAuthStore();
       />
 
       <AppSidebarGroup
-        v-if="folders?.data.ownedFolders"
+        v-if="folders && (folders?.data.ownedFolders.length || 0) > 0"
         label="Owned folders"
         :items="
           folders.data.ownedFolders.map((folder) => ({
@@ -83,7 +87,7 @@ const { user } = useAuthStore();
       />
 
       <AppSidebarGroup
-        v-if="folders?.data.sharedFolders"
+        v-if="folders && (folders?.data.sharedFolders.length || 0) > 0"
         label="Shared folders"
         :items="
           folders.data.sharedFolders.map((folder) => ({

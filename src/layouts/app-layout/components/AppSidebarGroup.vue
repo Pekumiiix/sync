@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
 import {
   SidebarGroup,
@@ -19,16 +19,24 @@ interface Props {
 
 defineProps<Props>();
 
-const router = useRouter();
+const route = useRoute();
+
+const isItemActive = (itemHref: string) => {
+  if (itemHref === 'all-bookmarks') {
+    return route.name === 'All Bookmarks';
+  }
+
+  return route.params.folderId === itemHref;
+};
 </script>
 
 <template>
-  <SidebarGroup class="flex flex-col gap-3 p-0">
+  <SidebarGroup class="h-fit flex flex-col gap-0 p-0">
     <SidebarGroupLabel class="text-sm font-normal leading-4.5 text-black-60">
       {{ label }}
     </SidebarGroupLabel>
     <SidebarGroupContent>
-      <SidebarMenu class="flex flex-col gap-0.5">
+      <SidebarMenu class="flex flex-col gap-1">
         <SidebarMenuItem
           v-for="item in items"
           :key="item.href"
@@ -36,10 +44,13 @@ const router = useRouter();
           <SidebarMenuButton
             as-child
             :class="
-              cn('h-12.25 flex items-center justify-between py-3.5 px-3', {
-                'bg-white hover:bg-white': router.currentRoute.value.path === item.href,
-                'bg-transparent': router.currentRoute.value.path !== item.href
-              })
+              cn(
+                'h-12.25 flex items-center justify-between py-3.5 px-3 transition-colors duration-200',
+                {
+                  'bg-white hover:bg-white': isItemActive(item.href),
+                  'bg-transparent hover:bg-black/5': !isItemActive(item.href)
+                }
+              )
             "
           >
             <router-link :to="`/app/${item.href}`">

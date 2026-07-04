@@ -8,7 +8,7 @@ export interface IBrowserConnection {
 
 export type DisplayType = 'list' | 'grid';
 
-export type SortOrder = 'a-z' | 'z-a' | 'newest' | 'oldest';
+export type SortOrder = 'title_desc' | 'title_asc' | 'newest' | 'oldest';
 
 export type BrowserProvider =
   | 'chrome'

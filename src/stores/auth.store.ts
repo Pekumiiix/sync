@@ -19,15 +19,15 @@ export const useAuthStore = defineStore('auth', () => {
   const user = computed(() => data.value?.data.user || null);
   const isAuthenticated = computed(() => !!token.value || !!user.value);
 
-  const setCredentials = (newToken: string) => {
+  function setCredentials(newToken: string) {
     token.value = newToken;
-  };
+  }
 
-  const clearCredentials = () => {
+  function clearCredentials() {
     token.value = null;
     localStorage.removeItem('auth_token');
     localStorage.removeItem('pending_invite');
-  };
+  }
 
   const checkAuthStatus = async () => {
     return new Promise((resolve) => {

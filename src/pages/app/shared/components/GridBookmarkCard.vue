@@ -113,7 +113,15 @@ function handleEditBookmark(data: BookmarkDetails) {
     <div class="w-full flex justify-between gap-5 py-5 px-3">
       <div class="max-w-[80%] flex flex-col gap-1">
         <p class="text-lg font-medium leading-[100%] text-black-90">{{ websiteName }}</p>
-        <p class="text-sm leading-4.5 text-black-90">{{ domain }} | {{ folder.name }}</p>
+        <p class="text-sm leading-4.5 text-black-90">
+          {{ domain }} |
+          <router-link
+            :to="{ name: 'Bookmark Folder', params: { folderId: folder.id } }"
+            class="hover:text-primary-90 transition-colors duration-200"
+          >
+            {{ folder.name.toLocaleLowerCase() }}
+          </router-link>
+        </p>
         <p class="text-sm leading-4.5 text-black-50">{{ formatBookmarkTime(createdAt) }}</p>
       </div>
 

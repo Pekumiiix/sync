@@ -55,10 +55,14 @@ const actions = [
 const selectedBookmarks = ref<string[]>([]);
 
 watch(
-  transformedBookmarks,
+  [() => props.bookmarks, transformedBookmarks],
+  ([newBookmarksFromProps, newTransformedBookmarks], [oldBookmarksFromProps]) => {
+    if (newBookmarksFromProps !== oldBookmarksFromProps) {
+      transformedBookmarks.value = transformBookmarks(newBookmarksFromProps);
+      return;
+    }
 
-  (newBookmarks) => {
-    const selected = newBookmarks.filter((bookmark) => bookmark.isSelected);
+    const selected = newTransformedBookmarks.filter((bookmark) => bookmark.isSelected);
 
     selectedBookmarks.value = selected.length > 0 ? selected.map((b) => b.id) : [];
   },

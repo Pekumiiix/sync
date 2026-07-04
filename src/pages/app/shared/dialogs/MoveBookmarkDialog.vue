@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 import { LoadingButton } from '@/components/shared';
+import { useMoveBookmark } from '@/hooks/useBookmark';
 import { mockFoldersResponse } from '@/mock-data/folders';
 import type { ITransformedFolder } from '@/types/folder.type';
 import { transformBookmarkFolders } from '@/utils/bookmarkUtils';
@@ -16,7 +17,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const transformedBookmarks = ref(transformBookmarkFolders(mockFoldersResponse));
+const transformedBookmarksFolder = ref(transformBookmarkFolders(mockFoldersResponse));
 const selectedFolderId = ref<string | null>(null);
 
 const displayBool = defineModel<boolean>({ default: false });
@@ -30,26 +31,28 @@ function handleSelectFolder(folderId: string) {
       isSelected: folder.id === folderId ? !isDeselecting : false
     }));
 
-  transformedBookmarks.value = {
-    systemFolders: updateSelection(transformedBookmarks.value.systemFolders),
-    collections: updateSelection(transformedBookmarks.value.collections)
+  transformedBookmarksFolder.value = {
+    systemFolders: updateSelection(transformedBookmarksFolder.value.systemFolders),
+    ownedFolders: updateSelection(transformedBookmarksFolder.value.ownedFolders),
+    sharedFolders: updateSelection(transformedBookmarksFolder.value.sharedFolders)
   };
 
   selectedFolderId.value = isDeselecting ? null : folderId;
 }
 
+const { mutate: moveBookmark, isPending } = useMoveBookmark();
+
 function handleMove() {
-  if (selectedFolderId.value) {
-    console.log(
-      'Moving bookmarks to folder:',
-      selectedFolderId.value,
-      'with bookmark ids:',
-      props.bookmarkIds
-    );
-    displayBool.value = false;
-  } else {
-    console.log('No folder selected');
-  }
+  if (!selectedFolderId.value || typeof props.bookmarkIds !== 'string') return;
+
+  moveBookmark(
+    { bookmarkId: props.bookmarkIds, folderId: selectedFolderId.value },
+    {
+      onSuccess: () => {
+        displayBool.value = false;
+      }
+    }
+  );
 }
 </script>
 
@@ -61,14 +64,21 @@ function handleMove() {
   >
     <div class="flex flex-col gap-0.5 pt-3">
       <FolderListItem
-        v-for="folder in transformedBookmarks?.systemFolders || []"
+        v-for="folder in transformedBookmarksFolder?.systemFolders || []"
         :key="folder.id"
         :folder="folder"
         @select="handleSelectFolder"
       />
 
       <FolderListItem
-        v-for="folder in transformedBookmarks?.collections || []"
+        v-for="folder in transformedBookmarksFolder?.ownedFolders || []"
+        :key="folder.id"
+        :folder="folder"
+        @select="handleSelectFolder"
+      />
+
+      <FolderListItem
+        v-for="folder in transformedBookmarksFolder?.sharedFolders || []"
         :key="folder.id"
         :folder="folder"
         @select="handleSelectFolder"
@@ -77,7 +87,7 @@ function handleMove() {
       <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
         <LoadingButton
           :action="handleMove"
-          :isLoading="false"
+          :isLoading="isPending"
           :disabled="!selectedFolderId"
           class="w-21.75 h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] pt-2 px-4 rounded-full bg-black-100 hover:bg-black-90"
         >

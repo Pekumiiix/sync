@@ -117,6 +117,7 @@ router.beforeEach(async (to) => {
     localStorage.setItem('pending_invite', to.query.invite_token as string);
 
     const query = { ...to.query };
+
     delete query.invite_token;
 
     return { ...to, query };
@@ -133,7 +134,7 @@ router.beforeEach(async (to) => {
     };
   }
 
-  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+  if (to.meta.requiresGuest && authStore.isAuthenticated && to.name !== 'Verify Email') {
     return { name: 'All Bookmarks' };
   }
 });

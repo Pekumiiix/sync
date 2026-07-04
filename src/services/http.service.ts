@@ -41,10 +41,16 @@ api.interceptors.response.use(
 
       authStore.clearCredentials();
 
-      router.replace({
-        name: 'Sign In',
-        query: { redirect: router.currentRoute.value.fullPath }
-      });
+      const currentPath = window.location.pathname;
+      const currentFullPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      const isAppRoute = currentPath.startsWith('/app');
+
+      if (isAppRoute) {
+        router.replace({
+          name: 'Sign In',
+          query: { redirect: currentFullPath }
+        });
+      }
     }
 
     return Promise.reject(error);

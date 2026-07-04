@@ -7,7 +7,6 @@ export interface IUpdateProfilePayload {
   firstName?: string;
   lastName?: string;
   location?: string;
-  email?: string;
   avatarUrl?: string;
 }
 

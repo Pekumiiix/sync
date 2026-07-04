@@ -196,6 +196,7 @@ function onInputChange(event: Event) {
         <SettingsInputField
           name="email"
           label="Email"
+          readonly
           placeholder="Enter your email"
         />
       </div>

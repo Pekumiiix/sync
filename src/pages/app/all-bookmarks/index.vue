@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useUrlSearchParams } from '@vueuse/core';
 
 import { useGetAllBookmarks, useGetBookmarkBrowsers } from '@/hooks/useBookmark';
-import type { BrowserProvider } from '@/types/app.type';
+import type { BrowserProvider, SortOrder } from '@/types/app.type';
 import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
@@ -11,6 +11,8 @@ import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper } from '../shared/wrappers';
 
 const params = useUrlSearchParams('history');
+
+const sortOrder = ref<SortOrder>('title_desc');
 
 const activeTab = computed({
   get: () => (params.tab as string) || 'all',
@@ -22,7 +24,8 @@ const activeTab = computed({
 const queryParams = computed(() => ({
   page: 1,
   limit: 10,
-  filter: activeTab.value as BrowserProvider | 'all'
+  filter: activeTab.value as BrowserProvider | 'all',
+  sort: sortOrder.value
 }));
 
 const { data: bookmarksData } = useGetAllBookmarks(queryParams);
@@ -51,6 +54,7 @@ const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinned
       <BookmarkTabWrapper
         v-model:activeTab="activeTab"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
+        v-model:sortOrder="sortOrder"
         :tabs="tabs"
         :bookmarks="bookmarksData?.data.bookmarks || []"
         :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"

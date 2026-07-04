@@ -34,7 +34,7 @@ const actions = [
     icon: EyeIcon,
     label: 'View',
     action: () => {
-      console.log('Viewed this bookmark.');
+      window.open(props.bookmark.url, '_blank', 'noopener,noreferrer');
     }
   },
   props.bookmark.isPinned
@@ -99,7 +99,14 @@ function handleEditBookmark(data: BookmarkDetails) {
         <div class="flex flex-col gap-1">
           <p class="text-lg font-medium leading-[100%] text-black-90">{{ props.bookmark.title }}</p>
           <p class="text-sm leading-4.5 text-black-70">
-            {{ props.bookmark.domain }} | {{ props.bookmark.folder.name }} |
+            {{ props.bookmark.domain }} |
+            <router-link
+              :to="{ name: 'Bookmark Folder', params: { folderId: props.bookmark.folder.id } }"
+              class="hover:text-primary-90 transition-colors duration-200"
+            >
+              {{ props.bookmark.folder.name.toLocaleLowerCase() }}
+            </router-link>
+            |
             {{ formatBookmarkTime(props.bookmark.createdAt) }}
           </p>
           <div class="flex items-center gap-1">

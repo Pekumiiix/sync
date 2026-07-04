@@ -40,14 +40,13 @@ const displayTypeOptions: IDisplayTypeOptions[] = [
 ];
 
 const sortOrderOptions: ISortOrderOptions[] = [
-  { value: 'a-z', label: 'A-Z' },
-  { value: 'z-a', label: 'Z-A' },
+  { value: 'title_desc', label: 'A-Z' },
+  { value: 'title_asc', label: 'Z-A' },
   { value: 'newest', label: 'Newest' },
   { value: 'oldest', label: 'Oldest' }
 ];
 
 const displayType = ref<DisplayType>('list');
-const sortOrder = ref<SortOrder>('a-z');
 
 const showDeleteBookmarkDialog = ref<boolean>(false);
 
@@ -84,6 +83,7 @@ const actions = computed(() => [
 ]);
 
 const activeTab = defineModel<string>('activeTab', { default: 'all' });
+const sortOrder = defineModel<SortOrder>('sortOrder', { default: 'title_desc' });
 const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBookmarks', {
   default: null
 });

@@ -8,6 +8,7 @@ interface Props {
   name: keyof AccountInformationData;
   label: string;
   placeholder: string;
+  readonly?: boolean;
 }
 
 defineProps<Props>();
@@ -25,7 +26,8 @@ const TypedFormField = createTypedForm<AccountInformationData>();
       <Input
         v-bind="fieldProps"
         :placeholder="placeholder"
-        class="h-10.5 text-sm font-regular leading-5 placeholder:text-black-50 py-2.75 px-4.5 rounded-full"
+        :readonly="readonly"
+        class="h-10.5 text-sm font-regular leading-5 placeholder:text-black-50 py-2.75 px-4.5 rounded-full read-only:cursor-not-allowed"
       />
     </template>
   </TypedFormField>
