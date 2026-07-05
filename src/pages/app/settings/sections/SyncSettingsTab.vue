@@ -5,14 +5,12 @@ import { syncFrequency } from '@/components/constants/sync-frequency';
 import { useUpdateSettings } from '@/hooks/useAccount';
 import { useGetBrowserIntegrations } from '@/hooks/useBrowserIntegration';
 import { useAuthStore } from '@/stores/auth.store';
-import { useSettingsStore } from '@/stores/settings.store';
 
 import { BrowserIntegegrations, FrequencyOptionButton } from '../components';
 import { type SyncSettingsData, syncSettingsSchema } from '../schemas/sync-settings.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { settings } = useSettingsStore();
-const { user } = useAuthStore();
+const authStore = useAuthStore();
 
 const { data, isLoading } = useGetBrowserIntegrations();
 const { mutate, isPending } = useUpdateSettings();
@@ -21,7 +19,7 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<SyncSettingsData>({
     validationSchema: syncSettingsSchema,
     initialValues: {
-      syncInterval: user?.settings.sync.frequency
+      syncInterval: authStore.user?.settings.sync.frequency
     }
   });
 
@@ -31,7 +29,7 @@ const onSubmit = handleSubmit((values) => {
   });
 });
 
-const isUserPro = settings.subscription.isPro || false;
+const isUserOnBasicPlan = authStore.user?.plan === 'basic';
 </script>
 
 <template>
@@ -64,16 +62,16 @@ const isUserPro = settings.subscription.isPro || false;
       <div class="grid grid-cols-4 gap-3">
         <FrequencyOptionButton
           :isSelected="values.syncInterval === 'immediate'"
-          :disabled="!isUserPro"
+          :disabled="!isUserOnBasicPlan"
           @click="setFieldValue('syncInterval', 'immediate')"
           class="bg-black-100 hover:bg-black-90 text-white"
         >
           Immediately
           <span
-            v-if="!isUserPro"
+            v-if="!isUserOnBasicPlan"
             class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)]"
           >
-            Go Pro
+            Go Basic
           </span>
         </FrequencyOptionButton>
 

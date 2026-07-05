@@ -9,15 +9,15 @@ import { SettingsSwitch } from '../components';
 import { type NotificationData, notificationSchema } from '../schemas/notification.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { user } = useAuthStore();
+const authStore = useAuthStore();
 
 const { mutate, isPending } = useUpdateSettings();
 
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<NotificationData>({
   validationSchema: notificationSchema,
   initialValues: {
-    notifyOnNewBookmark: user?.settings.notification.notifyOnNewBookmark,
-    notifyOnNewMember: user?.settings.notification.notifyOnNewMember
+    notifyOnNewBookmark: authStore.user?.settings.notification.notifyOnNewBookmark,
+    notifyOnNewMember: authStore.user?.settings.notification.notifyOnNewMember
   }
 });
 

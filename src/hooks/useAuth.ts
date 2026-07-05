@@ -22,12 +22,15 @@ export function useSignUp() {
   return useMutation({
     mutationFn: (payload: ISignUpPayload) => authService.signUp(payload),
     onSuccess: (response) => {
-      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
+        data: { user: response.data.user }
+      });
 
       localStorage.setItem('auth_token', response.data.token);
+
       setCredentials(response.data.token);
 
-      router.push('/auth/verify-email');
+      router.push({ name: 'Verify Email' });
     },
     onError: (error) => {
       toaster.error(error.message);
@@ -44,7 +47,9 @@ export function useSignIn() {
   return useMutation({
     mutationFn: (payload: ISignInPayload) => authService.signIn(payload),
     onSuccess: (response) => {
-      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
+        data: { user: response.data.user }
+      });
 
       localStorage.setItem('auth_token', response.data.token);
       setCredentials(response.data.token);
@@ -63,12 +68,14 @@ export function useSignOut() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const { clearCredentials } = useAuthStore();
+
   return useMutation({
     mutationFn: () => authService.signOut(),
     onSettled: () => {
       queryClient.clear();
 
-      localStorage.removeItem('auth_token');
+      clearCredentials();
 
       toaster.success('You have been signed out.');
 
@@ -80,15 +87,19 @@ export function useSignOut() {
 export function useVerifyEmail() {
   const router = useRouter();
 
+  const { refetchCurrentUser } = useAuthStore();
+
   return useMutation({
     mutationFn: (payload: IVerifyEmailPayload) => authService.verifyEmail(payload),
-    onSuccess: () => {
+    onSuccess: async () => {
       toaster.success('Email verified successfully.');
+
+      await refetchCurrentUser();
 
       router.push('/app/all-bookmarks');
     },
-    onError: (error) => {
-      toaster.error(error.message);
+    onError: () => {
+      toaster.error('Something went wrong. Please try again later.');
     }
   });
 }

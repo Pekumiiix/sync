@@ -19,7 +19,9 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: (payload: IUpdateProfilePayload) => accountService.updateProfile(payload),
     onSuccess: (response) => {
-      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
+        data: { user: response.data.user }
+      });
 
       toaster.success('Profile updated successfully');
     }
@@ -32,7 +34,9 @@ export function useUpdateSettings() {
   return useMutation({
     mutationFn: (payload: IUpdateSettingsPayload) => accountService.updateSettings(payload),
     onSuccess: (response) => {
-      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), response.data.user);
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
+        data: { user: response.data.user }
+      });
 
       toaster.success(response.message);
     }

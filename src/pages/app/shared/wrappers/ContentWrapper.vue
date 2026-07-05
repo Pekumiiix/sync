@@ -20,6 +20,7 @@ interface Props {
     id: IFolderBookmarksResponse['folder']['id'];
     previewMembers: IFolderBookmarksResponse['previewMembers'];
     memberCount: IFolderBookmarksResponse['folder']['memberCount'];
+    isSystem: IFolderBookmarksResponse['folder']['isSystem'];
   };
 }
 
@@ -68,7 +69,9 @@ const searchResults = computed(() => {
       </MotionParagraph>
     </AnimatePresence>
 
-    <AnimatePresence>
+    <AnimatePresence
+      v-if="folder && isQueryEmpty && showTabActions && folder.id && !folder.isSystem"
+    >
       <MotionStaggerContainer
         v-if="isQueryEmpty && showTabActions && folder?.id"
         class="flex items-center gap-3"

@@ -48,31 +48,35 @@ const router = createRouter({
       path: '/auth',
       name: 'Auth',
       component: AuthLayout,
-      meta: { requiresGuest: true },
       children: [
         {
           path: 'sign-in',
           name: 'Sign In',
+          meta: { requiresGuest: true },
           component: SignInPage
         },
         {
           path: 'sign-up',
           name: 'Sign Up',
+          meta: { requiresGuest: true },
           component: SignUpPage
         },
         {
           path: 'forgot-password',
           name: 'Forgot Password',
+          meta: { requiresGuest: true },
           component: ForgotPasswordPage
         },
         {
           path: 'reset-password',
           name: 'Reset Password',
+          meta: { requiresGuest: true },
           component: ResetPasswordPage
         },
         {
           path: 'verify-email',
           name: 'Verify Email',
+          meta: { requiresAuth: true },
           component: VerifyEmailPage
         }
       ]

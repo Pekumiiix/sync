@@ -25,14 +25,28 @@ const { data: folders } = useGetFolders();
 const generalSidebarItems = computed(() => {
   if (!folders.value?.data) return [];
 
+  const { systemFolders, ownedFolders, sharedFolders } = folders.value.data;
+
+  const allAvailableFolders = [
+    ...(systemFolders || []),
+    ...(ownedFolders || []),
+    ...(sharedFolders || [])
+  ];
+
+  const aggregatedRecentImages = allAvailableFolders
+    .flatMap((folder) => folder.recentBookmarksImages || [])
+    .filter((url) => url !== null && url !== '')
+    .filter((url, index, self) => self.indexOf(url) === index)
+    .slice(0, 3);
+
   const allBookmarksItem = {
     href: 'all-bookmarks',
     name: 'All Bookmarks',
     count:
-      sumBookmarksCount(folders.value.data.systemFolders) +
-      sumBookmarksCount(folders.value.data.ownedFolders) +
-      sumBookmarksCount(folders.value.data.sharedFolders),
-    images: []
+      sumBookmarksCount(systemFolders) +
+      sumBookmarksCount(ownedFolders) +
+      sumBookmarksCount(sharedFolders),
+    images: aggregatedRecentImages
   };
 
   const systemItems = (folders.value.data.systemFolders || []).map((folder) => ({
@@ -47,7 +61,7 @@ const generalSidebarItems = computed(() => {
 
 const displayCreateFolderDialog = ref(false);
 
-const { user } = useAuthStore();
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -119,7 +133,7 @@ const { user } = useAuthStore();
       </SidebarGroup>
     </SidebarContent>
 
-    <AppSidebarFooter v-if="user?.plan === 'free'" />
+    <AppSidebarFooter v-if="authStore.user?.plan === 'free'" />
   </Sidebar>
 
   <CreateFolderDialog v-model="displayCreateFolderDialog" />

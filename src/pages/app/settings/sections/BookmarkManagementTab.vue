@@ -11,14 +11,14 @@ import {
 } from '../schemas/bookmark-management.schema';
 import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
-const { user } = useAuthStore();
+const authStore = useAuthStore();
 
 const { mutate, isPending } = useUpdateSettings();
 
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<BookmarkManagementData>({
   validationSchema: bookmarkManagementSchema,
   initialValues: {
-    autoMergeBookmarks: user?.settings.autoMergeDuplicate
+    autoMergeBookmarks: authStore.user?.settings.autoMergeDuplicate
   }
 });
 

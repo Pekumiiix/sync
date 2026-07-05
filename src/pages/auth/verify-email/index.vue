@@ -20,7 +20,7 @@ const token = (router.query.token as string) || '';
 
 const TypedFormField = createAuthTypedForm<VerifyEmailData>();
 
-const { user } = useAuthStore();
+const authStore = useAuthStore();
 const { isCounting, formattedTime, start, stop } = useCountdown(60);
 
 const { handleSubmit, meta, isSubmitting } = useForm<VerifyEmailData>({
@@ -53,7 +53,7 @@ const onSubmit = handleSubmit((values) => {
 function handleResendEmail() {
   resendEmail(
     {
-      email: user?.email || ''
+      email: authStore.user?.email || ''
     },
     {
       onSuccess: () => {

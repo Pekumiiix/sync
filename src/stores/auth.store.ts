@@ -5,18 +5,16 @@ import { useCurrentUser } from '@/hooks/useAccount';
 import { useSignIn, useSignOut } from '@/hooks/useAuth';
 
 export const useAuthStore = defineStore('auth', () => {
-  const { data, isLoading: isFetchingCurrentUser } = useCurrentUser();
+  const { data, isLoading: isFetchingCurrentUser, refetch: refetchCurrentUser } = useCurrentUser();
 
   const signIn = useSignIn();
   const signOut = useSignOut();
 
   const token = ref<string | null>(localStorage.getItem('auth_token'));
 
-  const isLoading = computed(
-    () => signIn.isPending.value || signOut.isPending.value || isFetchingCurrentUser.value
-  );
+  const isLoading = computed(() => isFetchingCurrentUser.value);
 
-  const user = computed(() => data.value?.data.user || null);
+  const user = computed(() => data.value?.data?.user ?? null);
   const isAuthenticated = computed(() => !!token.value || !!user.value);
 
   function setCredentials(newToken: string) {
@@ -25,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function clearCredentials() {
     token.value = null;
+
     localStorage.removeItem('auth_token');
     localStorage.removeItem('pending_invite');
   }
@@ -53,6 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     signOut,
     checkAuthStatus,
     setCredentials,
-    clearCredentials
+    clearCredentials,
+    refetchCurrentUser
   };
 });

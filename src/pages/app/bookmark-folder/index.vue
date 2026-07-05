@@ -64,7 +64,8 @@ const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinned
       :folder="{
         id: folderData?.id || '',
         previewMembers: folderBookmarksData?.data.previewMembers || [],
-        memberCount: folderData?.memberCount || 0
+        memberCount: folderData?.memberCount || 0,
+        isSystem: folderData?.isSystem || false
       }"
     >
       <BookmarkTabWrapper
@@ -74,7 +75,6 @@ const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinned
         :bookmarks="folderBookmarksData?.data.bookmarks || []"
         :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
-        >
         <PinnedBookmarks
           v-model="selectedPinnedBookmarks"
           :pinnedBookmarks="folderBookmarksData?.data.pinnedBookmarks || []"

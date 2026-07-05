@@ -24,7 +24,7 @@ const fileInputRef = ref<HTMLInputElement>();
 
 const selectedFile = ref<File | null>(null);
 
-const { user } = useAuthStore();
+const authStore = useAuthStore();
 const { mutate, isPending } = useUpdateProfile();
 const { mutate: uploadMedia, isPending: isUploading } = useUploadMedia();
 
@@ -32,11 +32,11 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   useForm<AccountInformationData>({
     validationSchema: accountInformationSchema,
     initialValues: {
-      avatarUrl: user?.avatarUrl || undefined,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      email: user?.email,
-      location: user?.location || undefined
+      avatarUrl: authStore.user?.avatarUrl || undefined,
+      firstName: authStore.user?.firstName,
+      lastName: authStore.user?.lastName,
+      email: authStore.user?.email,
+      location: authStore.user?.location || undefined
     }
   });
 
@@ -135,7 +135,7 @@ function onInputChange(event: Event) {
       >
         <BaseAvatar
           :src="values.avatarUrl"
-          :fallback="user?.firstName || user?.lastName || 'User'"
+          :fallback="authStore.user?.firstName || authStore.user?.lastName || 'User'"
           :class="
             cn('size-35', {
               'cursor-not-allowed opacity-50': isUploading
