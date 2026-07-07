@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import env from '@/config/env';
 import { useClipboard } from '@/hooks/useClipboard';
-import { mockFolderMembersResponse } from '@/mock-data/member';
+import { useCreateInvitation } from '@/hooks/useInvitation';
+import { useGetFolderMembers } from '@/hooks/useMember';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { MembersItem } from '../components';
@@ -19,22 +20,32 @@ import { AddPasswordDialog } from '.';
 
 interface Props {
   folderId: string;
+  isProtected: boolean;
 }
 
 const props = defineProps<Props>();
 
 const { copy, hasCopied } = useClipboard();
 
+const { data: folderMembersData } = useGetFolderMembers(() => ({
+  folderId: props.folderId
+}));
+const { mutate: createInvitation, isPending: isCreatingInvitation } = useCreateInvitation();
+
 const { handleSubmit, meta, isSubmitting } = useForm<ShareBookmarkData>({
   validationSchema: shareBookmarkSchema,
   initialValues: {
     email: '',
-    action: 'editor'
+    accessLevel: 'editor'
   }
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  console.log(values, props.folderId);
+  createInvitation({
+    folderId: props.folderId,
+    email: values.email,
+    accessLevel: values.accessLevel
+  });
 });
 
 const TypedFormField = createTypedForm<ShareBookmarkData>();
@@ -95,7 +106,7 @@ const displayBool = defineModel<boolean>({ default: false });
             </template>
           </TypedFormField>
 
-          <TypedFormField name="action">
+          <TypedFormField name="accessLevel">
             <template #default="fieldProps">
               <BaseSelect
                 v-bind="fieldProps"
@@ -113,8 +124,8 @@ const displayBool = defineModel<boolean>({ default: false });
         </div>
 
         <LoadingButton
-          :isLoading="isSubmitting"
-          :disabled="isSubmitting || !meta.valid"
+          :isLoading="isSubmitting || isCreatingInvitation"
+          :disabled="isSubmitting || !meta.valid || isCreatingInvitation"
           class="w-24.25 h-10.5 py-3 px-4 text-xs font-medium rounded-full disabled:bg-white-90 disabled:bg-black-40"
         >
           <span>Invite user</span>
@@ -123,16 +134,19 @@ const displayBool = defineModel<boolean>({ default: false });
     </div>
 
     <MembersItem
-      v-for="member in mockFolderMembersResponse.data"
+      v-for="member in folderMembersData?.data.members || []"
       :key="member.id"
-      :avatar_url="member.avatarUrl"
-      :name="member.name"
-      :email="member.email"
-      :role="member.systemRole"
+      :avatar_url="member.user.avatarUrl"
+      :name="member.user.firstName + ' ' + member.user.lastName"
+      :email="member.user.email"
+      :role="member.role"
       :accessLevel="member.accessLevel"
     />
 
-    <div class="w-full flex items-center justify-between p-6 border-t border-[#292D321A]">
+    <div
+      v-if="folderMembersData?.data.permission.role === 'owner' || !props.isProtected"
+      class="w-full flex items-center justify-between p-6 border-t border-[#292D321A]"
+    >
       <div class="flex flex-col gap-1">
         <p class="text-lg font-medium leading-[100%] text-black-90">
           Add extra security to your link

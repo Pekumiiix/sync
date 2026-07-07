@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { invitationService } from '@/services/invitation.service';
 import type { IBaseInvitationPayload, ICreateInvitationPayload } from '@/types/invitation.type';
+import { toaster } from '@/utils/toastUtils';
 
 /**
  * Hook to retrieve invitation details (used on the "You have been invited" landing page).
@@ -24,8 +25,12 @@ export function useCreateInvitation() {
   return useMutation({
     mutationFn: (payload: ICreateInvitationPayload) =>
       invitationService.createInvitationLink(payload),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.invitation.lists() });
+      toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }

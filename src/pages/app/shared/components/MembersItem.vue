@@ -1,20 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { BaseAvatar, BaseSelect } from '@/components/re-useable';
-import type { FolderAccessLevel, SystemRole } from '@/types/member.type';
+import { useAuthStore } from '@/stores/auth.store';
+import type { MemberAccessLevel, MemberRole } from '@/types/member.type';
 
 interface IMembersItemProps {
   avatar_url: string | null;
   name: string;
   email: string;
-  role: SystemRole;
-  accessLevel: FolderAccessLevel;
+  role: MemberRole;
+  accessLevel: MemberAccessLevel;
 }
 
 const props = defineProps<IMembersItemProps>();
 
-const userRole = ref(props.accessLevel);
+const userAccessLevel = ref(props.accessLevel);
+
+const isCurrentUser = computed(() => {
+  const authStore = useAuthStore();
+
+  return props.email === authStore.user?.email;
+});
 </script>
 
 <template>
@@ -32,18 +39,11 @@ const userRole = ref(props.accessLevel);
         <p class="font-medium leading-5.5 -tracking-[1%] text-black-90">{{ props.name }}</p>
         <p class="text-xs leading-[100%] text-black-70">{{ props.email }}</p>
       </div>
-
-      <p
-        v-if="props.role === 'admin'"
-        class="text-[10px] leading-[100%] text-[#21620a] py-1.25 px-2.25 rounded-[3px] bg-[#21620A0F] capitalize"
-      >
-        Admin
-      </p>
     </div>
 
     <BaseSelect
-      v-if="props.accessLevel !== 'owner'"
-      v-model="userRole"
+      v-if="props.accessLevel === 'editor' && !isCurrentUser"
+      v-model="userAccessLevel"
       :options="[
         { label: 'Editor', value: 'editor' },
         { label: 'Viewer', value: 'viewer' }

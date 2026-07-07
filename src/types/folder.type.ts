@@ -72,6 +72,15 @@ export interface IJoinFolderPayload {
   folderId: FolderId;
 }
 
+export interface IAddPasswordToFolderPayload {
+  password: string;
+  folderId: FolderId;
+}
+
+export interface IRemovePasswordFromFolderPayload {
+  folderId: FolderId;
+}
+
 // Response objects for folder related operations
 
 export interface IFolderResponse {
@@ -91,6 +100,7 @@ export interface IFolderBookmarksResponse {
     isSystem: boolean;
     memberCount: number;
     bookmarkCount: number;
+    isProtected: boolean;
   };
   permission: IFolderPermission;
   previewMembers: IFolderMemberPreview[];

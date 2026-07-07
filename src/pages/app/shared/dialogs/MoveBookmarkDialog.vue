@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { LoadingButton } from '@/components/shared';
 import { useMoveBookmark } from '@/hooks/useBookmark';
-import { mockFoldersResponse } from '@/mock-data/folders';
+import { useGetFolders } from '@/hooks/useFolder';
 import type { ITransformedFolder } from '@/types/folder.type';
 import { transformBookmarkFolders } from '@/utils/bookmarkUtils';
 import { pluralizeIfArray } from '@/utils/stringutils';
@@ -16,31 +16,35 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const transformedBookmarksFolder = ref(transformBookmarkFolders(mockFoldersResponse));
-const selectedFolderId = ref<string | null>(null);
-
 const displayBool = defineModel<boolean>({ default: false });
 
-function handleSelectFolder(folderId: string) {
-  const isDeselecting = selectedFolderId.value === folderId;
+const { data: foldersData } = useGetFolders();
+const { mutate: moveBookmark, isPending } = useMoveBookmark();
 
-  const updateSelection = (folders: ITransformedFolder[]) =>
-    folders.map((folder) => ({
+const selectedFolderId = ref<string | null>(null);
+
+const baseFolders = computed(() => transformBookmarkFolders(foldersData.value?.data));
+
+const transformedBookmarksFolder = computed(() => {
+  const folders = baseFolders.value;
+  const targetId = selectedFolderId.value;
+
+  const applySelection = (list: ITransformedFolder[]) =>
+    list.map((folder) => ({
       ...folder,
-      isSelected: folder.id === folderId ? !isDeselecting : false
+      isSelected: folder.id === targetId
     }));
 
-  transformedBookmarksFolder.value = {
-    systemFolders: updateSelection(transformedBookmarksFolder.value.systemFolders),
-    ownedFolders: updateSelection(transformedBookmarksFolder.value.ownedFolders),
-    sharedFolders: updateSelection(transformedBookmarksFolder.value.sharedFolders)
+  return {
+    systemFolders: applySelection(folders.systemFolders),
+    ownedFolders: applySelection(folders.ownedFolders),
+    sharedFolders: applySelection(folders.sharedFolders)
   };
+});
 
-  selectedFolderId.value = isDeselecting ? null : folderId;
+function handleSelectFolder(folderId: string) {
+  selectedFolderId.value = selectedFolderId.value === folderId ? null : folderId;
 }
-
-const { mutate: moveBookmark, isPending } = useMoveBookmark();
 
 function handleMove() {
   if (!selectedFolderId.value || typeof props.bookmarkIds !== 'string') return;
@@ -86,7 +90,7 @@ function handleMove() {
 
       <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
         <LoadingButton
-          :action="handleMove"
+          @click="handleMove"
           :isLoading="isPending"
           :disabled="!selectedFolderId"
           class="w-21.75 h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] pt-2 px-4 rounded-full bg-black-100 hover:bg-black-90"

@@ -2,6 +2,8 @@
 import { useForm } from 'vee-validate';
 
 import { BasePasswordInput } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
+import { useAddPasswordToFolder } from '@/hooks/useFolder';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type AddPasswordData, addPasswordSchema } from '../schemas/add-password.schema';
@@ -21,8 +23,20 @@ const { handleSubmit, meta, isSubmitting } = useForm<AddPasswordData>({
   }
 });
 
+const { mutate: addPasswordToFolder, isPending } = useAddPasswordToFolder();
+
 const onSubmit = handleSubmit((data: AddPasswordData) => {
-  console.log(data, props.folderId);
+  addPasswordToFolder(
+    {
+      folderId: props.folderId,
+      password: data.password
+    },
+    {
+      onSuccess: () => {
+        displayBool.value = false;
+      }
+    }
+  );
 });
 
 const TypedFormField = createTypedForm<AddPasswordData>();
@@ -61,9 +75,10 @@ const displayBool = defineModel<boolean>({ default: false });
 
     <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
       <LoadingButton
-        :isLoading="isSubmitting"
-        :disabled="!meta.valid"
-        class="w-fit h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] bg-black-100 py-2 px-4 rounded-full"
+        @click="onSubmit"
+        :isLoading="isSubmitting || isPending"
+        :disabled="!meta.valid || isSubmitting || isPending"
+        class="w-fit h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] bg-black-100 py-2 px-4 rounded-full hover:bg-black-90"
       >
         <span>Save Password</span>
       </LoadingButton>

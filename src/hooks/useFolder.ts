@@ -1,13 +1,17 @@
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
+import { useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { folderService } from '@/services/folder.service';
 import type {
+  IAddPasswordToFolderPayload,
   ICreateFolderPayload,
   IDeleteFolderPayload,
   IEditFolderPayload,
   IGetFolderBookmarksPayload,
-  IJoinFolderPayload
+  IJoinFolderPayload,
+  IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
 import { toaster } from '@/utils/toastUtils';
 
@@ -25,13 +29,19 @@ export function useGetFolders() {
 /**
  * Fetches bookmarks restricted to a single specific folder.
  */
-export function useGetFolderBookmarks(payload: IGetFolderBookmarksPayload) {
-  return useQuery({
-    queryKey: QUERY_KEYS.folder.getFolderBookmarks(payload),
-    queryFn: () => folderService.getFolderBookmarks(payload),
-    staleTime: 1000 * 60 * 5,
-    enabled: !!payload.folderId
-  });
+export function useGetFolderBookmarks(payload: MaybeRefOrGetter<IGetFolderBookmarksPayload>) {
+  return useQuery(
+    computed(() => {
+      const unwrappedPayload = toValue(payload);
+
+      return {
+        queryKey: QUERY_KEYS.folder.getFolderBookmarks(unwrappedPayload),
+        queryFn: () => folderService.getFolderBookmarks(unwrappedPayload),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!unwrappedPayload.folderId
+      };
+    })
+  );
 }
 
 /**
@@ -73,6 +83,7 @@ export function useEditFolder() {
  */
 export function useDeleteFolder() {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: (payload: IDeleteFolderPayload) => folderService.deleteFolder(payload),
@@ -88,6 +99,10 @@ export function useDeleteFolder() {
       queryClient.invalidateQueries({
         queryKey: [...QUERY_KEYS.folder.bookmarks(), 'all']
       });
+
+      toaster.success('Folder deleted successfully');
+
+      router.replace({ name: 'All Bookmarks' });
     }
   });
 }
@@ -104,6 +119,44 @@ export function useJoinFolder() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
       });
+    }
+  });
+}
+
+/**
+ * Adds a password to a folder
+ */
+export function useAddPasswordToFolder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IAddPasswordToFolderPayload) =>
+      folderService.addPasswordToFolder(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.getFolders()
+      });
+
+      toaster.success('Password added to folder successfully');
+    },
+    onError: (error) => {
+      toaster.error(error.message);
+    }
+  });
+}
+
+export function useRemovePasswordFromFolder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IRemovePasswordFromFolderPayload) =>
+      folderService.removePasswordFromFolder(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.getFolders()
+      });
+
+      toaster.success('Password removed from folder successfully');
     }
   });
 }

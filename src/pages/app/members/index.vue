@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { mockFolderMembersResponse } from '@/mock-data/member';
+import { useGetFolderMembers } from '@/hooks/useMember';
 
 import { AppWrapper } from '../shared';
 import { SearchInput } from '../shared/components';
@@ -12,15 +12,18 @@ const query = ref('');
 
 const route = useRoute();
 
-console.log(route.params.folderId);
+const { data: folderMembersData } = useGetFolderMembers(() => ({
+  folderId: route.params.folderId as string
+}));
 
 const result = computed(() => {
   const searchTerm = query.value.toLowerCase().trim();
 
-  return mockFolderMembersResponse.data.filter((member) => {
+  return folderMembersData?.value?.data.members.filter((member) => {
     return (
-      member.name.toLowerCase().includes(searchTerm) ||
-      member.email.toLowerCase().includes(searchTerm)
+      member.user.firstName.toLowerCase().includes(searchTerm) ||
+      member.user.lastName.toLowerCase().includes(searchTerm) ||
+      member.user.email.toLowerCase().includes(searchTerm)
     );
   });
 });
@@ -31,10 +34,10 @@ const result = computed(() => {
     <div class="w-full flex items-center justify-between py-6 px-6.5 border-b border-stroke-1/10">
       <div class="flex flex-col gap-1">
         <p class="text-sm leading-6 font-medium text-black-70">
-          {{ mockFolderMembersResponse.folder.name }}
+          {{ folderMembersData?.data.folder.name }}
         </p>
         <p class="text-xl font-medium leading-7 text-black-90 -tracking-[1%]">
-          {{ mockFolderMembersResponse.meta.totalCount }} Members
+          {{ folderMembersData?.data.meta.totalMemberCount }} Members
         </p>
       </div>
 
@@ -48,22 +51,22 @@ const result = computed(() => {
       <MembersItem
         v-for="member in result"
         :key="member.id"
-        :avatar_url="member.avatarUrl"
-        :name="member.name"
-        :email="member.email"
-        :role="member.systemRole"
+        :avatar_url="member.user.avatarUrl"
+        :name="member.user.firstName + ' ' + member.user.lastName"
+        :email="member.user.email"
+        :role="member.role"
         :accessLevel="member.accessLevel"
       />
     </div>
 
     <div v-if="query === ''">
       <MembersItem
-        v-for="member in mockFolderMembersResponse.data"
+        v-for="member in folderMembersData?.data.members || []"
         :key="member.id"
-        :avatar_url="member.avatarUrl"
-        :name="member.name"
-        :email="member.email"
-        :role="member.systemRole"
+        :avatar_url="member.user.avatarUrl"
+        :name="member.user.firstName + ' ' + member.user.lastName"
+        :email="member.user.email"
+        :role="member.role"
         :accessLevel="member.accessLevel"
       />
     </div>

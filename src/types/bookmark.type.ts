@@ -55,7 +55,10 @@ export interface ICreateBookmarkPayload extends IBaseBookmarkPayload {
   domain: string;
 }
 
-export interface IEditBookmarkPayload extends IBaseBookmarkPayload {
+export interface IEditBookmarkPayload extends Pick<
+  IBaseBookmarkPayload,
+  'title' | 'description' | 'tags'
+> {
   bookmarkId: BookmarkId;
 }
 

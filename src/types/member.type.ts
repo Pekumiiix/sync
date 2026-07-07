@@ -1,7 +1,20 @@
 import type { FolderId, IFolderPermission } from './folder.type';
 
-export type MemberRole = 'editor' | 'viewer';
-export type MemberAccessLevel = 'member' | 'viewer';
+export type MemberRole = 'owner' | 'member';
+export type MemberAccessLevel = 'editor' | 'viewer';
+
+export interface IMember {
+  id: string;
+  role: MemberRole;
+  accessLevel: MemberAccessLevel;
+  folderId: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+    email: string;
+  };
+}
 
 // Request payloads for member-related operations
 
@@ -23,21 +36,15 @@ export interface IFolderMembersPayload {
 // Response objects for member-related operations
 
 export interface IMemberResponse {
-  member: {
-    id: string;
-    role: MemberRole;
-    accessLevel: MemberAccessLevel;
-    folderId: string;
-    user: {
-      firstName: string;
-      lastName: string;
-      avatarUrl: string | null;
-    };
-  };
+  member: IMember;
 }
 
 export interface IFolderMembersResponse {
-  members: IMemberResponse[];
+  folder: {
+    id: FolderId;
+    name: string;
+  };
+  members: IMember[];
   permission: IFolderPermission;
   meta: { totalMemberCount: number };
 }

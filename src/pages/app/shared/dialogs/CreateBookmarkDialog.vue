@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { watch } from 'vue';
 import { X } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
@@ -7,8 +6,10 @@ import { useForm } from 'vee-validate';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useCreateBookmark } from '@/hooks/useBookmark';
 import { useGetFolders } from '@/hooks/useFolder';
-import { handleImageError } from '@/utils/bookmarkUtils';
+import type { BrowserProvider } from '@/types/app.type';
+import { handleImageError, useTags } from '@/utils/bookmarkUtils';
 import { createTypedForm } from '@/utils/formUtils';
 import { truncateString } from '@/utils/stringutils';
 
@@ -17,14 +18,15 @@ import { type CreateBookmarkData, createBookmarkSchema } from '../schemas/create
 import { ActionDialogWrapper } from '../wrappers';
 
 interface Props {
-  isCreating: boolean;
   data: Omit<CreateBookmarkData, 'tags' | 'folderId' | 'browser'>;
-  onSave: (data: CreateBookmarkData) => void;
 }
 
 const props = defineProps<Props>();
 
 const displayBool = defineModel<boolean>({ default: false });
+
+const { data: foldersData } = useGetFolders();
+const { mutate: createBookmark, isPending: isCreating } = useCreateBookmark();
 
 const { handleSubmit, values, setFieldValue, isSubmitting, meta, resetForm } =
   useForm<CreateBookmarkData>({
@@ -62,37 +64,36 @@ watch(
 );
 
 const onSubmit = handleSubmit((data: CreateBookmarkData) => {
-  props.onSave(data);
+  createBookmark(
+    {
+      folderId: data.folderId,
+      title: data.title,
+      description: data.description,
+      url: data.url,
+      tags: data.tags,
+      faviconUrl: data.favIconUrl,
+      coverImageUrl: data.coverImageUrl,
+      browser: data.browser as BrowserProvider,
+      websiteName: data.websiteName,
+      domain: data.domain
+    },
+    {
+      onSuccess() {
+        displayBool.value = false;
+      },
+      onError() {
+        console.error('Failed to create bookmark');
+      }
+    }
+  );
 });
 
-const currentTag = ref<string>('');
-
-function handleAddTag() {
-  const tag = currentTag.value.trim();
-
-  if (!tag) return;
-
-  const currentTagsArray = values.tags || [];
-
-  if (!currentTagsArray.includes(tag)) {
-    setFieldValue('tags', [...currentTagsArray, tag]);
-  }
-
-  currentTag.value = '';
-}
-
-function removeTag(tagToRemove: string) {
-  const currentTagsArray = values.tags || [];
-
-  setFieldValue(
-    'tags',
-    currentTagsArray.filter((t) => t !== tagToRemove)
-  );
-}
+const { currentTag, addTag, removeTag } = useTags(
+  () => values.tags,
+  (newTags) => setFieldValue('tags', newTags)
+);
 
 const TypedFormField = createTypedForm<CreateBookmarkData>();
-
-const { data: foldersData } = useGetFolders();
 
 const fieldClassName =
   'w-full h-12.25! text-base leading-[100%] text-black-90 placeholder:text-black-60 py-3.5 px-4.5 rounded-full border border-[#E8E8E8]';
@@ -162,7 +163,7 @@ const fieldClassName =
             <template #default>
               <Input
                 v-model="currentTag"
-                @keydown.enter.prevent="handleAddTag"
+                @keydown.enter.prevent="addTag"
                 placeholder="Enter tags"
                 :class="fieldClassName"
               />
@@ -209,8 +210,8 @@ const fieldClassName =
       <div class="flex items-center justify-end p-6 pb-0 border-t border-stroke-1/10">
         <LoadingButton
           class="w-32 h-12 rounded-full text-base font-medium"
-          :isLoading="isSubmitting || props.isCreating"
-          :disabled="!meta.valid || isSubmitting || props.isCreating"
+          :isLoading="isSubmitting || isCreating"
+          :disabled="!meta.valid || isSubmitting || isCreating"
         >
           <span>Save</span>
         </LoadingButton>

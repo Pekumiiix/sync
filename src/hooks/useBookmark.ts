@@ -116,7 +116,7 @@ export function useMoveBookmark() {
 
   return useMutation({
     mutationFn: (payload: IMoveBookmarkPayload) => bookmarkService.moveBookmark(payload),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });

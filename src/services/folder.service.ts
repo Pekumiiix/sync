@@ -1,5 +1,6 @@
 import type { IApiResponse } from '@/types/api.type';
 import type {
+  IAddPasswordToFolderPayload,
   ICreateFolderPayload,
   IDeleteFolderPayload,
   IEditFolderPayload,
@@ -7,7 +8,8 @@ import type {
   IFolderResponse,
   IGetFolderBookmarksPayload,
   IGetFoldersResponse,
-  IJoinFolderPayload
+  IJoinFolderPayload,
+  IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
 import { apiClient } from '@/utils/apiUtils';
 
@@ -34,6 +36,21 @@ class FolderService {
     const { folderId, param } = payload;
 
     return apiClient<IApiResponse<IFolderBookmarksResponse>>('get', `/folders/${folderId}`, param);
+  }
+
+  addPasswordToFolder(payload: IAddPasswordToFolderPayload) {
+    const { folderId, password } = payload;
+
+    return apiClient<IApiResponse<IFolderResponse>>('patch', `/folders/${folderId}/password`, {
+      password
+    });
+  }
+
+  removePasswordFromFolder(payload: IRemovePasswordFromFolderPayload) {
+    return apiClient<IApiResponse<IFolderResponse>>(
+      'delete',
+      `/folders/${payload.folderId}/password`
+    );
   }
 
   joinFolder(payload: IJoinFolderPayload) {

@@ -1,4 +1,5 @@
 // src/hooks/useMember.ts
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
@@ -12,14 +13,18 @@ import type {
 /**
  * Hook to fetch the list of members for a specific folder.
  */
-export function useGetFolderMembers(payload: IFolderMembersPayload) {
-  const folderId = payload.folderId;
+export function useGetFolderMembers(payload: MaybeRefOrGetter<IFolderMembersPayload>) {
+  return useQuery(
+    computed(() => {
+      const unwrappedPayload = toValue(payload);
 
-  return useQuery({
-    queryKey: QUERY_KEYS.member.lists(),
-    queryFn: () => memberService.getFolderMembers(payload),
-    enabled: !!folderId
-  });
+      return {
+        queryKey: QUERY_KEYS.member.lists(),
+        queryFn: () => memberService.getFolderMembers(unwrappedPayload),
+        enabled: !!unwrappedPayload.folderId
+      };
+    })
+  );
 }
 
 /**
@@ -65,11 +70,11 @@ export function useKickMember() {
   });
 }
 
-export function useLeaveFolder(payload: IFolderMembersPayload) {
+export function useLeaveFolder() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => memberService.leaveFolder(payload),
+    mutationFn: (payload: IFolderMembersPayload) => memberService.leaveFolder(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.member.lists()

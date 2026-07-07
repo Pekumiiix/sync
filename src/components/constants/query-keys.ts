@@ -2,7 +2,7 @@ import type {
   GetFolderBookmarksQueryParams,
   IGetFolderBookmarksPayload
 } from '@/types/folder.type';
-import type { SearchFolderBookmarksQueryParams } from '@/types/search.type';
+import type { SearchBookmarksQueryParams, SearchFolderQueryParams } from '@/types/search.type';
 
 export const QUERY_KEYS = {
   auth: {
@@ -46,8 +46,10 @@ export const QUERY_KEYS = {
   },
   search: {
     all: ['search'] as const,
-    bookmarks: (params: SearchFolderBookmarksQueryParams) =>
-      [...QUERY_KEYS.search.all, 'bookmarks', { ...params }] as const
+    bookmarks: (params: SearchBookmarksQueryParams) =>
+      [...QUERY_KEYS.search.all, 'global', { ...params }] as const,
+    folderBookmarks: (params: SearchFolderQueryParams) =>
+      [...QUERY_KEYS.search.all, 'folder', params.folderId, { ...params }] as const
   },
   browserIntegration: {
     all: ['browser-integrations'] as const,

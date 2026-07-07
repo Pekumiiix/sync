@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { refDebounced } from '@vueuse/core';
 import { Upload } from 'lucide-vue-next';
 import { AnimatePresence } from 'motion-v';
 
 import { fadeSlideYConfig, fadeSlideYVariant } from '@/components/constants/animations';
+import { LeaveIcon, TrashIcon } from '@/components/icons';
 import { MotionParagraph, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
+import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
+import { useDeleteFolder } from '@/hooks/useFolder';
+import { useLeaveFolder } from '@/hooks/useMember';
+import { useSearchBookmarks, useSearchFolderBookmarks } from '@/hooks/useSearch';
 import type { IFolderBookmarksResponse } from '@/types/folder.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
@@ -21,32 +27,53 @@ interface Props {
     previewMembers: IFolderBookmarksResponse['previewMembers'];
     memberCount: IFolderBookmarksResponse['folder']['memberCount'];
     isSystem: IFolderBookmarksResponse['folder']['isSystem'];
+    isProtected: IFolderBookmarksResponse['folder']['isProtected'];
+    role: IFolderBookmarksResponse['permission']['role'];
   };
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   showTabActions: false
 });
 
 const query = ref('');
 const showShareDialog = ref(false);
 
-const transformedBookmarks = ref(transformBookmarks([]));
+const debouncedQuery = refDebounced(query, 400);
 
 const isQueryEmpty = computed(() => query.value === '');
+const isFolderScope = computed(() => !!props.folder?.id);
+
+const { data: searchBookmarkData } = useSearchBookmarks(() => ({
+  query: isFolderScope.value ? '' : debouncedQuery.value
+}));
+
+const { data: searchFolderBookmarkData } = useSearchFolderBookmarks(() => ({
+  query: isFolderScope.value ? debouncedQuery.value : '',
+  folderId: props.folder?.id || ''
+}));
+
+const { mutate: deleteFolder, isPending: isDeletingFolder } = useDeleteFolder();
+const { mutate: leaveFolder, isPending: isLeavingFolder } = useLeaveFolder();
+
+function handleDeleteFolder() {
+  if (!props.folder?.id) return;
+
+  deleteFolder({ folderId: props.folder.id });
+}
+
+function handleLeaveFolder() {
+  if (!props.folder?.id) return;
+
+  leaveFolder({ folderId: props.folder.id });
+}
 
 const searchResults = computed(() => {
-  if (isQueryEmpty.value) {
-    return [];
-  }
+  const data = isFolderScope.value ? searchFolderBookmarkData.value : searchBookmarkData.value;
 
-  return transformedBookmarks.value.filter(
-    (bookmark) =>
-      bookmark.url.toLowerCase().includes(query.value.toLowerCase()) ||
-      bookmark.title.toLowerCase().includes(query.value.toLowerCase()) ||
-      bookmark.description?.toLowerCase().includes(query.value.toLowerCase()) ||
-      bookmark.tags.some((tag) => tag.toLowerCase().includes(query.value.toLowerCase()))
-  );
+  if (!data?.data?.bookmarks) return [];
+
+  return transformBookmarks(data.data.bookmarks);
 });
 </script>
 
@@ -101,6 +128,26 @@ const searchResults = computed(() => {
           </p>
         </MotionDiv>
 
+        <LoadingButton
+          v-if="folder.role === 'owner' && !folder.isSystem"
+          :is-loading="isDeletingFolder"
+          @click="handleDeleteFolder"
+          class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
+        >
+          <TrashIcon class="stroke-danger-100" />
+          Delete
+        </LoadingButton>
+
+        <LoadingButton
+          v-if="folder.role !== 'owner' && !folder.isSystem"
+          :is-loading="isLeavingFolder"
+          @click="handleLeaveFolder"
+          class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
+        >
+          <LeaveIcon class="stroke-danger-100" />
+          Leave
+        </LoadingButton>
+
         <MotionDiv
           :config="{ variants: fadeSlideYVariant }"
           class="size-fit"
@@ -109,11 +156,11 @@ const searchResults = computed(() => {
             @click="showShareDialog = true"
             class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full"
           >
-            <span class="text-xs font-medium">Share</span>
             <Upload
               :size="20"
               class="text-inherit"
             />
+            <span class="text-xs font-medium">Share</span>
           </Button>
         </MotionDiv>
       </MotionStaggerContainer>
@@ -139,5 +186,6 @@ const searchResults = computed(() => {
     v-if="folder"
     v-model="showShareDialog"
     :folder-id="folder?.id"
+    :is-protected="folder?.isProtected"
   />
 </template>

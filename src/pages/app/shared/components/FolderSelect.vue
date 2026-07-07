@@ -17,7 +17,7 @@ interface Options {
   name: string;
   updatedAt: string;
   bookmarkCount: number;
-  recentImages: string[];
+  recentBookmarksImages: string[];
 }
 
 interface Props {
@@ -71,7 +71,7 @@ function renderValue(value: string) {
           >
             <FolderThumbnail
               :folderName="option.name"
-              :images="option.recentImages"
+              :images="option.recentBookmarksImages"
               :class-names="{
                 container: 'size-9 px-0.5 py-1 gap-0.75 shrink-0 rounded-[6px]',
                 images: {

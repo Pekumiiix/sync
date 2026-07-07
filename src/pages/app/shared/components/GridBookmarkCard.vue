@@ -18,8 +18,7 @@ import type { IBookmark } from '@/types/bookmark.type';
 import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
 import { formatBookmarkTime } from '@/utils/dateUtils';
 
-import { BookmarkDetailsDialog, DeleteBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
-import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
+import { DeleteBookmarkDialog, EditBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
 
 interface Props {
   bookmark: IBookmark;
@@ -27,21 +26,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const {
-  id,
-  url,
-  domain,
-  folder,
-  createdAt,
-  coverImageUrl,
-  isPinned,
-  tags,
-  faviconUrl,
-  description,
-  title,
-  websiteName
-} = props.bookmark;
 
 const detailsDisplayBool = ref<boolean>(false);
 const moveBookmarkDisplayBool = ref<boolean>(false);
@@ -53,16 +37,16 @@ const { mutate: pinBookmark } = usePinBookmark();
 const { mutate: unpinBookmark } = useUnpinBookmark();
 
 const actions = computed(() => [
-  isPinned
+  props.bookmark.isPinned
     ? {
         icon: UnpinIcon,
         label: 'Unpin',
-        action: () => unpinBookmark({ bookmarkId: id })
+        action: () => unpinBookmark({ bookmarkId: props.bookmark.id })
       }
     : {
         icon: PinIcon,
         label: 'Pin',
-        action: () => pinBookmark({ bookmarkId: id })
+        action: () => pinBookmark({ bookmarkId: props.bookmark.id })
       },
   {
     icon: EditIcon,
@@ -93,18 +77,14 @@ const actions = computed(() => [
     }
   }
 ]);
-
-function handleEditBookmark(data: BookmarkDetails) {
-  console.log('Edit bookmark:', data);
-}
 </script>
 
 <template>
   <div class="min-w-68.5 w-[32%] 2xl:w-[22%] flex flex-col rounded-xl border border-white-90">
     <div class="w-full h-39.75 overflow-hidden rounded-t-xl">
       <img
-        :src="coverImageUrl || FALLBACK_IMAGE"
-        :alt="domain"
+        :src="props.bookmark.coverImageUrl || FALLBACK_IMAGE"
+        :alt="props.bookmark.domain"
         class="w-full max-h-39.75 h-auto rounded-t-xl object-cover"
         @error="handleImageError"
       />
@@ -112,17 +92,21 @@ function handleEditBookmark(data: BookmarkDetails) {
 
     <div class="w-full flex justify-between gap-5 py-5 px-3">
       <div class="max-w-[80%] flex flex-col gap-1">
-        <p class="text-lg font-medium leading-[100%] text-black-90">{{ websiteName }}</p>
+        <p class="text-lg font-medium leading-[100%] text-black-90">
+          {{ props.bookmark.websiteName }}
+        </p>
         <p class="text-sm leading-4.5 text-black-90">
-          {{ domain }} |
+          {{ props.bookmark.domain }} |
           <router-link
-            :to="{ name: 'Bookmark Folder', params: { folderId: folder.id } }"
+            :to="{ name: 'Bookmark Folder', params: { folderId: props.bookmark.folder.id } }"
             class="hover:text-primary-90 transition-colors duration-200"
           >
-            {{ folder.name.toLocaleLowerCase() }}
+            {{ props.bookmark.folder.name.toLocaleLowerCase() }}
           </router-link>
         </p>
-        <p class="text-sm leading-4.5 text-black-50">{{ formatBookmarkTime(createdAt) }}</p>
+        <p class="text-sm leading-4.5 text-black-50">
+          {{ formatBookmarkTime(props.bookmark.createdAt) }}
+        </p>
       </div>
 
       <Checkbox
@@ -163,27 +147,24 @@ function handleEditBookmark(data: BookmarkDetails) {
     </div>
   </div>
 
-  <BookmarkDetailsDialog
+  <EditBookmarkDialog
     v-model="detailsDisplayBool"
     :data="{
-      image: faviconUrl || '',
-      title: title,
-      description: description || '',
-      url: url,
-      tags: tags,
-      folder_name: folder.name
+      id: props.bookmark.id,
+      favIconUrl: props.bookmark.faviconUrl || '',
+      title: props.bookmark.title,
+      description: props.bookmark.description || '',
+      tags: props.bookmark.tags
     }"
-    @save="handleEditBookmark"
-    type="edit"
   />
 
   <DeleteBookmarkDialog
-    :bookmarkIds="id"
+    :bookmarkIds="props.bookmark.id"
     v-model="deleteDisplayBool"
   />
 
   <MoveBookmarkDialog
-    :bookmarkIds="id"
+    :bookmarkIds="props.bookmark.id"
     v-model="moveBookmarkDisplayBool"
   />
 </template>

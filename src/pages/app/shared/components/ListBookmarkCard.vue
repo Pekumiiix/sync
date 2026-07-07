@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { EditIcon, EyeIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
+import { EditIcon, EyeIcon, FolderIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { LoadingButton } from '@/components/shared';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
@@ -9,8 +9,7 @@ import type { IBookmark } from '@/types/bookmark.type';
 import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
 import { formatBookmarkTime } from '@/utils/dateUtils';
 
-import { BookmarkDetailsDialog, DeleteBookmarkDialog } from '../dialogs';
-import type { BookmarkDetails } from '../schemas/bookmark-details.schema';
+import { DeleteBookmarkDialog, EditBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
 
 interface Props {
   bookmark: IBookmark;
@@ -25,6 +24,7 @@ const selectedBool = defineModel<boolean>({ default: false });
 
 const detailsDisplayBool = ref<boolean>(false);
 const deleteDisplayOpen = ref<boolean>(false);
+const moveBookmarkDisplayBool = ref<boolean>(false);
 
 const { mutate: pinBookmark, isPending: isPinning } = usePinBookmark();
 const { mutate: unpinBookmark, isPending: isUnpinning } = useUnpinBookmark();
@@ -64,6 +64,13 @@ const actions = [
     }
   },
   {
+    icon: FolderIcon,
+    label: 'Move',
+    action: () => {
+      moveBookmarkDisplayBool.value = true;
+    }
+  },
+  {
     icon: TrashIcon,
     label: 'Delete',
     action: () => {
@@ -71,10 +78,6 @@ const actions = [
     }
   }
 ];
-
-function handleEditBookmark(data: BookmarkDetails) {
-  console.log('Edit bookmark:', data);
-}
 </script>
 
 <template>
@@ -144,22 +147,24 @@ function handleEditBookmark(data: BookmarkDetails) {
     </div>
   </div>
 
-  <BookmarkDetailsDialog
+  <EditBookmarkDialog
     v-model="detailsDisplayBool"
     :data="{
-      image: props.bookmark.faviconUrl || '',
+      id: props.bookmark.id,
+      favIconUrl: props.bookmark.faviconUrl || FALLBACK_IMAGE,
       title: props.bookmark.title,
       description: props.bookmark.description || '',
-      url: props.bookmark.url,
-      tags: props.bookmark.tags,
-      folder_name: props.bookmark.folder.name
+      tags: props.bookmark.tags
     }"
-    @save="handleEditBookmark"
-    type="edit"
   />
 
   <DeleteBookmarkDialog
     :bookmark-ids="props.bookmark.id"
     v-model="deleteDisplayOpen"
+  />
+
+  <MoveBookmarkDialog
+    :bookmarkIds="props.bookmark.id"
+    v-model="moveBookmarkDisplayBool"
   />
 </template>

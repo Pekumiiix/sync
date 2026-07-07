@@ -4,8 +4,7 @@ import { useForm } from 'vee-validate';
 
 import { LoadingButton } from '@/components/shared';
 import { Input } from '@/components/ui/input';
-import { useCreateBookmark, useGetBookmarkPreview } from '@/hooks/useBookmark';
-import type { BrowserProvider } from '@/types/app.type';
+import { useGetBookmarkPreview } from '@/hooks/useBookmark';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type AddBookmarkData, addBookmarkSchema } from '../schemas/add-bookmark.schema';
@@ -18,7 +17,6 @@ const { handleSubmit, meta, isSubmitting } = useForm<AddBookmarkData>({
 });
 
 const { mutate: getBookmarkPreview, isPending: isLoading } = useGetBookmarkPreview();
-const { mutate: createBookmark, isPending: isCreating } = useCreateBookmark();
 
 const bookmarkDetails = ref<Omit<CreateBookmarkData, 'tags' | 'folderId' | 'browser'> | undefined>(
   undefined
@@ -47,31 +45,6 @@ const onSubmit = handleSubmit(async (values) => {
     }
   });
 });
-
-function handleCreateBookmark(data: CreateBookmarkData) {
-  createBookmark(
-    {
-      folderId: data.folderId,
-      title: data.title,
-      description: data.description,
-      url: data.url,
-      tags: data.tags,
-      faviconUrl: data.favIconUrl,
-      coverImageUrl: data.coverImageUrl,
-      browser: data.browser as BrowserProvider,
-      websiteName: data.websiteName,
-      domain: data.domain
-    },
-    {
-      onSuccess() {
-        detailsDisplayBool.value = false;
-      },
-      onError() {
-        console.error('Failed to create bookmark');
-      }
-    }
-  );
-}
 
 const TypedFormField = createTypedForm<AddBookmarkData>();
 
@@ -115,7 +88,5 @@ const detailsDisplayBool = ref<boolean>(false);
     v-if="bookmarkDetails"
     v-model="detailsDisplayBool"
     :data="bookmarkDetails"
-    :isCreating="isCreating"
-    @save="handleCreateBookmark"
   />
 </template>
