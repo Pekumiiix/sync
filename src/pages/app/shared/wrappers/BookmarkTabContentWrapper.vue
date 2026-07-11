@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { computed } from 'vue';
 import { Plus } from 'lucide-vue-next';
 import { AnimatePresence } from 'motion-v';
 
 import { fadeSlideYConfig, fadeSlideYVariant } from '@/components/constants/animations';
-import { EyeIcon, FolderIcon, TrashIcon } from '@/components/icons';
+import { FolderIcon, TrashIcon } from '@/components/icons';
 import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -14,6 +15,8 @@ import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { GridBookmarkCard, ListBookmarkCard } from '../components';
 import { AddBookmarkDialog, DeleteBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
+import { EmptyState } from '../query-states';
+import { QueryStateWrapper } from '.';
 
 interface Props {
   displayType: DisplayType;
@@ -27,32 +30,27 @@ const addBookmarkDisplayBool = ref(false);
 const moveBookmarkDisplayBool = ref(false);
 const deleteBookmarkDisplayBool = ref(false);
 
+const selectedBookmarks = ref<string[]>([]);
+
 const transformedBookmarks = ref(transformBookmarks(props.bookmarks));
 
-const actions = [
-  {
-    label: 'View',
-    icon: EyeIcon,
-    acion: () => {}
-  },
+const buttons = computed(() => [
   {
     label: 'Move',
     icon: FolderIcon,
-    acion: () => {
+    action: () => {
       moveBookmarkDisplayBool.value = true;
     }
   },
   {
     label: 'Delete',
     icon: TrashIcon,
-    acion: () => {
+    action: () => {
       deleteBookmarkDisplayBool.value = true;
     },
     class: 'text-[#FF2F00] stroke-[#FF2F00] hover:text-[#FF2F00] hover:bg-[#FF2F00]/10'
   }
-];
-
-const selectedBookmarks = ref<string[]>([]);
+]);
 
 watch(
   [() => props.bookmarks, transformedBookmarks],
@@ -85,25 +83,25 @@ watch(
           class="flex items-center gap-4"
         >
           <MotionDiv
-            v-for="action in actions"
-            :key="action.label"
+            v-for="button in buttons"
+            :key="button.label"
             :config="{ variants: fadeSlideYVariant }"
             class="size-fit"
           >
             <Button
               variant="ghost"
-              @click="action.acion"
+              @click="button.action"
               :class="
-                cn('flex items-center gap-1 text-base leading-[100%] text-black-90', action.class)
+                cn('flex items-center gap-1 text-base leading-[100%] text-black-90', button.class)
               "
             >
-              <component :is="action.icon" /> <span>{{ action.label }}</span>
+              <component :is="button.icon" /> <span>{{ button.label }}</span>
             </Button>
           </MotionDiv>
         </MotionStaggerContainer>
       </AnimatePresence>
 
-      <!-------------------------------------- Add bookmark buttons --------------------------------->
+      <!-------------------------------------- Add bookmark button --------------------------------->
       <AnimatePresence>
         <MotionDiv
           v-if="selectedBookmarks.length === 0"
@@ -128,30 +126,50 @@ watch(
     </div>
 
     <!------------------------- Bookmark Cards --------------------------->
-    <div
-      v-if="displayType === 'list'"
-      class="flex flex-col"
-    >
-      <ListBookmarkCard
-        v-for="bookmark in transformedBookmarks"
-        v-model="bookmark.isSelected"
-        :key="bookmark.id"
-        :bookmark="bookmark"
-      />
-    </div>
+    <QueryStateWrapper :is-empty="!bookmarks.length">
+      <template #default>
+        <div
+          v-if="displayType === 'list'"
+          class="flex flex-col"
+        >
+          <ListBookmarkCard
+            v-for="bookmark in transformedBookmarks"
+            v-model="bookmark.isSelected"
+            :key="bookmark.id"
+            :bookmark="bookmark"
+          />
+        </div>
 
-    <div
-      v-else
-      class="flex flex-row flex-wrap gap-3.5 px-6.5 pb-5"
-    >
-      <GridBookmarkCard
-        v-for="bookmark in transformedBookmarks"
-        v-model="bookmark.isSelected"
-        :key="bookmark.id"
-        :bookmark="bookmark"
-        :showCheckbox="(selectedBookmarks?.length || 0) > 0"
-      />
-    </div>
+        <div
+          v-else
+          class="flex flex-row flex-wrap gap-3.5 px-6.5 pb-5"
+        >
+          <GridBookmarkCard
+            v-for="bookmark in transformedBookmarks"
+            v-model="bookmark.isSelected"
+            :key="bookmark.id"
+            :bookmark="bookmark"
+            :showCheckbox="!!selectedBookmarks?.length"
+          />
+        </div>
+      </template>
+
+      <template #empty>
+        <div class="w-full h-fit px-6.5 pb-7">
+          <EmptyState
+            class="rounded-[12px] border border-white-90"
+            title="You have no bookmarks at this moment"
+          >
+            <router-link
+              to="#"
+              class="text-sm leading-4 font-medium font-dm-sans underline text-black-100 underline-offset-2"
+            >
+              Sync from another browser?
+            </router-link>
+          </EmptyState>
+        </div>
+      </template>
+    </QueryStateWrapper>
   </section>
 
   <!------------------------------------ Dialogs --------------------------------------------->

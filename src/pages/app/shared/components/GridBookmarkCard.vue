@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { Ellipsis } from 'lucide-vue-next';
 
 import {
@@ -16,7 +17,7 @@ import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
 import { cn } from '@/lib/utils';
 import type { IBookmark } from '@/types/bookmark.type';
 import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
-import { formatBookmarkTime } from '@/utils/dateUtils';
+import { timeAgo } from '@/utils/dateUtils';
 
 import { DeleteBookmarkDialog, EditBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
 
@@ -27,11 +28,13 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const route = useRoute();
+
 const detailsDisplayBool = ref<boolean>(false);
 const moveBookmarkDisplayBool = ref<boolean>(false);
+const deleteDisplayBool = ref<boolean>(false);
 
 const selectBool = defineModel<boolean>({ default: false });
-const deleteDisplayBool = ref<boolean>(false);
 
 const { mutate: pinBookmark } = usePinBookmark();
 const { mutate: unpinBookmark } = useUnpinBookmark();
@@ -55,13 +58,17 @@ const actions = computed(() => [
       detailsDisplayBool.value = true;
     }
   },
-  {
-    icon: SelectIcon,
-    label: selectBool.value ? 'Deselect' : 'Select',
-    action: () => {
-      selectBool.value = !selectBool.value;
-    }
-  },
+  ...(route.name === 'Bookmark Folder'
+    ? [
+        {
+          icon: SelectIcon,
+          label: selectBool.value ? 'Deselect' : 'Select',
+          action: () => {
+            selectBool.value = !selectBool.value;
+          }
+        }
+      ]
+    : []),
   {
     icon: FolderIcon,
     label: 'Move',
@@ -81,14 +88,18 @@ const actions = computed(() => [
 
 <template>
   <div class="min-w-68.5 w-[32%] 2xl:w-[22%] flex flex-col rounded-xl border border-white-90">
-    <div class="w-full h-39.75 overflow-hidden rounded-t-xl">
+    <a
+      :href="props.bookmark.url"
+      target="_blank"
+      class="w-full h-39.75 overflow-hidden rounded-t-xl group"
+    >
       <img
         :src="props.bookmark.coverImageUrl || FALLBACK_IMAGE"
         :alt="props.bookmark.domain"
-        class="w-full max-h-39.75 h-auto rounded-t-xl object-cover"
+        class="w-full max-h-39.75 h-auto rounded-t-xl object-cover group-hover:scale-105 transition-transform duration-300"
         @error="handleImageError"
       />
-    </div>
+    </a>
 
     <div class="w-full flex justify-between gap-5 py-5 px-3">
       <div class="max-w-[80%] flex flex-col gap-1">
@@ -105,7 +116,7 @@ const actions = computed(() => [
           </router-link>
         </p>
         <p class="text-sm leading-4.5 text-black-50">
-          {{ formatBookmarkTime(props.bookmark.createdAt) }}
+          {{ timeAgo(props.bookmark.createdAt) }}
         </p>
       </div>
 

@@ -5,12 +5,15 @@ import { Upload } from 'lucide-vue-next';
 import { AnimatePresence } from 'motion-v';
 
 import { fadeSlideYConfig, fadeSlideYVariant } from '@/components/constants/animations';
-import { LeaveIcon, TrashIcon } from '@/components/icons';
-import { MotionParagraph, MotionStaggerContainer } from '@/components/motion-wrappers';
+import { EditIcon, LeaveIcon, TrashIcon } from '@/components/icons';
+import {
+  MotionButton,
+  MotionParagraph,
+  MotionStaggerContainer
+} from '@/components/motion-wrappers';
 import { MotionDiv } from '@/components/motion-wrappers';
 import { BaseAvatar } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
-import { Button } from '@/components/ui/button';
 import { useDeleteFolder } from '@/hooks/useFolder';
 import { useLeaveFolder } from '@/hooks/useMember';
 import { useSearchBookmarks, useSearchFolderBookmarks } from '@/hooks/useSearch';
@@ -18,12 +21,14 @@ import type { IFolderBookmarksResponse } from '@/types/folder.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 
 import { ListBookmarkCard, SearchInput } from '../components';
-import { ShareFolderDialog } from '../dialogs';
+import { FolderFormDialog, ShareFolderDialog } from '../dialogs';
+import { QueryStateWrapper } from '.';
 
 interface Props {
   showTabActions?: boolean;
   folder?: {
     id: IFolderBookmarksResponse['folder']['id'];
+    name: IFolderBookmarksResponse['folder']['name'];
     previewMembers: IFolderBookmarksResponse['previewMembers'];
     memberCount: IFolderBookmarksResponse['folder']['memberCount'];
     isSystem: IFolderBookmarksResponse['folder']['isSystem'];
@@ -38,20 +43,23 @@ const props = withDefaults(defineProps<Props>(), {
 
 const query = ref('');
 const showShareDialog = ref(false);
+const showEditFolderDialog = ref(false);
 
 const debouncedQuery = refDebounced(query, 400);
 
 const isQueryEmpty = computed(() => query.value === '');
 const isFolderScope = computed(() => !!props.folder?.id);
 
-const { data: searchBookmarkData } = useSearchBookmarks(() => ({
+const { data: searchBookmarkData, isPending: isSearchingForBookmark } = useSearchBookmarks(() => ({
   query: isFolderScope.value ? '' : debouncedQuery.value
 }));
 
-const { data: searchFolderBookmarkData } = useSearchFolderBookmarks(() => ({
-  query: isFolderScope.value ? debouncedQuery.value : '',
-  folderId: props.folder?.id || ''
-}));
+const { data: searchFolderBookmarkData, isPending: isSearchingFolder } = useSearchFolderBookmarks(
+  () => ({
+    query: isFolderScope.value ? debouncedQuery.value : '',
+    folderId: props.folder?.id || ''
+  })
+);
 
 const { mutate: deleteFolder, isPending: isDeletingFolder } = useDeleteFolder();
 const { mutate: leaveFolder, isPending: isLeavingFolder } = useLeaveFolder();
@@ -116,7 +124,7 @@ const searchResults = computed(() => {
               :key="member.id"
               :src="member.avatarUrl"
               :fallback="member.lastName"
-              class="size-6 shrink-0 outline-2 outline-[#F8F8F9]"
+              class="size-6 shrink-0 outline-2 outline-contemporary-background"
             />
           </router-link>
 
@@ -128,8 +136,20 @@ const searchResults = computed(() => {
           </p>
         </MotionDiv>
 
+        <MotionButton
+          v-if="folder.role === 'owner' && !folder.isSystem"
+          :config="{ variants: fadeSlideYVariant }"
+          :is-loading="isDeletingFolder"
+          @click="showEditFolderDialog = true"
+          class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-black-70 gap-1.75 px-3 py-3.5 rounded-full bg-tertiary-background hover:bg-black-10/70"
+        >
+          <EditIcon class="stroke-black-70" />
+          Edit
+        </MotionButton>
+
         <LoadingButton
           v-if="folder.role === 'owner' && !folder.isSystem"
+          :config="{ variants: fadeSlideYVariant }"
           :is-loading="isDeletingFolder"
           @click="handleDeleteFolder"
           class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
@@ -140,6 +160,7 @@ const searchResults = computed(() => {
 
         <LoadingButton
           v-if="folder.role !== 'owner' && !folder.isSystem"
+          :config="{ variants: fadeSlideYVariant }"
           :is-loading="isLeavingFolder"
           @click="handleLeaveFolder"
           class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
@@ -148,21 +169,17 @@ const searchResults = computed(() => {
           Leave
         </LoadingButton>
 
-        <MotionDiv
+        <MotionButton
           :config="{ variants: fadeSlideYVariant }"
-          class="size-fit"
+          @click="showShareDialog = true"
+          class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full"
         >
-          <Button
-            @click="showShareDialog = true"
-            class="w-fit h-9.5 flex items-center gap-2 py-3 px-4 rounded-full"
-          >
-            <Upload
-              :size="20"
-              class="text-inherit"
-            />
-            <span class="text-xs font-medium">Share</span>
-          </Button>
-        </MotionDiv>
+          <Upload
+            :size="20"
+            class="text-inherit"
+          />
+          <span class="text-xs font-medium">Share</span>
+        </MotionButton>
       </MotionStaggerContainer>
     </AnimatePresence>
   </section>
@@ -171,21 +188,34 @@ const searchResults = computed(() => {
 
   <div
     v-else
-    class="w-full flex flex-col"
+    class="w-full h-full flex flex-col"
   >
-    <ListBookmarkCard
-      v-for="bookmark in searchResults"
-      v-model="bookmark.isSelected"
-      :key="bookmark.id"
-      :bookmark="bookmark"
-      :showCheckbox="false"
-    />
+    <QueryStateWrapper
+      :is-empty="!searchResults.length"
+      :is-loading="isSearchingFolder || isSearchingForBookmark"
+    >
+      <ListBookmarkCard
+        v-for="bookmark in searchResults"
+        v-model="bookmark.isSelected"
+        :key="bookmark.id"
+        :bookmark="bookmark"
+        :showCheckbox="false"
+      />
+    </QueryStateWrapper>
   </div>
 
   <ShareFolderDialog
     v-if="folder"
     v-model="showShareDialog"
-    :folder-id="folder?.id"
-    :is-protected="folder?.isProtected"
+    :folder-id="folder.id"
+    :is-protected="folder.isProtected"
+  />
+
+  <FolderFormDialog
+    v-if="folder"
+    v-model="showEditFolderDialog"
+    :folder-id="folder.id"
+    :name="folder.name"
+    type="edit"
   />
 </template>

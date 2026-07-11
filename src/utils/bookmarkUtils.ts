@@ -1,4 +1,4 @@
-import { computed, type MaybeRefOrGetter, ref, toValue } from 'vue';
+import { type MaybeRefOrGetter, ref, toValue } from 'vue';
 
 import type { IBookmark } from '@/types/bookmark.type';
 import type { IFolder, IGetFoldersResponse } from '@/types/folder.type';
@@ -32,17 +32,6 @@ export function transformBookmarkFolders(data: IGetFoldersResponse | undefined) 
       updatedAt: timeAgo(folder.updatedAt),
       isSelected: false
     }))
-  };
-}
-
-export function extractPinnedBookmarksData() {
-  const selectedPinnedBookmarks = ref<string[] | null>(null);
-
-  const selectedPinnedBookmarksLength = computed(() => selectedPinnedBookmarks.value?.length || 0);
-
-  return {
-    selectedPinnedBookmarks,
-    selectedPinnedBookmarksLength
   };
 }
 
@@ -87,4 +76,8 @@ export function handleImageError(event: Event) {
     target.src = FALLBACK_IMAGE;
     target.onerror = null;
   }
+}
+
+export function handleBookmarkView(url: string) {
+  return window.open(url, '_blank', 'noopener,noreferrer');
 }

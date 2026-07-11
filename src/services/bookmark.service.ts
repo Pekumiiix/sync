@@ -4,6 +4,8 @@ import type {
   IBookmarkResponse,
   IBrowserPayload,
   IBrowserResponse,
+  IBulkActionPayload,
+  IBulkMoveBookmarksPayload,
   ICreateBookmarkPayload,
   IDeleteBookmarkPayload,
   IEditBookmarkPayload,
@@ -62,6 +64,18 @@ class BookmarkService {
 
   getBookmarkBrowsers(payload?: IBrowserPayload) {
     return apiClient<IApiResponse<IBrowserResponse>>('get', `/bookmarks/browsers`, payload);
+  }
+
+  bulkDeleteBookmarks(payload: IBulkActionPayload) {
+    return apiClient<IApiResponse>('delete', `/bookmarks/bulk-delete`, payload);
+  }
+
+  bulkMoveBookmarks(payload: IBulkMoveBookmarksPayload) {
+    return apiClient<IApiResponse>('patch', `/bookmarks/bulk-move`, payload);
+  }
+
+  bulkUnpinBookmarks(payload: IBulkActionPayload) {
+    return apiClient<IApiResponse>('patch', `/bookmarks/bulk-unpin`, payload);
   }
 }
 

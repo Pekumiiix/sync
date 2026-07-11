@@ -70,9 +70,13 @@ export function useEditFolder() {
 
   return useMutation({
     mutationFn: (payload: IEditFolderPayload) => folderService.editFolder(payload),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.folderBookmarksBase(variables.folderId)
       });
     }
   });

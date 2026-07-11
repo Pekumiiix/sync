@@ -37,6 +37,10 @@ export interface IBrowser {
   browser: BrowserProvider;
 }
 
+export interface IBulkActionPayload {
+  bookmarkIds: BookmarkId[];
+}
+
 // Request payloads for bookmark related operations
 
 export interface IBaseBookmarkPayload {
@@ -80,7 +84,12 @@ export interface IPreviewBookmarkPayload {
 }
 
 export interface IBrowserPayload {
-  folder?: FolderId;
+  folderId?: FolderId;
+}
+
+export interface IBulkMoveBookmarksPayload {
+  bookmarkIds: BookmarkId[];
+  folderId: FolderId;
 }
 
 // Response objects for bookmark related operations

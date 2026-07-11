@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { LoaderCircle } from 'lucide-vue-next';
+import type { MotionProps } from 'motion-v';
 
-import { Button, type ButtonVariants } from '@/components/ui/button';
+import { type ButtonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
+import { MotionButton } from '../motion-wrappers';
 
 interface Props {
   isLoading: boolean;
@@ -11,6 +14,7 @@ interface Props {
   loaderClass?: string;
   strokeWidth?: number;
   variant?: ButtonVariants['variant'];
+  config?: MotionProps<'button'>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,8 +28,9 @@ const isButtonDisabled = computed(() => props.isLoading || props.disabled);
 </script>
 
 <template>
-  <Button
+  <MotionButton
     v-bind="$attrs"
+    :config="config"
     :disabled="isButtonDisabled"
     :variant="props.variant"
   >
@@ -36,5 +41,5 @@ const isButtonDisabled = computed(() => props.isLoading || props.disabled);
     />
 
     <slot v-else />
-  </Button>
+  </MotionButton>
 </template>

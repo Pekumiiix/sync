@@ -17,13 +17,9 @@ export const QUERY_KEYS = {
     allBookmarksBase: () => [...QUERY_KEYS.folder.bookmarks(), 'all'] as const,
     getAllBookmarks: (params: GetFolderBookmarksQueryParams) =>
       [...QUERY_KEYS.folder.allBookmarksBase(), { ...params }] as const,
-    folderBookmarksBase: (folderId: string) =>
-      [...QUERY_KEYS.folder.bookmarks(), 'detail', folderId] as const,
+    folderBookmarksBase: (folderId: string) => ['folders', 'bookmarks', folderId] as const,
     getFolderBookmarks: (payload: IGetFolderBookmarksPayload) =>
-      [
-        ...QUERY_KEYS.folder.folderBookmarksBase(payload.folderId),
-        { params: payload.param }
-      ] as const,
+      [...QUERY_KEYS.folder.folderBookmarksBase(payload.folderId), payload.param] as const,
     bookmarkBrowsersBase: () => [...QUERY_KEYS.folder.all, 'bookmark-browsers'] as const,
     getBookmarkBrowsers: (folderId?: string) =>
       [...QUERY_KEYS.folder.bookmarkBrowsersBase(), { folderId }] as const

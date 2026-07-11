@@ -5,9 +5,7 @@ import { useUrlSearchParams } from '@vueuse/core';
 
 import { useGetBookmarkBrowsers } from '@/hooks/useBookmark';
 import { useGetFolderBookmarks } from '@/hooks/useFolder';
-import { mockFolderBookmarksResponse } from '@/mock-data/bookmark-folder';
 import type { BrowserProvider, SortOrder } from '@/types/app.type';
-import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
@@ -17,6 +15,7 @@ const route = useRoute();
 const params = useUrlSearchParams('history');
 
 const sortOrder = ref<SortOrder>('title_desc');
+const selectedPinnedBookmarks = ref<string[] | null>(null);
 
 const folderId = computed(() => route.params.folderId as string);
 
@@ -38,7 +37,7 @@ const { data: folderBookmarksData } = useGetFolderBookmarks(() => ({
   folderId: folderId.value,
   param: queryParams.value
 }));
-const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers();
+const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers({ folderId: folderId.value });
 
 const folderData = computed(() => folderBookmarksData.value?.data?.folder);
 
@@ -55,17 +54,16 @@ const tabs = computed(() => {
     }))
   ];
 });
-
-const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 </script>
 
 <template>
-  <AppWrapper :page="`${mockFolderBookmarksResponse.folder.name} Folder`">
+  <AppWrapper :page="`${folderData?.name || 'Untitled'} Folder`">
     <ContentWrapper
       showTabActions
       :folderId="folderId"
       :folder="{
         id: folderData?.id || '',
+        name: folderData?.name || '',
         previewMembers: folderBookmarksData?.data.previewMembers || [],
         memberCount: folderData?.memberCount || 0,
         isSystem: folderData?.isSystem || false,
@@ -75,15 +73,15 @@ const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinned
     >
       <BookmarkTabWrapper
         v-model:activeTab="activeTab"
+        v-model:sortOrder="sortOrder"
         v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
         :tabs="tabs"
         :bookmarks="folderBookmarksData?.data.bookmarks || []"
-        :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
       >
         <PinnedBookmarks
+          v-if="folderBookmarksData?.data.pinnedBookmarks.length"
           v-model="selectedPinnedBookmarks"
           :pinnedBookmarks="folderBookmarksData?.data.pinnedBookmarks || []"
-          :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
         />
       </BookmarkTabWrapper>
     </ContentWrapper>

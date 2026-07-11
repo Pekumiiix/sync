@@ -1,3 +1,4 @@
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
@@ -7,12 +8,18 @@ import type { IBaseNotificationPayload, IGetNotificationsParam } from '@/types/n
 /**
  * Hook to retrieve all user notifications.
  */
-export function useGetAllNotifications(params: IGetNotificationsParam) {
-  return useQuery({
-    queryKey: QUERY_KEYS.notification.getAllNotifications(),
-    queryFn: () => notificationService.getAllNotifications(params),
-    staleTime: 1000 * 60 * 1
-  });
+export function useGetAllNotifications(params: MaybeRefOrGetter<IGetNotificationsParam>) {
+  return useQuery(
+    computed(() => {
+      const unwrappedParams = toValue(params);
+
+      return {
+        queryKey: QUERY_KEYS.notification.getAllNotifications(),
+        queryFn: () => notificationService.getAllNotifications(unwrappedParams),
+        staleTime: 1000 * 60 * 1
+      };
+    })
+  );
 }
 
 /**

@@ -4,11 +4,10 @@ import { useUrlSearchParams } from '@vueuse/core';
 
 import { useGetAllBookmarks, useGetBookmarkBrowsers } from '@/hooks/useBookmark';
 import type { BrowserProvider, SortOrder } from '@/types/app.type';
-import { extractPinnedBookmarksData } from '@/utils/bookmarkUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
-import { BookmarkTabWrapper, ContentWrapper } from '../shared/wrappers';
+import { BookmarkTabWrapper, ContentWrapper, QueryStateWrapper } from '../shared/wrappers';
 
 const params = useUrlSearchParams('history');
 
@@ -28,7 +27,7 @@ const queryParams = computed(() => ({
   sort: sortOrder.value
 }));
 
-const { data: bookmarksData } = useGetAllBookmarks(queryParams);
+const { data: bookmarksData, isLoading: isLoadingBookmarks } = useGetAllBookmarks(queryParams);
 const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers();
 
 const tabs = computed(() => {
@@ -44,27 +43,27 @@ const tabs = computed(() => {
     }))
   ];
 });
-
-const { selectedPinnedBookmarks, selectedPinnedBookmarksLength } = extractPinnedBookmarksData();
 </script>
 
 <template>
   <AppWrapper page="All Bookmarks">
     <ContentWrapper>
-      <BookmarkTabWrapper
-        v-model:activeTab="activeTab"
-        v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
-        v-model:sortOrder="sortOrder"
-        :tabs="tabs"
-        :bookmarks="bookmarksData?.data.bookmarks || []"
-        :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
+      <QueryStateWrapper
+        :is-loading="isLoadingBookmarks"
+        loading-title="Fetching bookmarks"
       >
-        <PinnedBookmarks
-          v-model="selectedPinnedBookmarks"
-          :pinnedBookmarks="bookmarksData?.data.pinnedBookmarks || []"
-          :selectedPinnedBookmarksLength="selectedPinnedBookmarksLength"
-        />
-      </BookmarkTabWrapper>
+        <BookmarkTabWrapper
+          v-model:activeTab="activeTab"
+          v-model:sortOrder="sortOrder"
+          :tabs="tabs"
+          :bookmarks="bookmarksData?.data.bookmarks || []"
+        >
+          <PinnedBookmarks
+            v-if="bookmarksData?.data.pinnedBookmarks.length"
+            :pinnedBookmarks="bookmarksData?.data.pinnedBookmarks || []"
+          />
+        </BookmarkTabWrapper>
+      </QueryStateWrapper>
     </ContentWrapper>
   </AppWrapper>
 </template>

@@ -1,39 +1,77 @@
 <script setup lang="ts">
+import { watch } from 'vue';
 import { useForm } from 'vee-validate';
 
 import { BaseDialog } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useCreateFolder } from '@/hooks/useFolder';
+import { useCreateFolder, useEditFolder } from '@/hooks/useFolder';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { type CreateFolderData, createFolderSchema } from '../schemas/create-folder.schema';
 
-const { handleSubmit, meta, isSubmitting } = useForm<CreateFolderData>({
-  validationSchema: createFolderSchema
+type CreateFolderProps = {
+  type: 'create';
+  name?: never;
+  folderId?: never;
+};
+
+type AddFolderProps = {
+  type: 'edit';
+  name: string;
+  folderId: string;
+};
+
+type Props = CreateFolderProps | AddFolderProps;
+
+const props = defineProps<Props>();
+
+const displayBool = defineModel({ default: false });
+
+const { handleSubmit, meta, isSubmitting, resetForm } = useForm<CreateFolderData>({
+  validationSchema: createFolderSchema,
+  initialValues: {
+    name: props.name
+  }
 });
 
-const { mutate, isPending } = useCreateFolder();
+watch(displayBool, (isOpen) => {
+  if (isOpen) {
+    resetForm({ values: { name: props.name } });
+  }
+});
+
+const { mutate: createFolder, isPending: isCreatingFolder } = useCreateFolder();
+const { mutate: editFolder, isPending: isEditingFolder } = useEditFolder();
 
 const onSubmit = handleSubmit(async (values) => {
-  mutate(values, {
-    onSuccess: () => {
-      displayBool.value = false;
-    }
-  });
+  if (props.type === 'edit') {
+    editFolder(
+      { ...values, folderId: props.folderId },
+      {
+        onSuccess: () => {
+          displayBool.value = false;
+        }
+      }
+    );
+  } else {
+    createFolder(values, {
+      onSuccess: () => {
+        displayBool.value = false;
+      }
+    });
+  }
 });
 
 const TypedFormField = createTypedForm<CreateFolderData>();
-
-const displayBool = defineModel({ default: false });
 </script>
 
 <template>
   <BaseDialog
     v-model="displayBool"
-    title="Create new folder"
-    description="Enter a name for your new folder"
+    :title="type === 'edit' ? 'Edit folder' : 'Create new folder'"
+    description="Enter a name for your folder"
     :img="{
       src: '/images/app/dialogs/folder.png',
       alt: 'Folder',
@@ -78,8 +116,8 @@ const displayBool = defineModel({ default: false });
 
         <LoadingButton
           class="w-full h-11 rounded-full text-base font-medium leading-5.5"
-          :isLoading="isSubmitting || isPending"
-          :disabled="!meta.valid || isSubmitting || isPending"
+          :isLoading="isSubmitting || isEditingFolder || isCreatingFolder"
+          :disabled="!meta.valid || isSubmitting || isEditingFolder || isCreatingFolder"
         >
           <span>Continue</span>
         </LoadingButton>

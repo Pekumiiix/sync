@@ -51,6 +51,8 @@ const result = computed(() => {
       <MembersItem
         v-for="member in result"
         :key="member.id"
+        :memberId="member.id"
+        :folderId="member.folderId"
         :avatar_url="member.user.avatarUrl"
         :name="member.user.firstName + ' ' + member.user.lastName"
         :email="member.user.email"
@@ -63,6 +65,8 @@ const result = computed(() => {
       <MembersItem
         v-for="member in folderMembersData?.data.members || []"
         :key="member.id"
+        :memberId="member.id"
+        :folderId="member.folderId"
         :avatar_url="member.user.avatarUrl"
         :name="member.user.firstName + ' ' + member.user.lastName"
         :email="member.user.email"

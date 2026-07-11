@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router';
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import env from '@/config/env';
-import { useGetAllNotifications } from '@/hooks/useNotification';
 
 // import { JoinWorkSpaceDialog } from '../dialogs';
 import { NotificationPanel } from './sections';
@@ -15,8 +14,6 @@ interface Props {
 }
 
 defineProps<Props>();
-
-const { data, isLoading } = useGetAllNotifications({ page: 1, limit: 10 });
 
 const router = useRouter();
 
@@ -48,18 +45,7 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
       </Button>
 
       <div class="flex items-center justify-between gap-3">
-        <div class="size-fit relative">
-          <NotificationPanel
-            :is-loading="isLoading"
-            :notifications="data?.data.notifications || []"
-            :unread-count="data?.data.meta.unreadCount || 0"
-          />
-
-          <span
-            v-if="(data?.data.meta.unreadCount || 0) > 0"
-            class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0"
-          />
-        </div>
+        <NotificationPanel />
 
         <Button
           as-child

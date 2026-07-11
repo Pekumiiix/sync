@@ -5,8 +5,12 @@ import { useSeoMeta } from '@vueuse/head';
 
 import { Toaster } from '@/components/ui/sonner';
 
+import { FullScreenLoader } from './components/shared';
+import { useAuthStore } from './stores/auth.store';
+
 import 'vue-sonner/style.css';
 
+const authStore = useAuthStore();
 const route = useRoute();
 
 const pageTitle = computed(() => {
@@ -37,9 +41,15 @@ useSeoMeta({
   twitterImageAlt: 'Sync App Dashboard Preview'
   // twitterSite: '@SyncApp',
 });
+
+const isAppRouteLoading = computed(() => {
+  return authStore.isLoading && route.meta.requiresAuth;
+});
 </script>
 
 <template>
+  <FullScreenLoader v-if="isAppRouteLoading" />
+
   <Toaster />
 
   <RouterView />

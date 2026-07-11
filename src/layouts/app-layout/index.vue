@@ -4,7 +4,6 @@ import { RouterView } from 'vue-router';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
 
-// import { mockPendingInvitation } from '@/mock-data/invitation';
 // import { JoinWorkSpaceDialog } from '@/pages/app/shared/dialogs';
 import { AppSidebar } from './sections';
 

@@ -10,7 +10,7 @@ defineProps<Props>();
 </script>
 
 <template>
-  <Avatar>
+  <Avatar :title="fallback">
     <AvatarImage
       :src="src || ''"
       class="object-center object-cover"

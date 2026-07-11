@@ -8,6 +8,7 @@ import MarketingLayout from '@/layouts/marketing-layout/index.vue';
 import AllBookmarksPage from '@/pages/app/all-bookmarks/index.vue';
 import BookmarkFolderPage from '@/pages/app/bookmark-folder/index.vue';
 import MembersPage from '@/pages/app/members/index.vue';
+import AppNotFoundPage from '@/pages/app/not-found/index.vue';
 import SettingsPage from '@/pages/app/settings/index.vue';
 // -- Auth Pages --------
 import ForgotPasswordPage from '@/pages/auth/forgot-password/index.vue';
@@ -108,6 +109,11 @@ const router = createRouter({
           path: ':folderId/members',
           name: 'Members',
           component: MembersPage
+        },
+        {
+          path: ':pathMatch(.*)*',
+          name: 'Not Found',
+          component: AppNotFoundPage
         }
       ]
     }

@@ -13,14 +13,14 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar';
 import { useGetFolders } from '@/hooks/useFolder';
-import { CreateFolderDialog } from '@/pages/app/shared/dialogs';
+import { FolderFormDialog } from '@/pages/app/shared/dialogs';
 import { useAuthStore } from '@/stores/auth.store';
 import { sumBookmarksCount } from '@/utils/bookmarkUtils';
 
 import { AppSidebarGroup } from '../components';
 import { AppSidebarFooter, UserInfo } from '.';
 
-const { data: folders } = useGetFolders();
+const { data: folders, isLoading } = useGetFolders();
 
 const generalSidebarItems = computed(() => {
   if (!folders.value?.data) return [];
@@ -82,16 +82,18 @@ const authStore = useAuthStore();
       <UserInfo />
 
       <AppSidebarGroup
-        v-if="folders?.data.systemFolders"
         label="General"
         :items="generalSidebarItems"
+        :isLoading="isLoading"
+        :isEmpty="!folders?.data.systemFolders?.length"
       />
 
       <AppSidebarGroup
-        v-if="folders && (folders?.data.ownedFolders.length || 0) > 0"
         label="Owned folders"
+        :isLoading="isLoading"
+        :isEmpty="!folders?.data.ownedFolders?.length"
         :items="
-          folders.data.ownedFolders.map((folder) => ({
+          folders?.data.ownedFolders.map((folder) => ({
             href: `${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
@@ -101,10 +103,11 @@ const authStore = useAuthStore();
       />
 
       <AppSidebarGroup
-        v-if="folders && (folders?.data.sharedFolders.length || 0) > 0"
         label="Shared folders"
+        :isLoading="isLoading"
+        :isEmpty="!folders?.data.sharedFolders?.length"
         :items="
-          folders.data.sharedFolders.map((folder) => ({
+          folders?.data.sharedFolders.map((folder) => ({
             href: `${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
@@ -136,5 +139,8 @@ const authStore = useAuthStore();
     <AppSidebarFooter v-if="authStore.user?.plan === 'free'" />
   </Sidebar>
 
-  <CreateFolderDialog v-model="displayCreateFolderDialog" />
+  <FolderFormDialog
+    v-model="displayCreateFolderDialog"
+    type="create"
+  />
 </template>

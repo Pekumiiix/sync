@@ -3,3 +3,4 @@ export { default as AddBookmarkDialogWrapper } from './AddBookmarkDialogWrapper.
 export { default as BookmarkTabContentWrapper } from './BookmarkTabContentWrapper.vue';
 export { default as BookmarkTabWrapper } from './BookmarkTabWrapper.vue';
 export { default as ContentWrapper } from './ContentWrapper.vue';
+export { default as QueryStateWrapper } from './QueryStateWrapper.vue';

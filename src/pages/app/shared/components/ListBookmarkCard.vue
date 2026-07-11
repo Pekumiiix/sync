@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { EditIcon, EyeIcon, FolderIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { LoadingButton } from '@/components/shared';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
 import type { IBookmark } from '@/types/bookmark.type';
-import { FALLBACK_IMAGE, handleImageError } from '@/utils/bookmarkUtils';
-import { formatBookmarkTime } from '@/utils/dateUtils';
+import { FALLBACK_IMAGE, handleBookmarkView, handleImageError } from '@/utils/bookmarkUtils';
+import { timeAgo } from '@/utils/dateUtils';
 
 import { DeleteBookmarkDialog, EditBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
 
@@ -19,6 +20,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   showCheckbox: true
 });
+
+const route = useRoute();
 
 const selectedBool = defineModel<boolean>({ default: false });
 
@@ -33,9 +36,7 @@ const actions = [
   {
     icon: EyeIcon,
     label: 'View',
-    action: () => {
-      window.open(props.bookmark.url, '_blank', 'noopener,noreferrer');
-    }
+    action: () => handleBookmarkView(props.bookmark.url)
   },
   props.bookmark.isPinned
     ? {
@@ -86,7 +87,7 @@ const actions = [
   >
     <div class="w-fit flex items-center gap-4">
       <Checkbox
-        v-if="props.showCheckbox"
+        v-if="props.showCheckbox && route.name !== 'All Bookmarks'"
         v-model:model-value="selectedBool"
         class="size-4"
       />
@@ -110,7 +111,7 @@ const actions = [
               {{ props.bookmark.folder.name.toLocaleLowerCase() }}
             </router-link>
             |
-            {{ formatBookmarkTime(props.bookmark.createdAt) }}
+            {{ timeAgo(props.bookmark.createdAt) }}
           </p>
           <div class="flex items-center gap-1">
             <template

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 
 import { LoadingButton } from '@/components/shared';
-import { useMoveBookmark } from '@/hooks/useBookmark';
+import { useBulkMoveBookmarks, useMoveBookmark } from '@/hooks/useBookmark';
 import { useGetFolders } from '@/hooks/useFolder';
 import type { ITransformedFolder } from '@/types/folder.type';
 import { transformBookmarkFolders } from '@/utils/bookmarkUtils';
@@ -20,6 +20,7 @@ const displayBool = defineModel<boolean>({ default: false });
 
 const { data: foldersData } = useGetFolders();
 const { mutate: moveBookmark, isPending } = useMoveBookmark();
+const { mutate: bulkMoveBookmarks, isPending: isBulkMovePending } = useBulkMoveBookmarks();
 
 const selectedFolderId = ref<string | null>(null);
 
@@ -47,16 +48,27 @@ function handleSelectFolder(folderId: string) {
 }
 
 function handleMove() {
-  if (!selectedFolderId.value || typeof props.bookmarkIds !== 'string') return;
+  if (!selectedFolderId.value) return;
 
-  moveBookmark(
-    { bookmarkId: props.bookmarkIds, folderId: selectedFolderId.value },
-    {
-      onSuccess: () => {
-        displayBool.value = false;
+  if (typeof props.bookmarkIds === 'string') {
+    moveBookmark(
+      { bookmarkId: props.bookmarkIds, folderId: selectedFolderId.value },
+      {
+        onSuccess: () => {
+          displayBool.value = false;
+        }
       }
-    }
-  );
+    );
+  } else if (Array.isArray(props.bookmarkIds)) {
+    bulkMoveBookmarks(
+      { bookmarkIds: props.bookmarkIds, folderId: selectedFolderId.value },
+      {
+        onSuccess: () => {
+          displayBool.value = false;
+        }
+      }
+    );
+  }
 }
 </script>
 
@@ -91,7 +103,7 @@ function handleMove() {
       <div class="flex items-center justify-end p-6 border-t border-stroke-1/10">
         <LoadingButton
           @click="handleMove"
-          :isLoading="isPending"
+          :isLoading="isPending || isBulkMovePending"
           :disabled="!selectedFolderId"
           class="w-21.75 h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] pt-2 px-4 rounded-full bg-black-100 hover:bg-black-90"
         >

@@ -4,11 +4,12 @@ import { AnimatePresence } from 'motion-v';
 
 import { fadeSlideYVariant } from '@/components/constants/animations';
 import { getBrowserImage } from '@/components/constants/browsers';
-import { EyeIcon, TrashIcon, UnpinIcon } from '@/components/icons';
+import { TrashIcon, UnpinIcon } from '@/components/icons';
 import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { BaseSelect } from '@/components/re-useable';
-import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/shared';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useBulkUnpinBookmarks } from '@/hooks/useBookmark';
 import { cn } from '@/lib/utils';
 import type { BrowserProvider, DisplayType, SortOrder } from '@/types/app.type';
 import type { IBookmark } from '@/types/bookmark.type';
@@ -18,11 +19,10 @@ import { BookmarkTabContentWrapper } from '.';
 
 interface Props {
   bookmarks: IBookmark[];
-  selectedPinnedBookmarksLength: number;
   tabs: { label: string; value: BrowserProvider | 'all' }[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 interface IDisplayTypeOptions {
   value: DisplayType;
@@ -50,27 +50,31 @@ const displayType = ref<DisplayType>('list');
 
 const showDeleteBookmarkDialog = ref<boolean>(false);
 
+const activeTab = defineModel<string>('activeTab', { default: 'all' });
+const sortOrder = defineModel<SortOrder>('sortOrder', { default: 'title_desc' });
+const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBookmarks', {
+  default: null
+});
+
 const isSelectedPinnedBookmarksGreaterThanZero = computed(
-  () => props.selectedPinnedBookmarksLength > 0
+  () => !!selectedPinnedBookmarks.value?.length
 );
 
-const actions = computed(() => [
-  ...(props.selectedPinnedBookmarksLength === 1
-    ? [
-        {
-          label: 'View',
-          icon: EyeIcon,
-          onClick: () => {
-            console.log('Viewed');
-          }
-        }
-      ]
-    : []),
+const { mutate: unpinBookmark, isPending: isUnpinning } = useBulkUnpinBookmarks();
+
+const buttons = computed(() => [
   {
     label: 'Unpin',
     icon: UnpinIcon,
+    isLoading: isUnpinning,
     onClick: () => {
-      console.log('Unpinned');
+      const selectedId = selectedPinnedBookmarks.value;
+
+      if (selectedId) {
+        unpinBookmark({
+          bookmarkIds: selectedId
+        });
+      }
     }
   },
   {
@@ -81,12 +85,6 @@ const actions = computed(() => [
     }
   }
 ]);
-
-const activeTab = defineModel<string>('activeTab', { default: 'all' });
-const sortOrder = defineModel<SortOrder>('sortOrder', { default: 'title_desc' });
-const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBookmarks', {
-  default: null
-});
 </script>
 
 <template>
@@ -121,30 +119,27 @@ const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBook
           v-if="isSelectedPinnedBookmarksGreaterThanZero"
           class="flex items-center gap-4"
         >
-          <MotionDiv
-            v-for="action in actions"
-            :key="action.label"
+          <LoadingButton
+            v-for="button in buttons"
+            :key="button.label"
+            variant="ghost"
             :config="{ variants: fadeSlideYVariant }"
-            class="size-fit"
+            :is-loading="button.isLoading?.value || false"
+            :class="
+              cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
+                'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-danger-100 hover:bg-danger-100/10':
+                  button.label === 'Delete',
+                'text-black-90 stroke-black-90': button.label !== 'Delete'
+              })
+            "
+            @click="button.onClick"
           >
-            <Button
-              variant="ghost"
-              :class="
-                cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
-                  'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-[#ff2f00] hover:bg-[#FF2F00]/10':
-                    action.label === 'Delete',
-                  'text-black-90 stroke-black-90': action.label !== 'Delete'
-                })
-              "
-              @click="action.onClick"
-            >
-              <component
-                :is="action.icon"
-                class="size-4 stroke-inherit"
-              />
-              <span class="text-inherit leading-[100%] text-base">{{ action.label }}</span>
-            </Button>
-          </MotionDiv>
+            <component
+              :is="button.icon"
+              class="size-4 stroke-inherit"
+            />
+            <span class="text-inherit leading-[100%] text-base">{{ button.label }}</span>
+          </LoadingButton>
         </MotionStaggerContainer>
       </AnimatePresence>
 

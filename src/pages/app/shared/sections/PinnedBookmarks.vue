@@ -7,7 +7,6 @@ import { transformBookmarks } from '@/utils/bookmarkUtils';
 import { GridBookmarkCard } from '../components';
 
 interface Props {
-  selectedPinnedBookmarksLength: number;
   pinnedBookmarks: IBookmark[];
 }
 
@@ -15,7 +14,9 @@ const props = defineProps<Props>();
 
 const transformedBookmarks = ref(transformBookmarks(props.pinnedBookmarks));
 
-const selectedPinnedBookmarks = defineModel<string[] | null>({ default: null });
+const selectedPinnedBookmarks = defineModel<string[] | null>({
+  default: null
+});
 
 watch(
   [() => props.pinnedBookmarks, transformedBookmarks],
@@ -44,7 +45,7 @@ watch(
         v-model="bookmark.isSelected"
         :key="bookmark.id"
         :bookmark="bookmark"
-        :showCheckbox="selectedPinnedBookmarksLength > 0"
+        :showCheckbox="!!selectedPinnedBookmarks?.length"
       />
     </div>
   </section>
