@@ -67,15 +67,15 @@ class BookmarkService {
   }
 
   bulkDeleteBookmarks(payload: IBulkActionPayload) {
-    return apiClient<IApiResponse>('delete', `/bookmarks/bulk-delete`, payload);
+    return apiClient<IApiResponse>('delete', `/bookmarks/delete`, payload);
   }
 
   bulkMoveBookmarks(payload: IBulkMoveBookmarksPayload) {
-    return apiClient<IApiResponse>('patch', `/bookmarks/bulk-move`, payload);
+    return apiClient<IApiResponse>('patch', `/bookmarks/move`, payload);
   }
 
   bulkUnpinBookmarks(payload: IBulkActionPayload) {
-    return apiClient<IApiResponse>('patch', `/bookmarks/bulk-unpin`, payload);
+    return apiClient<IApiResponse>('patch', `/bookmarks/unpin`, payload);
   }
 }
 

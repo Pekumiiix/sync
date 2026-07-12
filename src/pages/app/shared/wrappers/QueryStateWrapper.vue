@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { TriangleAlert } from 'lucide-vue-next';
+
+import { LoadingButton } from '@/components/shared';
+
 import { EmptyState } from '../query-states';
 
 interface Props {
@@ -18,9 +22,12 @@ withDefaults(defineProps<Props>(), {
   loadingTitle: 'Loading...',
   errorTitle: 'Something went wrong',
   errorMessage: 'We couldn’t fetch the data. Please try again.',
-  emptyTitle: 'No items found',
-  emptyMessage: 'There is nothing to display here right now.'
+  emptyTitle: 'No items found'
 });
+
+const emit = defineEmits<{
+  (e: 'retry'): void;
+}>();
 </script>
 
 <style scoped>
@@ -44,22 +51,45 @@ withDefaults(defineProps<Props>(), {
 <template>
   <div
     v-if="isError"
-    class="w-full py-12 flex flex-col items-center justify-center text-center"
+    class="w-full py-5 flex flex-col items-center justify-center text-center px-4 gap-6"
   >
-    <slot name="error">
-      <h3 class="text-lg font-semibold text-danger-100">{{ errorTitle }}</h3>
-      <p class="text-sm text-muted-foreground mt-1">{{ errorMessage }}</p>
+    <slot
+      name="error"
+      :retry="() => emit('retry')"
+    >
+      <div class="flex flex-col items-center gap-4">
+        <div class="size-12 rounded-full bg-[#FF2F000A] flex items-center justify-center">
+          <TriangleAlert class="size-6 text-danger-100" />
+        </div>
+
+        <div class="flex flex-col items-center gap-2">
+          <h3 class="text-lg font-medium leading-6 text-black-90 -tracking-[1%]">
+            {{ errorTitle }}
+          </h3>
+          <p class="text-base leading-[120%] text-black-70 max-w-sm">
+            {{ errorMessage }}
+          </p>
+        </div>
+      </div>
+
+      <LoadingButton
+        :is-loading="isLoading"
+        @click="emit('retry')"
+        class="h-10 px-5 flex items-center justify-center text-sm font-medium rounded-full"
+      >
+        Try Again
+      </LoadingButton>
     </slot>
   </div>
 
   <div
     v-else-if="isLoading"
-    class="size-full"
+    class="size-full flex items-center justify-center"
   >
     <slot name="loading">
-      <div class="size-full flex flex-col items-center justify-center">
+      <div class="w-full min-h-30 h-fit flex flex-col items-center justify-center">
         <div class="max-w-65 w-full flex flex-col gap-3 items-center">
-          <div class="relative size-12">
+          <div class="relative size-10">
             <img
               src="/images/app/app-logo.png"
               alt="Logo"
@@ -73,14 +103,9 @@ withDefaults(defineProps<Props>(), {
             />
           </div>
 
-          <div class="flex flex-col items-center gap-1">
-            <p class="text-[22px] text-center font-medium leading-7 text-black-90 -tracking-[1%]">
-              {{ loadingTitle }}
-            </p>
-            <!-- <p class="text-base leading-[120%] text-black-80 text-center">
-              {{ loadingMessage }}
-            </p> -->
-          </div>
+          <p class="text-lg text-center font-medium leading-7 text-black-90 -tracking-[1%]">
+            {{ loadingTitle }}
+          </p>
         </div>
       </div>
     </slot>

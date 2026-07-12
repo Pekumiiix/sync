@@ -136,7 +136,7 @@ export function useMoveBookmark() {
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks(), 'detail'] });
+      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks()] });
     }
   });
 }
@@ -151,7 +151,7 @@ export function useBulkMoveBookmarks() {
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks(), 'detail'] });
+      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks()] });
     }
   });
 }

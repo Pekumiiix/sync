@@ -1,73 +1,54 @@
-/**
- * Converts a date into a human-readable "time ago" string.
- * Supports short formats (2m, 2h) and conversational formats (yesterday, last week).
- * * @param dateInput - The date to evaluate (Date object, timestamp, or ISO string)
- * @returns A formatted relative time string
- */
-export function timeAgo(dateInput: Date | string | number): string {
-  const date = new Date(dateInput);
-  const now = new Date();
-
-  if (isNaN(date.getTime())) {
-    throw new Error('Invalid date provided to timeAgo');
-  }
-
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (diffInSeconds < 0) {
-    return 'just now';
-  }
-
-  // 4. Time Interval Logic
-  if (diffInSeconds < 60) {
-    return 'now';
-  }
-
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) {
-    return `${diffInMinutes}m`;
-  }
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) {
-    return `${diffInHours}h`;
-  }
-
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays === 1) {
-    return 'yesterday';
-  }
-  if (diffInDays < 7) {
-    return `${diffInDays}d`;
-  }
-
-  const diffInWeeks = Math.floor(diffInDays / 7);
-  if (diffInWeeks === 1) {
-    return 'last week';
-  }
-  if (diffInDays < 30) {
-    return `${diffInWeeks}w`;
-  }
-
-  const diffInMonths = Math.floor(diffInDays / 30);
-  if (diffInMonths < 12) {
-    return `${diffInMonths}mo`;
-  }
-
-  const diffInYears = Math.floor(diffInDays / 365);
-  return `${diffInYears}y`;
+export interface RelativeTimeOptions {
+  /** * Formatting style for the relative time.
+   * Examples (using 10 seconds):
+   * - 'long': "10 seconds ago"
+   * - 'short': "10 sec. ago"
+   * - 'narrow': "10s ago"
+   */
+  style?: 'long' | 'short' | 'narrow';
+  /** Fallback string if date is invalid or null */
+  fallback?: string;
 }
 
-export function formatBookmarkTime(isoString: string): string {
-  if (!isoString) return '';
+export function timeAgo(dateString: string | null, options: RelativeTimeOptions = {}): string {
+  if (!dateString) return options.fallback || 'Never';
 
-  const date = new Date(isoString);
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) throw new Error('Invalid date');
 
-  const formattedTime = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true
-  }).format(date);
+    const diffInSeconds = (date.getTime() - Date.now()) / 1000;
+    const absDiff = Math.abs(diffInSeconds);
 
-  return formattedTime;
+    const rtf = new Intl.RelativeTimeFormat('en', {
+      numeric: 'auto',
+      style: options.style || 'narrow'
+    });
+
+    // Custom override for immediate times
+    if (absDiff < 60) return 'Just now';
+
+    // Minutes
+    if (absDiff < 3600) {
+      return rtf.format(Math.round(diffInSeconds / 60), 'minute');
+    }
+    // Hours
+    if (absDiff < 86400) {
+      return rtf.format(Math.round(diffInSeconds / 3600), 'hour');
+    }
+    // Days
+    if (absDiff < 2592000) {
+      // 30 days
+      return rtf.format(Math.round(diffInSeconds / 86400), 'day');
+    }
+    // Months
+    if (absDiff < 31536000) {
+      // 365 days
+      return rtf.format(Math.round(diffInSeconds / 2592000), 'month');
+    }
+    // Years
+    return rtf.format(Math.round(diffInSeconds / 31536000), 'year');
+  } catch {
+    return options.fallback || 'Unknown';
+  }
 }

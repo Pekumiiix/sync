@@ -15,7 +15,7 @@ import { createTypedForm } from '@/utils/formUtils';
 
 import { MembersItem } from '../components';
 import { type ShareBookmarkData, shareBookmarkSchema } from '../schemas/share-bookmark.schema';
-import { ActionDialogWrapper } from '../wrappers';
+import { ActionDialogWrapper, QueryStateWrapper } from '../wrappers';
 import { AddPasswordDialog } from '.';
 
 interface Props {
@@ -27,7 +27,12 @@ const props = defineProps<Props>();
 
 const { copy, hasCopied } = useClipboard();
 
-const { data: folderMembersData } = useGetFolderMembers(() => ({
+const {
+  data: folderMembersData,
+  isLoading: isFolderMembersLoading,
+  isError: isFolderMembersError,
+  refetch: refetchFolderMembers
+} = useGetFolderMembers(() => ({
   folderId: props.folderId
 }));
 const { mutate: createInvitation, isPending: isCreatingInvitation } = useCreateInvitation();
@@ -133,15 +138,24 @@ const displayBool = defineModel<boolean>({ default: false });
       </form>
     </div>
 
-    <MembersItem
-      v-for="member in folderMembersData?.data.members || []"
-      :key="member.id"
-      :avatar_url="member.user.avatarUrl"
-      :name="member.user.firstName + ' ' + member.user.lastName"
-      :email="member.user.email"
-      :role="member.role"
-      :accessLevel="member.accessLevel"
-    />
+    <QueryStateWrapper
+      :isLoading="isFolderMembersLoading"
+      :is-error="isFolderMembersError"
+      @retry="refetchFolderMembers"
+      loading-title="Loading members"
+    >
+      <MembersItem
+        v-for="member in folderMembersData?.data.members || []"
+        :key="member.id"
+        :avatar_url="member.user.avatarUrl"
+        :name="member.user.firstName + ' ' + member.user.lastName"
+        :email="member.user.email"
+        :role="member.role"
+        :accessLevel="member.accessLevel"
+        :folder-id="props.folderId"
+        :member-id="member.id"
+      />
+    </QueryStateWrapper>
 
     <div
       v-if="folderMembersData?.data.permission.role === 'owner' || !props.isProtected"

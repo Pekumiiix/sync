@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import env from '@/config/env';
 
 // import { JoinWorkSpaceDialog } from '../dialogs';
-import { NotificationPanel } from './sections';
+import { InvitationPanel, NotificationPanel } from './sections';
 
 interface Props {
   page?: string;
@@ -45,6 +45,8 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
       </Button>
 
       <div class="flex items-center justify-between gap-3">
+        <InvitationPanel />
+
         <NotificationPanel />
 
         <Button
