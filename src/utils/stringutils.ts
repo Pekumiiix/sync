@@ -9,9 +9,16 @@ export function truncateString(str: string, maxLength: number): string {
   return str.slice(0, maxLength) + '...';
 }
 
-export function getInitials(firstName: string, lastName: string): string {
-  const firstInitial = firstName.charAt(0).toUpperCase();
-  const lastInitial = lastName.charAt(0).toUpperCase();
+export function getInitials(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word.charAt(0))
+    .join('')
+    .toUpperCase();
+}
 
-  return `${firstInitial}${lastInitial}`;
+export function computeUserName(firstName?: string, lastName?: string): string {
+  return (firstName || '') + ' ' + (lastName || '');
 }

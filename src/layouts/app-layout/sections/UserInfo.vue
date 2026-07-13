@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BaseAvatar } from '@/components/re-useable';
 import { useAuthStore } from '@/stores/auth.store';
-import { getInitials } from '@/utils/stringutils';
+import { computeUserName } from '@/utils/stringutils';
 
 const authStore = useAuthStore();
 </script>
@@ -13,13 +13,13 @@ const authStore = useAuthStore();
   >
     <BaseAvatar
       :src="authStore.user?.avatarUrl"
-      :fallback="getInitials(authStore.user?.firstName || '', authStore.user?.lastName || '')"
+      :fallback="computeUserName(authStore.user?.firstName, authStore.user?.lastName)"
       class="size-8 shrink-0"
     />
 
     <div class="flex flex-col gap-0.5">
       <p class="text-sm font-medium leading-6 text-black-100">
-        {{ authStore.user?.firstName }} {{ authStore.user?.lastName }}
+        {{ computeUserName(authStore.user?.firstName, authStore.user?.lastName) }}
       </p>
       <p class="text-xs leading-[100%] text-black-60">{{ authStore.user?.email }}</p>
     </div>

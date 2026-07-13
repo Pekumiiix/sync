@@ -74,7 +74,10 @@ function handleDeclineInvitation() {
         </p>
       </div>
 
-      <div class="grid grid-cols-2 gap-2">
+      <div
+        v-if="invitation.status === 'pending'"
+        class="grid grid-cols-2 gap-2"
+      >
         <LoadingButton
           :is-loading="isDecliningInvitation"
           @click="handleDeclineInvitation"
@@ -87,7 +90,7 @@ function handleDeclineInvitation() {
           :is-loading="isAcceptingInvitation"
           @click="handleAcceptInvitation"
           variant="outline"
-          class="w-full h-7 py-1.5 px-3 text-[10px] font-medium leading-[100%] rounded-full bg-black-100 hover:bg-black-90"
+          class="w-full h-7 py-1.5 px-3 text-[10px] text-primary-10 font-medium leading-[100%] rounded-full bg-black-100 hover:bg-black-90 hover:text-primary-10"
         >
           Accept
         </LoadingButton>

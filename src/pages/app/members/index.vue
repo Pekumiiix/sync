@@ -58,6 +58,7 @@ const result = computed(() => {
         :email="member.user.email"
         :role="member.role"
         :accessLevel="member.accessLevel"
+        :permission="folderMembersData?.data.permission"
       />
     </div>
 
@@ -72,6 +73,7 @@ const result = computed(() => {
         :email="member.user.email"
         :role="member.role"
         :accessLevel="member.accessLevel"
+        :permission="folderMembersData?.data.permission"
       />
     </div>
   </AppWrapper>

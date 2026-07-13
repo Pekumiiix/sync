@@ -8,8 +8,9 @@ import { useGetFolderBookmarks } from '@/hooks/useFolder';
 import type { BrowserProvider, SortOrder } from '@/types/app.type';
 
 import { AppWrapper } from '../shared';
+import { ErrorState } from '../shared/query-states';
 import { PinnedBookmarks } from '../shared/sections';
-import { BookmarkTabWrapper, ContentWrapper } from '../shared/wrappers';
+import { BookmarkTabWrapper, ContentWrapper, QueryStateWrapper } from '../shared/wrappers';
 
 const route = useRoute();
 const params = useUrlSearchParams('history');
@@ -33,7 +34,12 @@ const queryParams = computed(() => ({
   sort: sortOrder.value
 }));
 
-const { data: folderBookmarksData } = useGetFolderBookmarks(() => ({
+const {
+  data: folderBookmarksData,
+  isLoading,
+  isError,
+  error
+} = useGetFolderBookmarks(() => ({
   folderId: folderId.value,
   param: queryParams.value
 }));
@@ -58,32 +64,54 @@ const tabs = computed(() => {
 
 <template>
   <AppWrapper :page="`${folderData?.name || 'Untitled'} Folder`">
-    <ContentWrapper
-      showTabActions
-      :folderId="folderId"
-      :folder="{
-        id: folderData?.id || '',
-        name: folderData?.name || '',
-        previewMembers: folderBookmarksData?.data.previewMembers || [],
-        memberCount: folderData?.memberCount || 0,
-        isSystem: folderData?.isSystem || false,
-        isProtected: folderData?.isProtected || false,
-        role: folderBookmarksData?.data.permission.role || 'member'
-      }"
+    <QueryStateWrapper
+      :isLoading="isLoading"
+      :isError="isError"
+      loading-title="Loading folder"
     >
-      <BookmarkTabWrapper
-        v-model:activeTab="activeTab"
-        v-model:sortOrder="sortOrder"
-        v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
-        :tabs="tabs"
-        :bookmarks="folderBookmarksData?.data.bookmarks || []"
+      <ContentWrapper
+        showTabActions
+        :folderId="folderId"
+        :folder="{
+          id: folderData?.id || '',
+          name: folderData?.name || '',
+          previewMembers: folderBookmarksData?.data.previewMembers || [],
+          memberCount: folderData?.memberCount || 0,
+          isSystem: folderData?.isSystem || false,
+          isProtected: folderData?.isProtected || false,
+          role: folderBookmarksData?.data.permission.role || 'member'
+        }"
       >
-        <PinnedBookmarks
-          v-if="folderBookmarksData?.data.pinnedBookmarks.length"
-          v-model="selectedPinnedBookmarks"
-          :pinnedBookmarks="folderBookmarksData?.data.pinnedBookmarks || []"
+        <BookmarkTabWrapper
+          v-model:activeTab="activeTab"
+          v-model:sortOrder="sortOrder"
+          v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
+          :tabs="tabs"
+          :bookmarks="folderBookmarksData?.data.bookmarks || []"
+        >
+          <PinnedBookmarks
+            v-if="folderBookmarksData?.data.pinnedBookmarks.length"
+            v-model="selectedPinnedBookmarks"
+            :pinnedBookmarks="folderBookmarksData?.data.pinnedBookmarks || []"
+          />
+        </BookmarkTabWrapper>
+      </ContentWrapper>
+
+      <template #error>
+        <ErrorState
+          v-if="error?.statusCode === 403"
+          :code="403"
+          title="Access Denied"
+          message="It looks like you don't have permission to view this page. Check your account settings or head back home."
         />
-      </BookmarkTabWrapper>
-    </ContentWrapper>
+
+        <ErrorState
+          v-else-if="error?.statusCode === 404"
+          :code="404"
+          title="Folder Not Found"
+          message="The folder you are looking for does not exist. It may have been deleted or the link is incorrect."
+        />
+      </template>
+    </QueryStateWrapper>
   </AppWrapper>
 </template>

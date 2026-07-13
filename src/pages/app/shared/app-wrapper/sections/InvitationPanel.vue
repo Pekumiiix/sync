@@ -20,17 +20,19 @@ const { data: invitationData, isLoading } = useGetInvitations();
     }"
   >
     <template #trigger>
-      <Button
-        variant="outline"
-        class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
-      >
-        <MailOpen class="size-4.5 text-black-100 stroke-[1.5]" />
-      </Button>
+      <div class="size-fit relative">
+        <Button
+          variant="outline"
+          class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
+        >
+          <MailOpen class="size-4.5 text-black-100 stroke-[1.5]" />
+        </Button>
 
-      <span
-        v-if="invitationData?.data.pendingInvitations.length"
-        class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0"
-      />
+        <span
+          v-if="invitationData?.data.pendingInvitations.length"
+          class="absolute size-3 rounded-full bg-[#D54524] -top-0.5 right-0"
+        />
+      </div>
     </template>
 
     <template #default>
@@ -40,18 +42,21 @@ const { data: invitationData, isLoading } = useGetInvitations();
 
       <QueryStateWrapper
         :is-loading="isLoading"
-        :is-empty="!invitationData?.data.pendingInvitations.length"
+        :is-empty="
+          !invitationData?.data.pendingInvitations.length &&
+          !invitationData?.data.resolvedInvitations.length
+        "
         loading-title="Loading invitations"
         empty-title="No invitations found"
       >
         <InvitationItem
-          v-for="invitation in invitationData?.data.pendingInvitations"
+          v-for="invitation in invitationData?.data.pendingInvitations || []"
           :key="invitation.id"
           :invitation="invitation"
         />
 
         <InvitationItem
-          v-for="invitation in invitationData?.data.resolvedInvitations"
+          v-for="invitation in invitationData?.data.resolvedInvitations || []"
           :key="invitation.id"
           :invitation="invitation"
         />

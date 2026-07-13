@@ -14,7 +14,7 @@ export function useGetAllNotifications(params: MaybeRefOrGetter<IGetNotification
       const unwrappedParams = toValue(params);
 
       return {
-        queryKey: QUERY_KEYS.notification.getAllNotifications(),
+        queryKey: computed(() => QUERY_KEYS.notification.getAllNotifications(unwrappedParams)),
         queryFn: () => notificationService.getAllNotifications(unwrappedParams),
         staleTime: 1000 * 60 * 1
       };
@@ -31,7 +31,7 @@ export function useMarkAllAsRead() {
   return useMutation({
     mutationFn: () => notificationService.markAllAsRead(),
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
     }

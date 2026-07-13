@@ -23,7 +23,8 @@ const { data: notificationData, isLoading } = useGetAllNotifications(params);
   <BasePopover
     :class-names="{
       content:
-        'w-81 max-h-121 h-[80vh] flex flex-col py-2 px-0 rounded-2xl overflow-hidden overflow-y-scroll scrollbar-none'
+        'w-81 max-h-121 h-[80vh] flex flex-col py-2 px-0 rounded-2xl overflow-hidden overflow-y-scroll scrollbar-none',
+      trigger: 'size-fit relative'
     }"
   >
     <template #trigger>

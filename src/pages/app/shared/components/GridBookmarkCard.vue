@@ -11,7 +11,7 @@ import {
   TrashIcon,
   UnpinIcon
 } from '@/components/icons';
-import { BaseDropDownMenu } from '@/components/re-useable';
+import { BaseAvatar, BaseDropDownMenu } from '@/components/re-useable';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
 import { cn } from '@/lib/utils';
@@ -91,13 +91,19 @@ const actions = computed(() => [
     <a
       :href="props.bookmark.url"
       target="_blank"
-      class="w-full h-39.75 overflow-hidden rounded-t-xl group"
+      class="relative w-full h-39.75 overflow-hidden rounded-t-xl group"
     >
       <img
         :src="props.bookmark.coverImageUrl || FALLBACK_IMAGE"
         :alt="props.bookmark.domain"
         class="w-full max-h-39.75 h-auto rounded-t-xl object-cover group-hover:scale-105 transition-transform duration-300"
         @error="handleImageError"
+      />
+
+      <BaseAvatar
+        :src="props.bookmark.addedBy?.avatarUrl || FALLBACK_IMAGE"
+        :fallback="props.bookmark.addedBy?.firstName || 'User'"
+        class="absolute top-2.5 right-2.5 size-3 rounded-full border border-white-90"
       />
     </a>
 

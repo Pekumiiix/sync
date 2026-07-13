@@ -4,15 +4,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { folderService } from '@/services/folder.service';
+import type { IApiResponse } from '@/types/api.type';
 import type {
   IAddPasswordToFolderPayload,
   ICreateFolderPayload,
   IDeleteFolderPayload,
   IEditFolderPayload,
+  IFolderBookmarksResponse,
   IGetFolderBookmarksPayload,
   IJoinFolderPayload,
   IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
+import type { ApiError } from '@/utils/apiUtils';
 import { toaster } from '@/utils/toastUtils';
 
 /**
@@ -30,7 +33,7 @@ export function useGetFolders() {
  * Fetches bookmarks restricted to a single specific folder.
  */
 export function useGetFolderBookmarks(payload: MaybeRefOrGetter<IGetFolderBookmarksPayload>) {
-  return useQuery(
+  return useQuery<IApiResponse<IFolderBookmarksResponse>, ApiError>(
     computed(() => {
       const unwrappedPayload = toValue(payload);
 

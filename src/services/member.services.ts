@@ -28,13 +28,13 @@ class MemberService {
   kickMember(payload: IKickMemberPayload) {
     const { memberId, folderId } = payload;
 
-    return apiClient<IApiResponse>('delete', `/folders/${folderId}/member/${memberId}`);
+    return apiClient<IApiResponse>('delete', `/folders/${folderId}/members/${memberId}`);
   }
 
   leaveFolder(payload: IFolderMembersPayload) {
     const { folderId } = payload;
 
-    return apiClient<IApiResponse>('delete', `/folders/${folderId}/member/leave`);
+    return apiClient<IApiResponse>('delete', `/folders/${folderId}/members/leave`);
   }
 }
 

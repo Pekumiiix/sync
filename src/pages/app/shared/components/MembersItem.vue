@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
+import { LeaveIcon } from '@/components/icons';
 import { BaseAvatar, BaseSelect } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
-import { useChangeMemberAccessLevel, useKickMember } from '@/hooks/useMember';
+import { useChangeMemberAccessLevel, useKickMember, useLeaveFolder } from '@/hooks/useMember';
 import { useAuthStore } from '@/stores/auth.store';
+import type { IFolderPermission } from '@/types/folder.type';
 import type { MemberAccessLevel, MemberRole } from '@/types/member.type';
 
 interface IMembersItemProps {
@@ -15,6 +17,7 @@ interface IMembersItemProps {
   email: string;
   role: MemberRole;
   accessLevel: MemberAccessLevel;
+  permission?: IFolderPermission;
 }
 
 const props = defineProps<IMembersItemProps>();
@@ -28,10 +31,15 @@ const isCurrentUser = computed(() => {
 });
 
 const { mutate: kickMember, isPending: isKickingMember } = useKickMember();
+const { mutate: leaveFolder, isPending: isLeavingFolder } = useLeaveFolder();
 const { mutate: updateMemberAccessLevel } = useChangeMemberAccessLevel();
 
-function handleLeaveFolder() {
+function handleKickMember() {
   kickMember({ folderId: props.folderId, memberId: props.memberId });
+}
+
+function handleLeaveFolder() {
+  leaveFolder({ folderId: props.folderId });
 }
 
 function handleAccessLevelChange() {
@@ -83,13 +91,23 @@ function handleAccessLevelChange() {
       />
 
       <LoadingButton
-        v-if="props.role === 'owner' && !isCurrentUser"
+        v-if="props.permission?.role === 'owner' && props.role !== 'owner' && !isCurrentUser"
         :is-loading="isKickingMember"
-        @click="handleLeaveFolder"
+        @click="handleKickMember"
         class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
       >
         <LeaveIcon class="stroke-danger-100" />
         Kick
+      </LoadingButton>
+
+      <LoadingButton
+        v-if="props.role !== 'owner' && isCurrentUser"
+        :is-loading="isLeavingFolder"
+        @click="handleLeaveFolder"
+        class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
+      >
+        <LeaveIcon class="stroke-danger-100" />
+        Leave
       </LoadingButton>
     </div>
   </div>

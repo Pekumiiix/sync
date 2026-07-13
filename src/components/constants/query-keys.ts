@@ -2,6 +2,7 @@ import type {
   GetFolderBookmarksQueryParams,
   IGetFolderBookmarksPayload
 } from '@/types/folder.type';
+import type { IGetNotificationsParam } from '@/types/notification.type';
 import type { SearchBookmarksQueryParams, SearchFolderQueryParams } from '@/types/search.type';
 
 export const QUERY_KEYS = {
@@ -33,7 +34,8 @@ export const QUERY_KEYS = {
   notification: {
     all: ['notifications'] as const,
     lists: () => [...QUERY_KEYS.notification.all, 'list'] as const,
-    getAllNotifications: () => [...QUERY_KEYS.notification.lists()] as const
+    getAllNotifications: (params: IGetNotificationsParam) =>
+      [...QUERY_KEYS.notification.lists(), params] as const
   },
   member: {
     all: ['members'] as const,

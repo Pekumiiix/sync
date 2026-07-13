@@ -37,7 +37,7 @@ const {
 }));
 const { mutate: createInvitation, isPending: isCreatingInvitation } = useCreateInvitation();
 
-const { handleSubmit, meta, isSubmitting } = useForm<ShareBookmarkData>({
+const { handleSubmit, meta, isSubmitting, resetForm } = useForm<ShareBookmarkData>({
   validationSchema: shareBookmarkSchema,
   initialValues: {
     email: '',
@@ -46,11 +46,18 @@ const { handleSubmit, meta, isSubmitting } = useForm<ShareBookmarkData>({
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  createInvitation({
-    folderId: props.folderId,
-    email: values.email,
-    accessLevel: values.accessLevel
-  });
+  createInvitation(
+    {
+      folderId: props.folderId,
+      email: values.email,
+      accessLevel: values.accessLevel
+    },
+    {
+      onSuccess: () => {
+        resetForm();
+      }
+    }
+  );
 });
 
 const TypedFormField = createTypedForm<ShareBookmarkData>();
@@ -100,6 +107,7 @@ const displayBool = defineModel<boolean>({ default: false });
         >
           <TypedFormField
             name="email"
+            :show-message="false"
             :class-names="{ item: 'w-full' }"
           >
             <template #default="fieldProps">

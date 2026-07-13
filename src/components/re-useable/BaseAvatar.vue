@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getInitials } from '@/utils/stringutils';
+
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 interface Props {
@@ -15,6 +17,8 @@ defineProps<Props>();
       :src="src || ''"
       class="object-center object-cover"
     />
-    <AvatarFallback class="bg-primary-100 text-primary-10">{{ fallback }}</AvatarFallback>
+    <AvatarFallback class="bg-primary-100 text-sm text-primary-10">{{
+      getInitials(fallback)
+    }}</AvatarFallback>
   </Avatar>
 </template>

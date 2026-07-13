@@ -11,6 +11,7 @@ import { useUploadMedia } from '@/hooks/useCloudinary';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { getChangedValues } from '@/utils/formUtils';
+import { computeUserName } from '@/utils/stringutils';
 
 import { SettingsInputField } from '../components';
 import {
@@ -135,9 +136,9 @@ function onInputChange(event: Event) {
       >
         <BaseAvatar
           :src="values.avatarUrl"
-          :fallback="authStore.user?.firstName || authStore.user?.lastName || 'User'"
+          :fallback="computeUserName(authStore.user?.firstName, authStore.user?.lastName)"
           :class="
-            cn('size-35', {
+            cn('size-35 [&>span]:text-3xl font-medium', {
               'cursor-not-allowed opacity-50': isUploading
             })
           "

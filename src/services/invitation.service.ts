@@ -19,13 +19,13 @@ class InvitationService {
   acceptInvitation(payload: IBaseInvitationPayload) {
     const { token } = payload;
 
-    return apiClient<IApiResponse<IInvitationResponse>>('post', `/invitations/${token}/accept`);
+    return apiClient<IApiResponse<IInvitationResponse>>('patch', `/invitations/${token}/accept`);
   }
 
   declineInvitation(payload: IBaseInvitationPayload) {
     const { token } = payload;
 
-    return apiClient<IApiResponse<IInvitationResponse>>('post', `/invitations/${token}/decline`);
+    return apiClient<IApiResponse<IInvitationResponse>>('patch', `/invitations/${token}/decline`);
   }
 }
 

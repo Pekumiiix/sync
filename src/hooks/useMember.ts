@@ -1,5 +1,6 @@
 // src/hooks/useMember.ts
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
+import { useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
@@ -72,6 +73,7 @@ export function useKickMember() {
 
 export function useLeaveFolder() {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: (payload: IFolderMembersPayload) => memberService.leaveFolder(payload),
@@ -81,6 +83,8 @@ export function useLeaveFolder() {
       });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
+
+      router.replace({ name: 'All Bookmarks' });
     }
   });
 }
