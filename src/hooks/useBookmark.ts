@@ -41,6 +41,10 @@ export function useCreateBookmark() {
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
+      queryClient.invalidateQueries({
+        queryKey: [...QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)]
+      });
+
       if (variables.folderId) {
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.folder.folderBookmarksBase(variables.folderId)
@@ -131,12 +135,16 @@ export function useMoveBookmark() {
 
   return useMutation({
     mutationFn: (payload: IMoveBookmarkPayload) => bookmarkService.moveBookmark(payload),
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
       queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks()] });
+
+      queryClient.invalidateQueries({
+        queryKey: [...QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)]
+      });
     }
   });
 }
@@ -146,12 +154,16 @@ export function useBulkMoveBookmarks() {
 
   return useMutation({
     mutationFn: (payload: IBulkMoveBookmarksPayload) => bookmarkService.bulkMoveBookmarks(payload),
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
 
       queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks()] });
+
+      queryClient.invalidateQueries({
+        queryKey: [...QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)]
+      });
     }
   });
 }
@@ -164,6 +176,7 @@ export function useDeleteBookmark() {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarks() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarkBrowsersBase() });
 
       toaster.success(response.message);
     }
@@ -178,6 +191,7 @@ export function useBulkDeleteBookmarks() {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarks() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarkBrowsersBase() });
 
       toaster.success(response.message);
     }

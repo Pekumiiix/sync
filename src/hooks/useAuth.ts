@@ -17,18 +17,18 @@ export function useSignUp() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { setCredentials } = useAuthStore();
-
   return useMutation({
     mutationFn: (payload: ISignUpPayload) => authService.signUp(payload),
     onSuccess: (response) => {
+      const authStore = useAuthStore();
+
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
         data: { user: response.data.user }
       });
 
       localStorage.setItem('auth_token', response.data.token);
 
-      setCredentials(response.data.token);
+      authStore.setCredentials(response.data.token);
 
       router.push({ name: 'Verify Email' });
     },
@@ -42,17 +42,17 @@ export function useSignIn() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { setCredentials } = useAuthStore();
-
   return useMutation({
     mutationFn: (payload: ISignInPayload) => authService.signIn(payload),
     onSuccess: (response) => {
+      const authStore = useAuthStore();
+
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
         data: { user: response.data.user }
       });
 
       localStorage.setItem('auth_token', response.data.token);
-      setCredentials(response.data.token);
+      authStore.setCredentials(response.data.token);
 
       const redirectPath = router.currentRoute.value.query.redirect as string;
 
@@ -68,14 +68,14 @@ export function useSignOut() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { clearCredentials } = useAuthStore();
-
   return useMutation({
     mutationFn: () => authService.signOut(),
     onSettled: () => {
+      const authStore = useAuthStore();
+
       queryClient.clear();
 
-      clearCredentials();
+      authStore.clearCredentials();
 
       toaster.success('You have been signed out.');
 
@@ -105,13 +105,8 @@ export function useVerifyEmail() {
 }
 
 export function useForgotPassword() {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: (payload: IResetPasswordPayload) => authService.forgotPassword(payload),
-    onSuccess: () => {
-      router.push('/auth/reset-password');
-    },
     onError: (error) => {
       toaster.error(error.message);
     }

@@ -14,7 +14,8 @@ defineProps<Props>();
 <template>
   <Avatar :title="fallback">
     <AvatarImage
-      :src="src || ''"
+      v-if="src"
+      :src="src"
       class="object-center object-cover"
     />
     <AvatarFallback class="bg-primary-100 text-sm text-primary-10">{{

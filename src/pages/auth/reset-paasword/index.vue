@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 
 import { useResetPassword } from '@/hooks/useAuth';
@@ -11,6 +12,8 @@ import { type ResetPasswordData, resetPasswordSchema } from './schema';
 
 const TypedFormField = createAuthTypedForm<ResetPasswordData>();
 
+const router = useRouter();
+
 const { handleSubmit, meta, isSubmitting } = useForm<ResetPasswordData>({
   validationSchema: resetPasswordSchema
 });
@@ -19,7 +22,13 @@ const { mutate, isPending } = useResetPassword();
 
 const route = useRoute();
 
-const refreshToken = route.query.reset_token as string;
+const refreshToken = route.query.token as string;
+
+onMounted(() => {
+  if (!refreshToken) {
+    router.replace({ name: 'Sign In' });
+  }
+});
 
 const onSubmit = handleSubmit((values) => {
   mutate({

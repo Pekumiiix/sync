@@ -33,7 +33,7 @@ const { data: notificationData, isLoading } = useGetAllNotifications(params);
           variant="outline"
           class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
         >
-          <NotificationIcon class="size-4.5" />
+          <NotificationIcon class="size-4.5 pointer-events-none" />
         </Button>
 
         <span

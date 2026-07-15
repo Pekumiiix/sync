@@ -13,8 +13,9 @@ type NotificationType =
 export type ActionStatus = 'pending' | 'accepted' | 'declined';
 
 interface NotificationActor {
-  name: string;
-  avatarUrl: string | null;
+  firstName: string;
+  lastName: string;
+  avatar: string | null;
 }
 
 export interface NotificationFolder {

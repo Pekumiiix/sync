@@ -10,13 +10,14 @@ export function truncateString(str: string, maxLength: number): string {
 }
 
 export function getInitials(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((word) => word.charAt(0))
-    .join('')
-    .toUpperCase();
+  const names = name.trim().split(' ');
+
+  const firstName = names[0] || '';
+  const lastName = names.slice(1).join(' ') || '';
+
+  const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+
+  return initials || name.charAt(0).toUpperCase();
 }
 
 export function computeUserName(firstName?: string, lastName?: string): string {
