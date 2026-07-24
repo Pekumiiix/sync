@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { browserIntegrationService } from '@/services/browser-integration.service';
@@ -12,8 +12,13 @@ export function useGetBrowserIntegrations() {
 }
 
 export function useDisconnectBrowserIntegration() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: IDisconnectBrowserIntegrationPayload) =>
-      browserIntegrationService.disconnectBrowserIntegration(payload)
+      browserIntegrationService.disconnectBrowserIntegration(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.browserIntegration.lists() });
+    }
   });
 }
