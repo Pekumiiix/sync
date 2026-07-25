@@ -9,6 +9,7 @@ import { usePinBookmark, useUnpinBookmark } from '@/hooks/useBookmark';
 import type { IBookmark } from '@/types/bookmark.type';
 import { FALLBACK_IMAGE, handleBookmarkView, handleImageError } from '@/utils/bookmarkUtils';
 import { timeAgo } from '@/utils/dateUtils';
+import { truncateString } from '@/utils/stringutils';
 
 import { DeleteBookmarkDialog, EditBookmarkDialog, MoveBookmarkDialog } from '../dialogs';
 
@@ -83,7 +84,7 @@ const actions = [
 
 <template>
   <div
-    class="flex items-center justify-between py-8 px-6.5 border-b border-stroke-1/10 group hover:bg-[#F8F8F9] transition-colors duration-200 cursor-pointer"
+    class="flex items-center justify-between py-8 px-6.5 border-b border-stroke-1/10 group hover:bg-contemporary-background transition-colors duration-200 cursor-pointer"
   >
     <div class="w-fit flex items-center gap-4">
       <Checkbox
@@ -101,7 +102,9 @@ const actions = [
         />
 
         <div class="flex flex-col gap-1">
-          <p class="text-lg font-medium leading-[100%] text-black-90">{{ props.bookmark.title }}</p>
+          <p class="text-lg font-medium leading-[100%] text-black-90">
+            {{ truncateString(props.bookmark.title, 50) }}
+          </p>
           <p class="text-sm leading-4.5 text-black-70">
             {{ props.bookmark.domain }} |
             <router-link

@@ -1,6 +1,5 @@
-// src/hooks/useSearch.ts
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
-import { keepPreviousData, useQuery } from '@tanstack/vue-query'; // <-- 1. Import it here
+import { keepPreviousData, useQuery } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/components/constants/query-keys';
 import { searchService } from '@/services/search.service';

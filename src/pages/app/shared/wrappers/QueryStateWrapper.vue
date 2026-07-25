@@ -30,24 +30,6 @@ const emit = defineEmits<{
 }>();
 </script>
 
-<style scoped>
-@keyframes logoFill {
-  0% {
-    clip-path: inset(100% 0 0 0);
-  }
-  80% {
-    clip-path: inset(0 0 0 0);
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-.animate-logo-fill {
-  animation: logoFill 1.5s ease-in-out infinite;
-}
-</style>
-
 <template>
   <div
     v-if="isError"

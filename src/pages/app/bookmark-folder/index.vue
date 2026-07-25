@@ -20,15 +20,23 @@ const selectedPinnedBookmarks = ref<string[] | null>(null);
 
 const folderId = computed(() => route.params.folderId as string);
 
+const currentPage = computed<number>({
+  get: () => Number(params.page) || 1,
+  set: (newValue) => {
+    params.page = String(newValue);
+  }
+});
+
 const activeTab = computed({
   get: () => (params.tab as string) || 'all',
   set: (newValue) => {
     params.tab = newValue;
+    currentPage.value = 1;
   }
 });
 
 const queryParams = computed(() => ({
-  page: 1,
+  page: currentPage.value,
   limit: 10,
   filter: activeTab.value as BrowserProvider | 'all',
   sort: sortOrder.value
@@ -83,11 +91,13 @@ const tabs = computed(() => {
         }"
       >
         <BookmarkTabWrapper
+          v-model:page="currentPage"
           v-model:activeTab="activeTab"
           v-model:sortOrder="sortOrder"
           v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
           :tabs="tabs"
           :bookmarks="folderBookmarksData?.data.bookmarks || []"
+          :total="folderBookmarksData?.data.meta.totalCount || 1"
         >
           <PinnedBookmarks
             v-if="folderBookmarksData?.data.pinnedBookmarks.length"

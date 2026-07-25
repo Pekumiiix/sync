@@ -6,7 +6,7 @@ import { fadeSlideYVariant } from '@/components/constants/animations';
 import { getBrowserImage } from '@/components/constants/browsers';
 import { TrashIcon, UnpinIcon } from '@/components/icons';
 import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
-import { BaseSelect } from '@/components/re-useable';
+import { BasePagination, BaseSelect } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useBulkUnpinBookmarks } from '@/hooks/useBookmark';
@@ -20,6 +20,7 @@ import { BookmarkTabContentWrapper } from '.';
 interface Props {
   bookmarks: IBookmark[];
   tabs: { label: string; value: BrowserProvider | 'all' }[];
+  total: number;
 }
 
 defineProps<Props>();
@@ -52,6 +53,7 @@ const showDeleteBookmarkDialog = ref<boolean>(false);
 
 const activeTab = defineModel<string>('activeTab', { default: 'all' });
 const sortOrder = defineModel<SortOrder>('sortOrder', { default: 'title_desc' });
+const page = defineModel<number>('page', { default: 1 });
 const selectedPinnedBookmarks = defineModel<string[] | null>('selectedPinnedBookmarks', {
   default: null
 });
@@ -93,7 +95,9 @@ const buttons = computed(() => [
     class="w-full flex flex-col"
   >
     <div class="w-full flex items-center justify-between py-5 px-6.5 border-b border-stroke-1/10">
-      <TabsList class="w-fit h-13.25 flex items-center gap-2 p-2 rounded-full bg-[#F8F8F9]">
+      <TabsList
+        class="w-fit h-13.25 flex items-center gap-2 p-2 rounded-full bg-contemporary-background"
+      >
         <!-------------------------------------- Tab Trigger --------------------------------------->
         <TabsTrigger
           v-for="tab in tabs"
@@ -126,11 +130,14 @@ const buttons = computed(() => [
             :config="{ variants: fadeSlideYVariant }"
             :is-loading="button.isLoading?.value || false"
             :class="
-              cn('w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-[#F8F8F9]', {
-                'bg-[#FF2F000A] stroke-[#FF2F00] text-[#FF2F00] hover:text-danger-100 hover:bg-danger-100/10':
-                  button.label === 'Delete',
-                'text-black-90 stroke-black-90': button.label !== 'Delete'
-              })
+              cn(
+                'w-27 h-13.2 flex items-center gap-2 py-4 px-5 rounded-full bg-contemporary-background',
+                {
+                  'bg-[#FF2F000A] stroke-danger-100 text-danger-100 hover:text-danger-100 hover:bg-danger-100/10':
+                    button.label === 'Delete',
+                  'text-black-90 stroke-black-90': button.label !== 'Delete'
+                }
+              )
             "
             @click="button.onClick"
           >
@@ -157,7 +164,8 @@ const buttons = computed(() => [
               v-model="sortOrder"
               :options="sortOrderOptions"
               :classNames="{
-                trigger: 'w-32 min-h-13.25 h-13.25 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+                trigger:
+                  'w-32 min-h-13.25 h-13.25 py-4 px-5 rounded-full bg-contemporary-background border-none'
               }"
             />
           </MotionDiv>
@@ -170,7 +178,7 @@ const buttons = computed(() => [
               :options="displayTypeOptions"
               :classNames="{
                 trigger:
-                  'w-27.5 min-h-13.25 h-13.25 py-4 px-5 rounded-full bg-[#F8F8F9] border-none'
+                  'w-27.5 min-h-13.25 h-13.25 py-4 px-5 rounded-full bg-contemporary-background border-none'
               }"
             />
           </MotionDiv>
@@ -191,6 +199,16 @@ const buttons = computed(() => [
         :displayType="displayType"
         :bookmarks="bookmarks"
       />
+
+      <div
+        v-if="total > 1"
+        class="py-10"
+      >
+        <BasePagination
+          v-model:page="page"
+          :total="total"
+        />
+      </div>
     </TabsContent>
   </Tabs>
 

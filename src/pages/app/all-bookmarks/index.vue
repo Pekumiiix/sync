@@ -13,15 +13,23 @@ const params = useUrlSearchParams('history');
 
 const sortOrder = ref<SortOrder>('title_desc');
 
+const currentPage = computed<number>({
+  get: () => Number(params.page) || 1,
+  set: (newValue) => {
+    params.page = String(newValue);
+  }
+});
+
 const activeTab = computed({
   get: () => (params.tab as string) || 'all',
   set: (newValue) => {
     params.tab = newValue;
+    currentPage.value = 1;
   }
 });
 
 const queryParams = computed(() => ({
-  page: 1,
+  page: currentPage.value,
   limit: 10,
   filter: activeTab.value as BrowserProvider | 'all',
   sort: sortOrder.value
@@ -33,10 +41,7 @@ const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers();
 const tabs = computed(() => {
   const browsers = bookmarkBrowsersData.value?.data.browsers || [];
   return [
-    {
-      label: 'All',
-      value: 'all' as const
-    },
+    { label: 'All', value: 'all' as const },
     ...browsers.map((browser) => ({
       label: browser.browser,
       value: browser.browser
@@ -53,10 +58,12 @@ const tabs = computed(() => {
         loading-title="Fetching bookmarks"
       >
         <BookmarkTabWrapper
+          v-model:page="currentPage"
           v-model:activeTab="activeTab"
           v-model:sortOrder="sortOrder"
           :tabs="tabs"
           :bookmarks="bookmarksData?.data.bookmarks || []"
+          :total="bookmarksData?.data.meta.totalCount || 1"
         >
           <PinnedBookmarks
             v-if="bookmarksData?.data.pinnedBookmarks.length"
