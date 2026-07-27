@@ -15,17 +15,16 @@ import {
 import { useGetFolders } from '@/hooks/useFolder';
 import { FolderFormDialog } from '@/pages/app/shared/dialogs';
 import { useAuthStore } from '@/stores/auth.store';
-import { sumBookmarksCount } from '@/utils/bookmarkUtils';
 
 import { AppSidebarGroup } from '../components';
 import { AppSidebarFooter, UserInfo } from '.';
 
-const { data: folders, isLoading } = useGetFolders();
+const { data: foldersData, isLoading } = useGetFolders();
 
 const generalSidebarItems = computed(() => {
-  if (!folders.value?.data) return [];
+  if (!foldersData.value?.data) return [];
 
-  const { systemFolders, ownedFolders, sharedFolders } = folders.value.data;
+  const { systemFolders, ownedFolders, sharedFolders } = foldersData.value.data;
 
   const allAvailableFolders = [
     ...(systemFolders || []),
@@ -42,14 +41,11 @@ const generalSidebarItems = computed(() => {
   const allBookmarksItem = {
     href: 'all-bookmarks',
     name: 'All Bookmarks',
-    count:
-      sumBookmarksCount(systemFolders) +
-      sumBookmarksCount(ownedFolders) +
-      sumBookmarksCount(sharedFolders),
+    count: foldersData.value.data.meta.totalBookmarks || 0,
     images: aggregatedRecentImages
   };
 
-  const systemItems = (folders.value.data.systemFolders || []).map((folder) => ({
+  const systemItems = (foldersData.value.data.systemFolders || []).map((folder) => ({
     href: `${folder.id}`,
     name: folder.name,
     count: folder.bookmarkCount,
@@ -85,15 +81,15 @@ const authStore = useAuthStore();
         label="General"
         :items="generalSidebarItems"
         :isLoading="isLoading"
-        :isEmpty="!folders?.data.systemFolders?.length"
+        :isEmpty="!foldersData?.data.systemFolders?.length"
       />
 
       <AppSidebarGroup
         label="Owned folders"
         :isLoading="isLoading"
-        :isEmpty="!folders?.data.ownedFolders?.length"
+        :isEmpty="!foldersData?.data.ownedFolders?.length"
         :items="
-          folders?.data.ownedFolders.map((folder) => ({
+          foldersData?.data.ownedFolders.map((folder) => ({
             href: `${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,
@@ -105,9 +101,9 @@ const authStore = useAuthStore();
       <AppSidebarGroup
         label="Shared folders"
         :isLoading="isLoading"
-        :isEmpty="!folders?.data.sharedFolders?.length"
+        :isEmpty="!foldersData?.data.sharedFolders?.length"
         :items="
-          folders?.data.sharedFolders.map((folder) => ({
+          foldersData?.data.sharedFolders.map((folder) => ({
             href: `${folder.id}`,
             name: folder.name,
             count: folder.bookmarkCount,

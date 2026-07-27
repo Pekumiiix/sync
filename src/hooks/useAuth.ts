@@ -26,8 +26,6 @@ export function useSignUp() {
         data: { user: response.data.user }
       });
 
-      localStorage.setItem('auth_token', response.data.token);
-
       authStore.setCredentials(response.data.token);
 
       router.push({ name: 'Verify Email' });
@@ -51,12 +49,11 @@ export function useSignIn() {
         data: { user: response.data.user }
       });
 
-      localStorage.setItem('auth_token', response.data.token);
       authStore.setCredentials(response.data.token);
 
       const redirectPath = router.currentRoute.value.query.redirect as string;
 
-      router.replace(redirectPath || '/app/all-bookmarks');
+      router.replace(redirectPath || { name: 'All Bookmarks' });
     },
     onError: (error) => {
       toaster.error(error.message);
@@ -79,24 +76,25 @@ export function useSignOut() {
 
       toaster.success('You have been signed out.');
 
-      router.push('/auth/sign-in');
+      router.push({ name: 'Sign In' });
     }
   });
 }
 
 export function useVerifyEmail() {
   const router = useRouter();
-
-  const { refetchCurrentUser } = useAuthStore();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: IVerifyEmailPayload) => authService.verifyEmail(payload),
-    onSuccess: async () => {
+    onSuccess: (response) => {
       toaster.success('Email verified successfully.');
 
-      await refetchCurrentUser();
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), {
+        data: { user: response.data.user }
+      });
 
-      router.push('/app/all-bookmarks');
+      router.push({ name: 'All Bookmarks' });
     },
     onError: () => {
       toaster.error('Something went wrong. Please try again later.');
@@ -121,7 +119,7 @@ export function useResetPassword() {
     onSuccess: (response) => {
       toaster.success(response.message);
 
-      router.push('/auth/sign-in');
+      router.push({ name: 'Sign In' });
     },
     onError: (error) => {
       toaster.error(error.message);

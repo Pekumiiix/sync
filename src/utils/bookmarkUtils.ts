@@ -1,7 +1,7 @@
 import { type MaybeRefOrGetter, ref, toValue } from 'vue';
 
 import type { IBookmark } from '@/types/bookmark.type';
-import type { IFolder, IGetFoldersResponse } from '@/types/folder.type';
+import type { IGetFoldersResponse } from '@/types/folder.type';
 import { timeAgo } from '@/utils/dateUtils';
 
 export function transformBookmarks(bookmarks: IBookmark[]) {
@@ -9,10 +9,6 @@ export function transformBookmarks(bookmarks: IBookmark[]) {
     ...bookmark,
     isSelected: false
   }));
-}
-
-export function sumBookmarksCount(folderList: IFolder[] = []) {
-  return folderList.reduce((acc, folder) => acc + (folder?.bookmarkCount || 0), 0);
 }
 
 export function transformBookmarkFolders(data: IGetFoldersResponse | undefined) {

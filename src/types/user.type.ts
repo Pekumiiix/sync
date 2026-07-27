@@ -1,7 +1,9 @@
 import type { TSyncFrequency } from '@/types/settings.type';
 
 export interface UserSettingsResponse {
-  autoMergeDuplicate: boolean;
+  management: {
+    autoMergeDuplicate: boolean;
+  };
   notification: {
     notifyOnNewMember: boolean;
     notifyOnNewBookmark: boolean;
@@ -19,7 +21,7 @@ export interface IUser {
   isEmailVerified: boolean;
   location: string | null;
   avatarUrl: string | null;
-  plan: string;
+  plan: 'free' | 'standard' | 'basic';
   createdAt: string;
   updatedAt: string;
   settings: UserSettingsResponse;

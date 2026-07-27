@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { SettingsIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import env from '@/config/env';
 
-// import { JoinWorkSpaceDialog } from '../dialogs';
 import { InvitationPanel, NotificationPanel } from './sections';
 
 interface Props {
@@ -16,8 +13,6 @@ interface Props {
 defineProps<Props>();
 
 const router = useRouter();
-
-const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
 </script>
 
 <template>
@@ -25,7 +20,7 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
     <nav class="size-full flex items-center justify-between">
       <h5
         v-if="page"
-        class="text-lg leading-6 font-semibold text-black-90 -tracking-[1%]"
+        class="text-lg leading-6 font-semibold text-black-90 tracking-[-1%]"
       >
         {{ page }}
       </h5>
@@ -34,7 +29,7 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
         v-else
         @click="router.back()"
         variant="ghost"
-        class="size-fit flex items-center gap-1.5 p-0! text-xl font-medium leading-7 -tracking-[1%] text-black-90 hover:bg-transparent"
+        class="size-fit flex items-center gap-1.5 p-0! text-xl font-medium leading-7 tracking-[-1%] text-black-90 hover:bg-transparent"
       >
         <img
           src="/images/app/icons/arrow-left.png"
@@ -62,20 +57,5 @@ const joinWorkspaceDialogDisplayBool = ref<boolean>(false);
     </nav>
   </header>
 
-  <div
-    v-if="env.isDev"
-    class="w-full h-23.25 flex items-center gap-3 py-5 px-6.5 border-b border-[#292D321A]"
-  >
-    <Button @click="joinWorkspaceDialogDisplayBool = true">Show Join Workspace Dialog</Button>
-  </div>
-
   <slot />
-
-  <!-- <JoinWorkSpaceDialog
-    v-model="joinWorkspaceDialogDisplayBool"
-    :token="mockPendingInvitation.token"
-    :folder="mockPendingInvitation.folder"
-    :inviter="mockPendingInvitation.inviter"
-    :invited-at="mockPendingInvitation.invitedAt"
-  /> -->
 </template>

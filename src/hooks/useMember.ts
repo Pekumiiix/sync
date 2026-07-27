@@ -62,6 +62,10 @@ export function useKickMember() {
         queryKey: QUERY_KEYS.member.lists()
       });
 
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
+      });
+
       queryClient.removeQueries({
         queryKey: QUERY_KEYS.member.detail(variables.memberId)
       });

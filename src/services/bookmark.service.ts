@@ -9,16 +9,16 @@ import type {
   ICreateBookmarkPayload,
   IDeleteBookmarkPayload,
   IEditBookmarkPayload,
+  IGetBookmarksQueryParams,
   IMoveBookmarkPayload,
   IPreviewBookmarkPayload,
   IPreviewBookmarkResponse,
   TogglePinBookmarkPayload
 } from '@/types/bookmark.type';
-import type { GetFolderBookmarksQueryParams } from '@/types/folder.type';
 import { apiClient } from '@/utils/apiUtils';
 
 class BookmarkService {
-  getAllBookmarks(params: GetFolderBookmarksQueryParams) {
+  getAllBookmarks(params: IGetBookmarksQueryParams) {
     return apiClient<IApiResponse<IAllBookmarkResponse>>('get', `/bookmarks`, params);
   }
 

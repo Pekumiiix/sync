@@ -8,7 +8,6 @@ import type {
   IFolderResponse,
   IGetFolderBookmarksPayload,
   IGetFoldersResponse,
-  IJoinFolderPayload,
   IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
 import { apiClient } from '@/utils/apiUtils';
@@ -51,14 +50,6 @@ class FolderService {
       'delete',
       `/folders/${payload.folderId}/password`
     );
-  }
-
-  joinFolder(payload: IJoinFolderPayload) {
-    const { folderId, password } = payload;
-
-    return apiClient<IApiResponse>('post', `/folders/${folderId}/join`, {
-      password
-    });
   }
 }
 

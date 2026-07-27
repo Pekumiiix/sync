@@ -155,18 +155,13 @@ const displayBool = defineModel<boolean>({ default: false });
       <MembersItem
         v-for="member in folderMembersData?.data.members || []"
         :key="member.id"
-        :avatar_url="member.user.avatarUrl"
-        :name="member.user.firstName + ' ' + member.user.lastName"
-        :email="member.user.email"
-        :role="member.role"
-        :accessLevel="member.accessLevel"
-        :folder-id="props.folderId"
+        :member="member"
         :member-id="member.id"
       />
     </QueryStateWrapper>
 
     <div
-      v-if="folderMembersData?.data.permission.role === 'owner' || !props.isProtected"
+      v-if="folderMembersData?.data.permission.role === 'owner' && !props.isProtected"
       class="w-full flex items-center justify-between p-6 border-t border-[#292D321A]"
     >
       <div class="flex flex-col gap-1">
@@ -180,7 +175,7 @@ const displayBool = defineModel<boolean>({ default: false });
 
       <Button
         @click="showAddPasswordDialog = true"
-        class="w-fit h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] rounded-full py-2 px-4 bg-black-100 hover:bg-black-90"
+        class="w-fit h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] rounded-full py-2 px-4 bg-black-100 hover:bg-black-90"
       >
         Add password
       </Button>

@@ -10,10 +10,12 @@ import { MembersItem } from '../shared/components';
 
 const query = ref('');
 
-const route = useRoute();
+const route = useRoute<'Members'>();
+
+const folderId = computed(() => route.params.folderId);
 
 const { data: folderMembersData } = useGetFolderMembers(() => ({
-  folderId: route.params.folderId as string
+  folderId: folderId.value
 }));
 
 const result = computed(() => {
@@ -36,7 +38,7 @@ const result = computed(() => {
         <p class="text-sm leading-6 font-medium text-black-70">
           {{ folderMembersData?.data.folder.name }}
         </p>
-        <p class="text-xl font-medium leading-7 text-black-90 -tracking-[1%]">
+        <p class="text-xl font-medium leading-7 text-black-90 tracking-[=1%]">
           {{ folderMembersData?.data.meta.totalMemberCount }} Members
         </p>
       </div>
@@ -51,13 +53,7 @@ const result = computed(() => {
       <MembersItem
         v-for="member in result"
         :key="member.id"
-        :memberId="member.id"
-        :folderId="member.folderId"
-        :avatar_url="member.user.avatarUrl"
-        :name="member.user.firstName + ' ' + member.user.lastName"
-        :email="member.user.email"
-        :role="member.role"
-        :accessLevel="member.accessLevel"
+        :member="member"
         :permission="folderMembersData?.data.permission"
       />
     </div>
@@ -66,13 +62,7 @@ const result = computed(() => {
       <MembersItem
         v-for="member in folderMembersData?.data.members || []"
         :key="member.id"
-        :memberId="member.id"
-        :folderId="member.folderId"
-        :avatar_url="member.user.avatarUrl"
-        :name="member.user.firstName + ' ' + member.user.lastName"
-        :email="member.user.email"
-        :role="member.role"
-        :accessLevel="member.accessLevel"
+        :member="member"
         :permission="folderMembersData?.data.permission"
       />
     </div>

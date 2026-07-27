@@ -7,27 +7,21 @@ import { LoadingButton } from '@/components/shared';
 import { useChangeMemberAccessLevel, useKickMember, useLeaveFolder } from '@/hooks/useMember';
 import { useAuthStore } from '@/stores/auth.store';
 import type { IFolderPermission } from '@/types/folder.type';
-import type { MemberAccessLevel, MemberRole } from '@/types/member.type';
+import type { IMember } from '@/types/member.type';
 
 interface IMembersItemProps {
-  folderId: string;
-  memberId: string;
-  avatar_url: string | null;
-  name: string;
-  email: string;
-  role: MemberRole;
-  accessLevel: MemberAccessLevel;
+  member: IMember;
   permission?: IFolderPermission;
 }
 
 const props = defineProps<IMembersItemProps>();
 
-const userAccessLevel = ref(props.accessLevel);
+const userAccessLevel = ref(props.member.accessLevel);
 
 const isCurrentUser = computed(() => {
   const authStore = useAuthStore();
 
-  return props.email === authStore.user?.email;
+  return props.member.user.email === authStore.user?.email;
 });
 
 const { mutate: kickMember, isPending: isKickingMember } = useKickMember();
@@ -35,23 +29,23 @@ const { mutate: leaveFolder, isPending: isLeavingFolder } = useLeaveFolder();
 const { mutate: updateMemberAccessLevel } = useChangeMemberAccessLevel();
 
 function handleKickMember() {
-  kickMember({ folderId: props.folderId, memberId: props.memberId });
+  kickMember({ folderId: props.member.folderId, memberId: props.member.id });
 }
 
 function handleLeaveFolder() {
-  leaveFolder({ folderId: props.folderId });
+  leaveFolder({ folderId: props.member.folderId });
 }
 
 function handleAccessLevelChange() {
   updateMemberAccessLevel(
     {
-      folderId: props.folderId,
-      memberId: props.memberId,
+      folderId: props.member.folderId,
+      memberId: props.member.id,
       accessLevel: userAccessLevel.value
     },
     {
       onError: () => {
-        userAccessLevel.value = props.accessLevel;
+        userAccessLevel.value = props.member.accessLevel;
       }
     }
   );
@@ -64,20 +58,22 @@ function handleAccessLevelChange() {
   >
     <div class="flex flex-row items-center gap-2">
       <BaseAvatar
-        :src="avatar_url"
-        :fallback="name"
+        :src="props.member.user.avatarUrl"
+        :fallback="props.member.user.firstName + ' ' + props.member.user.lastName"
         class="size-8"
       />
 
       <div class="flex flex-col gap-0.5">
-        <p class="font-medium leading-5.5 -tracking-[1%] text-black-90">{{ props.name }}</p>
-        <p class="text-xs leading-[100%] text-black-70">{{ props.email }}</p>
+        <p class="font-medium leading-5.5 tracking-[-1%] text-black-90">
+          {{ props.member.user.firstName }} {{ props.member.user.lastName }}
+        </p>
+        <p class="text-xs leading-[100%] text-black-70">{{ props.member.user.email }}</p>
       </div>
     </div>
 
     <div class="flex items-center gap-2">
       <BaseSelect
-        v-if="props.accessLevel === 'editor' && !isCurrentUser"
+        v-if="props.member.accessLevel === 'editor' && !isCurrentUser"
         v-model="userAccessLevel"
         @update:model-value="handleAccessLevelChange"
         :options="[
@@ -91,7 +87,7 @@ function handleAccessLevelChange() {
       />
 
       <LoadingButton
-        v-if="props.permission?.role === 'owner' && props.role !== 'owner' && !isCurrentUser"
+        v-if="props.permission?.role === 'owner' && props.member.role !== 'owner' && !isCurrentUser"
         :is-loading="isKickingMember"
         @click="handleKickMember"
         class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"
@@ -101,7 +97,7 @@ function handleAccessLevelChange() {
       </LoadingButton>
 
       <LoadingButton
-        v-if="props.role !== 'owner' && isCurrentUser"
+        v-if="props.member.role !== 'owner' && isCurrentUser"
         :is-loading="isLeavingFolder"
         @click="handleLeaveFolder"
         class="h-9.5 flex items-center text-sm font-medium leading-4.75 text-danger-100 gap-1.75 px-3 py-3.5 rounded-full bg-[#FF2F000A] hover:bg-danger-100/10"

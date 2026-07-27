@@ -4,10 +4,7 @@ import { RouterView } from 'vue-router';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
 
-// import { JoinWorkSpaceDialog } from '@/pages/app/shared/dialogs';
 import { AppSidebar } from './sections';
-
-// const inviteToken = useLocalStorage<string | null>('invite_token', null);
 
 const pendingInviteToken = ref<string | null>(null);
 const isInviteDialogOpen = ref(false);
@@ -25,12 +22,6 @@ onMounted(() => {
 <template>
   <SidebarProvider class="w-full min-h-screen flex justify-center">
     <AppSidebar />
-
-    <!-- <JoinWorkSpaceDialog
-      v-if="pendingInviteToken"
-      v-model="isInviteDialogOpen"
-      :invitation="mockPendingInvitation"
-    /> -->
 
     <main class="flex-1 max-w-384 min-w-0 min-h-screen flex flex-col">
       <RouterView />

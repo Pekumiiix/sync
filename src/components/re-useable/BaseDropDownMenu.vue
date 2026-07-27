@@ -14,6 +14,7 @@ interface Props {
     label: string;
     icon: Component;
     action: () => void;
+    disabled?: boolean;
   }[];
   classNames?: {
     trigger?: string;
@@ -42,7 +43,8 @@ defineProps<Props>();
       <DropdownMenuItem
         v-for="item in items"
         :key="item.label"
-        :class="cn('cursor-pointer', classNames?.item?.(item.label))"
+        :disabled="item.disabled || false"
+        :class="cn('cursor-pointer disabled:cursor-not-allowed', classNames?.item?.(item.label))"
         @click="item.action"
       >
         <component

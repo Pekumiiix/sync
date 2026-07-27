@@ -12,7 +12,6 @@ import type {
   IEditFolderPayload,
   IFolderBookmarksResponse,
   IGetFolderBookmarksPayload,
-  IJoinFolderPayload,
   IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
 import type { ApiError } from '@/utils/apiUtils';
@@ -25,7 +24,7 @@ export function useGetFolders() {
   return useQuery({
     queryKey: QUERY_KEYS.folder.getFolders(),
     queryFn: () => folderService.getFolders(),
-    staleTime: 1000 * 60 * 5 // 5 minutes cache fresh time
+    staleTime: 1000 * 60 * 5
   });
 }
 
@@ -38,7 +37,7 @@ export function useGetFolderBookmarks(payload: MaybeRefOrGetter<IGetFolderBookma
       const unwrappedPayload = toValue(payload);
 
       return {
-        queryKey: QUERY_KEYS.folder.getFolderBookmarks(unwrappedPayload),
+        queryKey: QUERY_KEYS.bookmark.getFolderBookmarks(unwrappedPayload),
         queryFn: () => folderService.getFolderBookmarks(unwrappedPayload),
         staleTime: 1000 * 60 * 5,
         enabled: !!unwrappedPayload.folderId
@@ -77,9 +76,8 @@ export function useEditFolder() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
       });
-
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.folder.folderBookmarksBase(variables.folderId)
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
       });
     }
   });
@@ -98,34 +96,16 @@ export function useDeleteFolder() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
       });
-
       queryClient.removeQueries({
-        queryKey: QUERY_KEYS.folder.folderBookmarksBase(variables.folderId)
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
       });
-
       queryClient.invalidateQueries({
-        queryKey: [...QUERY_KEYS.folder.bookmarks(), 'all']
+        queryKey: QUERY_KEYS.bookmark.lists()
       });
 
       toaster.success('Folder deleted successfully');
 
       router.replace({ name: 'All Bookmarks' });
-    }
-  });
-}
-
-/**
- * Joins a folder
- */
-export function useJoinFolder() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: IJoinFolderPayload) => folderService.joinFolder(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.folder.getFolders()
-      });
     }
   });
 }
@@ -139,9 +119,12 @@ export function useAddPasswordToFolder() {
   return useMutation({
     mutationFn: (payload: IAddPasswordToFolderPayload) =>
       folderService.addPasswordToFolder(payload),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
       });
 
       toaster.success('Password added to folder successfully');
@@ -152,15 +135,21 @@ export function useAddPasswordToFolder() {
   });
 }
 
+/**
+ * Removes a password from a folder
+ */
 export function useRemovePasswordFromFolder() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: IRemovePasswordFromFolderPayload) =>
       folderService.removePasswordFromFolder(payload),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
       });
 
       toaster.success('Password removed from folder successfully');

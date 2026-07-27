@@ -10,7 +10,7 @@ import { SidebarFooter } from '@/components/ui/sidebar';
     />
 
     <div class="flex flex-col gap-1">
-      <p class="text-base font-medium leading-5.5 text-white -tracking-[1%]">
+      <p class="text-base font-medium leading-5.5 text-white tracking-[-1%]">
         Step Into Basic Plan
       </p>
       <p class="text-sm text-white-90">

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
 
 import { EditIcon, EyeIcon, FolderIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { LoadingButton } from '@/components/shared';
@@ -21,8 +20,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   showCheckbox: true
 });
-
-const route = useRoute();
 
 const selectedBool = defineModel<boolean>({ default: false });
 
@@ -88,7 +85,8 @@ const actions = [
   >
     <div class="w-fit flex items-center gap-4">
       <Checkbox
-        v-if="props.showCheckbox && route.name !== 'All Bookmarks'"
+        v-if="props.showCheckbox"
+        :disabled="!props.bookmark.canEdit"
         v-model:model-value="selectedBool"
         class="size-4"
       />
@@ -103,7 +101,7 @@ const actions = [
 
         <div class="flex flex-col gap-1">
           <p class="text-lg font-medium leading-[100%] text-black-90">
-            {{ truncateString(props.bookmark.title, 50) }}
+            {{ truncateString(props.bookmark.title || '', 50) }}
           </p>
           <p class="text-sm leading-4.5 text-black-70">
             {{ props.bookmark.domain }} |
@@ -156,7 +154,7 @@ const actions = [
     :data="{
       id: props.bookmark.id,
       favIconUrl: props.bookmark.faviconUrl || FALLBACK_IMAGE,
-      title: props.bookmark.title,
+      title: props.bookmark.title || '',
       description: props.bookmark.description || '',
       tags: props.bookmark.tags
     }"

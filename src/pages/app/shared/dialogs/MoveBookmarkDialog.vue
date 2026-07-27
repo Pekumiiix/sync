@@ -105,7 +105,7 @@ function handleMove() {
           @click="handleMove"
           :isLoading="isPending || isBulkMovePending"
           :disabled="!selectedFolderId"
-          class="w-21.75 h-11 text-base font-medium leading-5.5 text-white -tracking-[1%] pt-2 px-4 rounded-full bg-black-100 hover:bg-black-90"
+          class="w-21.75 h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] pt-2 px-4 rounded-full bg-black-100 hover:bg-black-90"
         >
           <span>Move</span>
         </LoadingButton>

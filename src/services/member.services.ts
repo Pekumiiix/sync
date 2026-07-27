@@ -20,7 +20,7 @@ class MemberService {
 
     return apiClient<IApiResponse<IMemberResponse>>(
       'patch',
-      `/folders/${folderId}/member/${memberId}/`,
+      `/folders/${folderId}/members/${memberId}/`,
       { accessLevel }
     );
   }

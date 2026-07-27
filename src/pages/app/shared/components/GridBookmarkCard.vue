@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
 import { Ellipsis } from 'lucide-vue-next';
 
 import {
@@ -27,8 +26,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const route = useRoute();
 
 const detailsDisplayBool = ref<boolean>(false);
 const moveBookmarkDisplayBool = ref<boolean>(false);
@@ -58,17 +55,14 @@ const actions = computed(() => [
       detailsDisplayBool.value = true;
     }
   },
-  ...(route.name === 'Bookmark Folder'
-    ? [
-        {
-          icon: SelectIcon,
-          label: selectBool.value ? 'Deselect' : 'Select',
-          action: () => {
-            selectBool.value = !selectBool.value;
-          }
-        }
-      ]
-    : []),
+  {
+    icon: SelectIcon,
+    label: selectBool.value ? 'Deselect' : 'Select',
+    disabled: !props.bookmark.canEdit,
+    action: () => {
+      selectBool.value = !selectBool.value;
+    }
+  },
   {
     icon: FolderIcon,
     label: 'Move',
@@ -140,17 +134,17 @@ const actions = computed(() => [
           item: (label) =>
             cn(
               'h-8 flex items-center justify-start gap-1.5 focus-visible:ring-0 rounded-none first:rounded-t-xl last:rounded-b-xl',
-              { 'hover:bg-[#FF2F00]/5!': label === 'Delete' }
+              { 'hover:bg-danger-100/5!': label === 'Delete' }
             ),
           icon: (label) =>
             cn('size-3.5 transition-colors duration-200', {
-              'stroke-[#FF2F00]': label === 'Delete',
+              'stroke-danger-100': label === 'Delete',
               'stroke-black-90': label !== 'Delete',
               'fill-black-90': label === 'Deselect'
             }),
           label: (label) =>
             cn('text-xs leading-[100%] font-normal', {
-              'text-[#FF2F00]': label === 'Delete',
+              'text-danger-100': label === 'Delete',
               'text-black-90': label !== 'Delete'
             })
         }"
@@ -169,7 +163,7 @@ const actions = computed(() => [
     :data="{
       id: props.bookmark.id,
       favIconUrl: props.bookmark.faviconUrl || '',
-      title: props.bookmark.title,
+      title: props.bookmark.title || '',
       description: props.bookmark.description || '',
       tags: props.bookmark.tags
     }"

@@ -31,7 +31,7 @@ export function useMarkAllAsRead() {
   return useMutation({
     mutationFn: () => notificationService.markAllAsRead(),
     onSuccess: () => {
-      return queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
     }

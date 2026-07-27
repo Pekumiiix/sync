@@ -7,12 +7,10 @@ export type InvitationStatus = 'pending' | 'accepted' | 'declined' | 'expired';
 
 export interface Invitation {
   id: string;
-  folderId: string;
   token: string;
   createdAt: string;
   status: InvitationStatus;
   inviter: {
-    id: string;
     avatarUrl: string | null;
     firstName: string;
     lastName: string;
@@ -28,6 +26,7 @@ export interface Invitation {
 // Request payloads for invitation-related operations
 export interface IBaseInvitationPayload {
   token: string;
+  password?: string;
 }
 
 export interface ICreateInvitationPayload {

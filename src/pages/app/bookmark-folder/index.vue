@@ -12,13 +12,13 @@ import { ErrorState } from '../shared/query-states';
 import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper, QueryStateWrapper } from '../shared/wrappers';
 
-const route = useRoute();
+const route = useRoute<'Bookmark Folder'>();
 const params = useUrlSearchParams('history');
 
 const sortOrder = ref<SortOrder>('title_desc');
 const selectedPinnedBookmarks = ref<string[] | null>(null);
 
-const folderId = computed(() => route.params.folderId as string);
+const folderId = computed(() => route.params.folderId);
 
 const currentPage = computed<number>({
   get: () => Number(params.page) || 1,

@@ -7,7 +7,6 @@ export interface Integration {
   browser: BrowserProvider;
   lastSyncedAt: string;
   createdAt: string;
-  deviceName: string | null;
   extensionVersion: string | null;
 }
 

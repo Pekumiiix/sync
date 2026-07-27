@@ -30,7 +30,11 @@ const isItemActive = (itemHref: string) => {
     return route.name === 'All Bookmarks';
   }
 
-  return route.params.folderId === itemHref;
+  if ('folderId' in route.params) {
+    return route.params.folderId === itemHref;
+  }
+
+  return false;
 };
 </script>
 

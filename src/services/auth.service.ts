@@ -1,3 +1,4 @@
+import type { IAccountResponse } from '@/types/account.type';
 import type { IApiResponse } from '@/types/api.type';
 import type {
   IAuthResponse,
@@ -24,7 +25,7 @@ class AuthService {
   }
 
   verifyEmail(payload: IVerifyEmailPayload) {
-    return apiClient<IApiResponse>('post', '/auth/verify-email', payload);
+    return apiClient<IApiResponse<IAccountResponse>>('post', '/auth/verify-email', payload);
   }
 
   resendVerificationEmail(payload: IResendVerificationEmailPayload) {

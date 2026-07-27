@@ -10,20 +10,20 @@ import type {
   ICreateBookmarkPayload,
   IDeleteBookmarkPayload,
   IEditBookmarkPayload,
+  IGetBookmarksQueryParams,
   IMoveBookmarkPayload,
   IPreviewBookmarkPayload,
   TogglePinBookmarkPayload
 } from '@/types/bookmark.type';
-import type { GetFolderBookmarksQueryParams } from '@/types/folder.type';
 import { toaster } from '@/utils/toastUtils';
 
-export function useGetAllBookmarks(params: MaybeRefOrGetter<GetFolderBookmarksQueryParams>) {
+export function useGetAllBookmarks(params: MaybeRefOrGetter<IGetBookmarksQueryParams>) {
   return useQuery(
     computed(() => {
       const unwrappedParams = toValue(params);
 
       return {
-        queryKey: computed(() => QUERY_KEYS.folder.getAllBookmarks(unwrappedParams)),
+        queryKey: QUERY_KEYS.bookmark.getAllBookmarks(unwrappedParams),
         queryFn: () => bookmarkService.getAllBookmarks(unwrappedParams),
         staleTime: 1000 * 60 * 5
       };
@@ -38,18 +38,13 @@ export function useCreateBookmark() {
     mutationFn: (payload: ICreateBookmarkPayload) => bookmarkService.createBookmark(payload),
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
-
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
-
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.lists() });
       queryClient.invalidateQueries({
-        queryKey: [...QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)]
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
       });
-
-      if (variables.folderId) {
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(variables.folderId)
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)
+      });
 
       toaster.success(response.message);
     }
@@ -64,13 +59,10 @@ export function useEditBookmark() {
     onSuccess: (response) => {
       const updatedBookmark = response.data.bookmark;
 
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
-
-      if (updatedBookmark?.folder.id) {
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(updatedBookmark.folder.id)
-        });
-      }
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.lists() });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(updatedBookmark.folder.id)
+      });
     }
   });
 }
@@ -83,15 +75,12 @@ export function usePinBookmark() {
     onSuccess: (response) => {
       const bookmark = response.data.bookmark;
 
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.lists() });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(bookmark.folder.id)
+      });
 
       toaster.success(response.message);
-
-      if (bookmark?.folder.id) {
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(bookmark.folder.id)
-        });
-      }
     }
   });
 }
@@ -104,15 +93,12 @@ export function useUnpinBookmark() {
     onSuccess: (response) => {
       const bookmark = response.data.bookmark;
 
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.lists() });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.bookmark.byFolderBase(bookmark.folder.id)
+      });
 
       toaster.success(response.message);
-
-      if (bookmark?.folder.id) {
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.folder.folderBookmarksBase(bookmark.folder.id)
-        });
-      }
     }
   });
 }
@@ -123,7 +109,7 @@ export function useBulkUnpinBookmarks() {
   return useMutation({
     mutationFn: (payload: IBulkActionPayload) => bookmarkService.bulkUnpinBookmarks(payload),
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
 
       toaster.success(response.message);
     }
@@ -135,15 +121,11 @@ export function useMoveBookmark() {
 
   return useMutation({
     mutationFn: (payload: IMoveBookmarkPayload) => bookmarkService.moveBookmark(payload),
-    onSuccess: async (_, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
-
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
-
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks()] });
-
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
       queryClient.invalidateQueries({
-        queryKey: [...QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)]
+        queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)
       });
     }
   });
@@ -154,15 +136,11 @@ export function useBulkMoveBookmarks() {
 
   return useMutation({
     mutationFn: (payload: IBulkMoveBookmarksPayload) => bookmarkService.bulkMoveBookmarks(payload),
-    onSuccess: async (_, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
-
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.allBookmarksBase() });
-
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.folder.bookmarks()] });
-
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
       queryClient.invalidateQueries({
-        queryKey: [...QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)]
+        queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)
       });
     }
   });
@@ -175,8 +153,8 @@ export function useDeleteBookmark() {
     mutationFn: (payload: IDeleteBookmarkPayload) => bookmarkService.deleteBookmark(payload),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarks() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarkBrowsersBase() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
 
       toaster.success(response.message);
     }
@@ -190,8 +168,8 @@ export function useBulkDeleteBookmarks() {
     mutationFn: (payload: IBulkActionPayload) => bookmarkService.bulkDeleteBookmarks(payload),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarks() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarkBrowsersBase() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
 
       toaster.success(response.message);
     }

@@ -123,16 +123,6 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
 
-  if (to.query.invite_token) {
-    localStorage.setItem('pending_invite', to.query.invite_token as string);
-
-    const query = { ...to.query };
-
-    delete query.invite_token;
-
-    return { ...to, query };
-  }
-
   if (authStore.isLoading) {
     await authStore.checkAuthStatus();
   }

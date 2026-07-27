@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { BaseAvatar } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { useAcceptInvitation, useDeclineInvitation } from '@/hooks/useInvitation';
@@ -6,13 +8,15 @@ import { cn } from '@/lib/utils';
 import type { Invitation, InvitationStatus } from '@/types/invitation.type';
 import { timeAgo } from '@/utils/dateUtils';
 
+import { JoinWorkSpaceDialog } from '../../dialogs';
+
 interface Props {
   invitation: Invitation;
 }
 
 const props = defineProps<Props>();
 
-const invitatyionConfig: Record<InvitationStatus, any> = {
+const invitatyionConfig: Record<InvitationStatus, { title: string; message: string }> = {
   pending: {
     title: 'New invite request',
     message: `${props.invitation.inviter.firstName} has requested your access to the folder "${props.invitation.folder.name}". Join to begin collaborating with them.`
@@ -34,8 +38,14 @@ const invitatyionConfig: Record<InvitationStatus, any> = {
 const { mutate: acceptInvitation, isPending: isAcceptingInvitation } = useAcceptInvitation();
 const { mutate: declineInvitation, isPending: isDecliningInvitation } = useDeclineInvitation();
 
+const joinWorkspaceDialogDisplay = ref(false);
+
 function handleAcceptInvitation() {
-  acceptInvitation({ token: props.invitation.token });
+  if (props.invitation.folder.isProtected) {
+    joinWorkspaceDialogDisplay.value = true;
+  } else {
+    acceptInvitation({ token: props.invitation.token });
+  }
 }
 
 function handleDeclineInvitation() {
@@ -64,7 +74,7 @@ function handleDeclineInvitation() {
           <p class="text-sm font-medium leading-4 text-black-90">
             {{ invitatyionConfig[props.invitation.status].title }}
           </p>
-          <p class="text-[10px] leading-3.5 text-black-70 -tracking-[1%]">
+          <p class="text-[10px] leading-3.5 text-black-70 tracking-[-1%]">
             {{ invitatyionConfig[props.invitation.status].message }}
           </p>
         </div>
@@ -97,4 +107,9 @@ function handleDeclineInvitation() {
       </div>
     </div>
   </div>
+
+  <JoinWorkSpaceDialog
+    v-model="joinWorkspaceDialogDisplay"
+    :invitation="props.invitation"
+  />
 </template>

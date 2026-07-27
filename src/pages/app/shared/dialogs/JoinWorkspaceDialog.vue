@@ -4,18 +4,24 @@ import { useForm } from 'vee-validate';
 import { BaseAvatar, BaseDialog, BasePasswordInput } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
+import { useAcceptInvitation } from '@/hooks/useInvitation';
 import type { Invitation } from '@/types/invitation.type';
 import { timeAgo } from '@/utils/dateUtils';
 import { createTypedForm } from '@/utils/formUtils';
+import { computeUserName } from '@/utils/stringutils';
 
 import { FolderThumbnail } from '../components';
 import { type JoinWorkspaceData, joinWorkspaceSchema } from '../schemas/join-workspace.schema';
 
-defineProps<{
+const props = defineProps<{
   invitation: Invitation;
 }>();
 
-const { handleSubmit, meta, isSubmitting } = useForm<JoinWorkspaceData>({
+const displayBool = defineModel<boolean>({ default: false });
+
+const { mutate: acceptInvitation, isPending: isAcceptingInvitation } = useAcceptInvitation();
+
+const { handleSubmit, meta, isSubmitting, setErrors } = useForm<JoinWorkspaceData>({
   validationSchema: joinWorkspaceSchema,
   initialValues: {
     password: ''
@@ -23,12 +29,20 @@ const { handleSubmit, meta, isSubmitting } = useForm<JoinWorkspaceData>({
 });
 
 const onSubmit = handleSubmit((data: JoinWorkspaceData) => {
-  console.log(data);
+  acceptInvitation(
+    { ...data, token: props.invitation.token },
+    {
+      onSuccess: () => {
+        displayBool.value = false;
+      },
+      onError: (error) => {
+        setErrors({ password: error.message });
+      }
+    }
+  );
 });
 
 const TypedFormField = createTypedForm<JoinWorkspaceData>();
-
-const displayBool = defineModel<boolean>({ default: false });
 </script>
 
 <template>
@@ -61,12 +75,14 @@ const displayBool = defineModel<boolean>({ default: false });
             Invited by
             <div class="flex items-center gap-1 text-white-90">
               <BaseAvatar
-                :fallback="invitation.inviter.firstName + ' ' + invitation.inviter.lastName"
+                :fallback="
+                  computeUserName(invitation.inviter.firstName, invitation.inviter.lastName)
+                "
                 :src="invitation.inviter.avatarUrl"
-                class="size-3"
+                class="size-3 [&>span]:text-[6px]"
               />
 
-              {{ invitation.inviter.firstName }} {{ invitation.inviter.lastName }}
+              {{ computeUserName(invitation.inviter.firstName, invitation.inviter.lastName) }}
             </div>
             <span class="size-1 rounded-full bg-white-70" /> {{ timeAgo(invitation.createdAt) }}
           </div>
@@ -95,13 +111,13 @@ const displayBool = defineModel<boolean>({ default: false });
           @click="displayBool = false"
           type="button"
           variant="ghost"
-          class="w-full h-12 rounded-full py-3.75 px-6 bg-[#F8F8F9] text-sm font-inter-tight font-medium text-black-100"
+          class="w-full h-12 rounded-full py-3.75 px-6 bg-contemporary-background text-sm font-inter-tight font-medium text-black-100"
         >
           Cancel
         </Button>
 
         <LoadingButton
-          :isLoading="isSubmitting"
+          :isLoading="isSubmitting || isAcceptingInvitation"
           :disabled="!meta.valid"
           class="w-full h-12 rounded-full py-3.75 px-6 text-sm font-inter-tight font-medium"
         >

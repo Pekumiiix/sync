@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/hooks/useAccount';
 import { useSignIn, useSignOut } from '@/hooks/useAuth';
 
 export const useAuthStore = defineStore('auth', () => {
-  const { data, isLoading: isFetchingCurrentUser, refetch: refetchCurrentUser } = useCurrentUser();
+  const { data, isLoading: isFetchingCurrentUser } = useCurrentUser();
 
   const signIn = useSignIn();
   const signOut = useSignOut();
@@ -19,6 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function setCredentials(newToken: string) {
     token.value = newToken;
+    localStorage.setItem('auth_token', newToken);
   }
 
   function clearCredentials() {
@@ -52,7 +53,6 @@ export const useAuthStore = defineStore('auth', () => {
     signOut,
     checkAuthStatus,
     setCredentials,
-    clearCredentials,
-    refetchCurrentUser
+    clearCredentials
   };
 });

@@ -1,5 +1,4 @@
-import type { BrowserProvider } from './app.type';
-import type { IBookmark } from './bookmark.type';
+import type { IBookmark, IGetBookmarksQueryParams } from './bookmark.type';
 import type { MemberAccessLevel, MemberRole } from './member.type';
 
 // Core Models
@@ -19,7 +18,7 @@ export interface IFolder {
   recentBookmarksImages: string[];
   isProtected: boolean;
   isSystem: boolean;
-  createdAt: string | null;
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -41,18 +40,11 @@ export interface IFolderPermission {
 
 export type SortBookmarks = 'title_desc' | 'title_asc' | 'newest' | 'oldest';
 
-export interface GetFolderBookmarksQueryParams {
-  page?: number;
-  limit?: number;
-  sort?: SortBookmarks;
-  filter?: BrowserProvider | 'all';
-}
-
 // Request payloads for folder related operations
 
 export interface IGetFolderBookmarksPayload {
   folderId: FolderId;
-  param: GetFolderBookmarksQueryParams;
+  param: IGetBookmarksQueryParams;
 }
 
 export interface ICreateFolderPayload {
@@ -64,11 +56,6 @@ export interface IEditFolderPayload extends ICreateFolderPayload {
 }
 
 export interface IDeleteFolderPayload {
-  folderId: FolderId;
-}
-
-export interface IJoinFolderPayload {
-  password?: string;
   folderId: FolderId;
 }
 
@@ -91,6 +78,9 @@ export interface IGetFoldersResponse {
   systemFolders: IFolder[];
   ownedFolders: IFolder[];
   sharedFolders: IFolder[];
+  meta: {
+    totalBookmarks: number;
+  };
 }
 
 export interface IFolderBookmarksResponse {
