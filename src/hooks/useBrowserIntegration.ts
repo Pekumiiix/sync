@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { browserIntegrationService } from '@/services/browser-integration.service';
 import type { IDisconnectBrowserIntegrationPayload } from '@/types/browser-integration.type';
 import { toaster } from '@/utils/toastUtils';
@@ -22,6 +22,9 @@ export function useDisconnectBrowserIntegration() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.browserIntegration.lists() });
 
       toaster.success(response.message);
+    },
+    onError: () => {
+      toaster.error('Failed to disconnect browser integration');
     }
   });
 }

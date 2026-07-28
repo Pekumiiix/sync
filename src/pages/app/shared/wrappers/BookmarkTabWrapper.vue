@@ -201,7 +201,7 @@ const buttons = computed(() => [
       />
 
       <div
-        v-if="total > 1"
+        v-if="total > 10"
         class="py-10"
       >
         <BasePagination

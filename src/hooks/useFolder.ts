@@ -2,7 +2,7 @@ import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { folderService } from '@/services/folder.service';
 import type { IApiResponse } from '@/types/api.type';
 import type {
@@ -60,6 +60,9 @@ export function useCreateFolder() {
       });
 
       toaster.success(response.message);
+    },
+    onError: () => {
+      toaster.error('Failed to create folder');
     }
   });
 }
@@ -72,13 +75,18 @@ export function useEditFolder() {
 
   return useMutation({
     mutationFn: (payload: IEditFolderPayload) => folderService.editFolder(payload),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
       });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
       });
+
+      toaster.success(response.message);
+    },
+    onError: () => {
+      toaster.error('Failed to edit folder');
     }
   });
 }
@@ -106,6 +114,9 @@ export function useDeleteFolder() {
       toaster.success('Folder deleted successfully');
 
       router.replace({ name: 'All Bookmarks' });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -153,6 +164,9 @@ export function useRemovePasswordFromFolder() {
       });
 
       toaster.success('Password removed from folder successfully');
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }

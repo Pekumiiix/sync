@@ -2,13 +2,10 @@
 import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 
-import { LinkIcon } from '@/components/icons';
 import { BaseSelect } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import env from '@/config/env';
-import { useClipboard } from '@/hooks/useClipboard';
 import { useCreateInvitation } from '@/hooks/useInvitation';
 import { useGetFolderMembers } from '@/hooks/useMember';
 import { createTypedForm } from '@/utils/formUtils';
@@ -24,8 +21,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const { copy, hasCopied } = useClipboard();
 
 const {
   data: folderMembersData,
@@ -54,7 +49,12 @@ const onSubmit = handleSubmit(async (values) => {
     },
     {
       onSuccess: () => {
-        resetForm();
+        resetForm({
+          values: {
+            email: '',
+            accessLevel: 'editor'
+          }
+        });
       }
     }
   );
@@ -74,30 +74,6 @@ const displayBool = defineModel<boolean>({ default: false });
     description="Share access with teammates or collaborators"
   >
     <div class="flex flex-col gap-1 px-6 pt-4.5">
-      <div
-        class="w-full flex items-center justify-between py-5 px-4 rounded-[14px] border border-primary-10 bg-[#F0EDFE4D]"
-      >
-        <div class="flex items-center gap-2">
-          <div class="size-10.5 flex items-center justify-center rounded-full bg-primary-100">
-            <LinkIcon class="fill-white size-4.5" />
-          </div>
-
-          <div class="flex flex-col gap-0.5">
-            <p class="text-lg font-medium text-black-90 leading-[100%]">Sharable link</p>
-            <p class="text-sm leading-4.5">Copy link to share publicly</p>
-          </div>
-        </div>
-
-        <Button
-          @click="copy(`${env.frontendUrl}/app/all-bookmarks?invite_token=${new Date().getTime()}`)"
-          :disabled="hasCopied"
-          variant="outline"
-          class="w-21.25 h-9.5 text-xs font-medium leading-[100%] py-3 px-4 rounded-full bg-white border-stroke-1/10"
-        >
-          {{ hasCopied ? 'Link copied' : 'Copy link' }}
-        </Button>
-      </div>
-
       <form
         @submit="onSubmit"
         class="flex items-center gap-2.5 pt-5"
@@ -187,3 +163,29 @@ const displayBool = defineModel<boolean>({ default: false });
     :folder-id="folderId"
   />
 </template>
+
+<!-- 
+ <div
+        class="w-full flex items-center justify-between py-5 px-4 rounded-[14px] border border-primary-10 bg-[#F0EDFE4D]"
+      >
+        <div class="flex items-center gap-2">
+          <div class="size-10.5 flex items-center justify-center rounded-full bg-primary-100">
+            <LinkIcon class="fill-white size-4.5" />
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <p class="text-lg font-medium text-black-90 leading-[100%]">Sharable link</p>
+            <p class="text-sm leading-4.5">Copy link to share publicly</p>
+          </div>
+        </div>
+
+        <Button
+          @click="copy(`${env.frontendUrl}/app/all-bookmarks?invite_token=${new Date().getTime()}`)"
+          :disabled="hasCopied"
+          variant="outline"
+          class="w-21.25 h-9.5 text-xs font-medium leading-[100%] py-3 px-4 rounded-full bg-white border-stroke-1/10"
+        >
+          {{ hasCopied ? 'Link copied' : 'Copy link' }}
+        </Button>
+      </div>
+-->

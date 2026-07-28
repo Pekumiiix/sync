@@ -69,11 +69,17 @@ function handleAccessLevelChange() {
         </p>
         <p class="text-xs leading-[100%] text-black-70">{{ props.member.user.email }}</p>
       </div>
+
+      <span
+        v-if="props.member.role === 'owner'"
+        class="py-1.25 px-2.25 rounded-[3px] bg-[#21620A0F] text-[10px]"
+        >Owner</span
+      >
     </div>
 
     <div class="flex items-center gap-2">
       <BaseSelect
-        v-if="props.member.accessLevel === 'editor' && !isCurrentUser"
+        v-if="props.permission?.role === 'owner' && !isCurrentUser"
         v-model="userAccessLevel"
         @update:model-value="handleAccessLevelChange"
         :options="[

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { computed } from 'vue';
 
 import { EditIcon, EyeIcon, FolderIcon, PinIcon, TrashIcon, UnpinIcon } from '@/components/icons';
 import { LoadingButton } from '@/components/shared';
@@ -30,53 +31,57 @@ const moveBookmarkDisplayBool = ref<boolean>(false);
 const { mutate: pinBookmark, isPending: isPinning } = usePinBookmark();
 const { mutate: unpinBookmark, isPending: isUnpinning } = useUnpinBookmark();
 
-const actions = [
+const actions = computed(() => [
   {
     icon: EyeIcon,
     label: 'View',
     action: () => handleBookmarkView(props.bookmark.url)
   },
-  props.bookmark.isPinned
-    ? {
-        icon: UnpinIcon,
-        label: 'Unpin',
-        isLoading: isUnpinning,
-        action: () =>
-          unpinBookmark({
-            bookmarkId: props.bookmark.id
-          })
-      }
-    : {
-        icon: PinIcon,
-        label: 'Pin',
-        isLoading: isPinning,
-        action: () =>
-          pinBookmark({
-            bookmarkId: props.bookmark.id
-          })
-      },
-  {
-    icon: EditIcon,
-    label: 'Edit',
-    action: () => {
-      detailsDisplayBool.value = true;
-    }
-  },
-  {
-    icon: FolderIcon,
-    label: 'Move',
-    action: () => {
-      moveBookmarkDisplayBool.value = true;
-    }
-  },
-  {
-    icon: TrashIcon,
-    label: 'Delete',
-    action: () => {
-      deleteDisplayOpen.value = true;
-    }
-  }
-];
+  ...(props.bookmark.canEdit
+    ? [
+        props.bookmark.isPinned
+          ? {
+              icon: UnpinIcon,
+              label: 'Unpin',
+              isLoading: isUnpinning,
+              action: () =>
+                unpinBookmark({
+                  bookmarkId: props.bookmark.id
+                })
+            }
+          : {
+              icon: PinIcon,
+              label: 'Pin',
+              isLoading: isPinning,
+              action: () =>
+                pinBookmark({
+                  bookmarkId: props.bookmark.id
+                })
+            },
+        {
+          icon: EditIcon,
+          label: 'Edit',
+          action: () => {
+            detailsDisplayBool.value = true;
+          }
+        },
+        {
+          icon: FolderIcon,
+          label: 'Move',
+          action: () => {
+            moveBookmarkDisplayBool.value = true;
+          }
+        },
+        {
+          icon: TrashIcon,
+          label: 'Delete',
+          action: () => {
+            deleteDisplayOpen.value = true;
+          }
+        }
+      ]
+    : [])
+]);
 </script>
 
 <template>
@@ -85,8 +90,7 @@ const actions = [
   >
     <div class="w-fit flex items-center gap-4">
       <Checkbox
-        v-if="props.showCheckbox"
-        :disabled="!props.bookmark.canEdit"
+        v-if="props.showCheckbox && props.bookmark.canEdit"
         v-model:model-value="selectedBool"
         class="size-4"
       />

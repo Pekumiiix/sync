@@ -1,7 +1,7 @@
 import { useRouter } from 'vue-router';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import type {

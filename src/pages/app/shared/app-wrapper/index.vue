@@ -49,7 +49,7 @@ const router = useRouter();
           variant="outline"
           class="size-10 rounded-full p-2.75 bg-[#F9F9FA] border-stroke-1/10"
         >
-          <router-link to="/app/settings?tab=account">
+          <router-link :to="{ name: 'Settings', query: { tab: 'account' } }">
             <SettingsIcon class="size-4.5" />
           </router-link>
         </Button>

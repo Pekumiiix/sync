@@ -7,6 +7,7 @@ import { useGetFolderMembers } from '@/hooks/useMember';
 import { AppWrapper } from '../shared';
 import { SearchInput } from '../shared/components';
 import { MembersItem } from '../shared/components';
+import { QueryStateWrapper } from '../shared/wrappers';
 
 const query = ref('');
 
@@ -14,7 +15,7 @@ const route = useRoute<'Members'>();
 
 const folderId = computed(() => route.params.folderId);
 
-const { data: folderMembersData } = useGetFolderMembers(() => ({
+const { data: folderMembersData, isLoading: isloadingFolderMembers } = useGetFolderMembers(() => ({
   folderId: folderId.value
 }));
 
@@ -59,12 +60,17 @@ const result = computed(() => {
     </div>
 
     <div v-if="query === ''">
-      <MembersItem
-        v-for="member in folderMembersData?.data.members || []"
-        :key="member.id"
-        :member="member"
-        :permission="folderMembersData?.data.permission"
-      />
+      <QueryStateWrapper
+        :is-loading="isloadingFolderMembers"
+        loading-title="Fetching members"
+      >
+        <MembersItem
+          v-for="member in folderMembersData?.data.members"
+          :key="member.id"
+          :member="member"
+          :permission="folderMembersData?.data.permission"
+        />
+      </QueryStateWrapper>
     </div>
   </AppWrapper>
 </template>

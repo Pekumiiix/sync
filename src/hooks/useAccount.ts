@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { accountService } from '@/services/account.service';
 import type { IUpdateProfilePayload, IUpdateSettingsPayload } from '@/types/account.type';
 import { toaster } from '@/utils/toastUtils';
@@ -23,7 +23,10 @@ export function useUpdateProfile() {
         data: { user: response.data.user }
       });
 
-      toaster.success('Profile updated successfully');
+      toaster.success(response.message);
+    },
+    onError: () => {
+      toaster.error('Failed to update profile');
     }
   });
 }
@@ -39,6 +42,9 @@ export function useUpdateSettings() {
       });
 
       toaster.success(response.message);
+    },
+    onError: () => {
+      toaster.error('Failed to update settings');
     }
   });
 }

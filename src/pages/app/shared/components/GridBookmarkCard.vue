@@ -95,9 +95,9 @@ const actions = computed(() => [
       />
 
       <BaseAvatar
-        :src="props.bookmark.addedBy?.avatarUrl || FALLBACK_IMAGE"
+        :src="props.bookmark.addedBy?.avatarUrl"
         :fallback="props.bookmark.addedBy?.firstName || 'User'"
-        class="absolute top-2.5 right-2.5 size-3 rounded-full border border-white-90"
+        class="absolute top-2.5 right-2.5 size-3 rounded-full border border-white-90 [&>span]:text-[8px]"
       />
     </a>
 
@@ -126,7 +126,7 @@ const actions = computed(() => [
       />
 
       <BaseDropDownMenu
-        v-else
+        v-if="props.bookmark.canEdit && !showCheckbox"
         :items="actions"
         :class-names="{
           trigger: 'p-0.5 rounded-md hover:bg-[#E8E8E8]/50',

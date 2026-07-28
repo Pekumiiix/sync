@@ -1,7 +1,7 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { keepPreviousData, useQuery } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { searchService } from '@/services/search.service';
 import type { SearchBookmarksQueryParams, SearchFolderQueryParams } from '@/types/search.type';
 

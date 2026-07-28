@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 
 import { BaseAvatar } from '@/components/re-useable';
 import { useAuthStore } from '@/stores/auth.store';
-import { computeUserName } from '@/utils/stringutils';
+import { computeUserName, truncateString } from '@/utils/stringutils';
 
 const authStore = useAuthStore();
 
@@ -28,7 +28,9 @@ const fullName = computed(() => computeUserName(user.value?.firstName, user.valu
       <p class="text-sm font-medium leading-6 text-black-100">
         {{ computeUserName(user?.firstName, user?.lastName) }}
       </p>
-      <p class="text-xs leading-[100%] text-black-60">{{ user?.email }}</p>
+      <p class="text-xs leading-[100%] text-black-60">
+        {{ truncateString(user?.email || '', 17) }}
+      </p>
     </div>
   </router-link>
 </template>

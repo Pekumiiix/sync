@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, provide, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useUrlSearchParams } from '@vueuse/core';
 
 import { useGetBookmarkBrowsers } from '@/hooks/useBookmark';
 import { useGetFolderBookmarks } from '@/hooks/useFolder';
+import { AppContextKey } from '@/keys/injenction-keys';
 import type { BrowserProvider, SortOrder } from '@/types/app.type';
+import { usePaginatedFilter } from '@/utils/paramUtils';
+import { computeFolderTabs } from '@/utils/tabUtils';
 
 import { AppWrapper } from '../shared';
 import { ErrorState } from '../shared/query-states';
@@ -13,27 +15,19 @@ import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper, QueryStateWrapper } from '../shared/wrappers';
 
 const route = useRoute<'Bookmark Folder'>();
-const params = useUrlSearchParams('history');
+
+const folderId = computed(() => route.params.folderId as string);
+
+const params = reactive({
+  tab: (route.query.tab as string) || 'all',
+  page: Number(route.query.page as string) || 1
+});
 
 const sortOrder = ref<SortOrder>('title_desc');
 const selectedPinnedBookmarks = ref<string[] | null>(null);
 
-const folderId = computed(() => route.params.folderId);
-
-const currentPage = computed<number>({
-  get: () => Number(params.page) || 1,
-  set: (newValue) => {
-    params.page = String(newValue);
-  }
-});
-
-const activeTab = computed({
-  get: () => (params.tab as string) || 'all',
-  set: (newValue) => {
-    params.tab = newValue;
-    currentPage.value = 1;
-  }
-});
+const currentPage = usePaginatedFilter(params, 'page', 1);
+const activeTab = usePaginatedFilter(params, 'tab', 'all', currentPage);
 
 const queryParams = computed(() => ({
   page: currentPage.value,
@@ -51,23 +45,19 @@ const {
   folderId: folderId.value,
   param: queryParams.value
 }));
-const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers({ folderId: folderId.value });
+const bookmarkBrowsersQuery = useGetBookmarkBrowsers(() => ({
+  folderId: folderId.value
+}));
 
 const folderData = computed(() => folderBookmarksData.value?.data?.folder);
 
-const tabs = computed(() => {
-  const browsers = bookmarkBrowsersData.value?.data.browsers || [];
-  return [
-    {
-      label: 'All',
-      value: 'all' as const
-    },
-    ...browsers.map((browser) => ({
-      label: browser.browser,
-      value: browser.browser
-    }))
-  ];
+const tabs = computeFolderTabs(() => bookmarkBrowsersQuery.data.value?.data.browsers || []);
+
+const appContext = ref({
+  canCreateBookmarks: folderBookmarksData.value?.data.permission.accessLevel === 'editor'
 });
+
+provide(AppContextKey, appContext);
 </script>
 
 <template>
@@ -78,17 +68,11 @@ const tabs = computed(() => {
       loading-title="Loading folder"
     >
       <ContentWrapper
-        showTabActions
-        :folderId="folderId"
-        :folder="{
-          id: folderData?.id || '',
-          name: folderData?.name || '',
-          previewMembers: folderBookmarksData?.data.previewMembers || [],
-          memberCount: folderData?.memberCount || 0,
-          isSystem: folderData?.isSystem || false,
-          isProtected: folderData?.isProtected || false,
-          role: folderBookmarksData?.data.permission.role || 'member'
-        }"
+        v-if="folderData"
+        type="folder"
+        :folder="folderData"
+        :role="folderBookmarksData?.data.permission.role || 'member'"
+        :previewMembers="folderBookmarksData?.data.previewMembers || []"
       >
         <BookmarkTabWrapper
           v-model:page="currentPage"
@@ -97,7 +81,7 @@ const tabs = computed(() => {
           v-model:selectedPinnedBookmarks="selectedPinnedBookmarks"
           :tabs="tabs"
           :bookmarks="folderBookmarksData?.data.bookmarks || []"
-          :total="folderBookmarksData?.data.meta.totalCount || 1"
+          :total="folderBookmarksData?.data.meta.totalCount || 0"
         >
           <PinnedBookmarks
             v-if="folderBookmarksData?.data.pinnedBookmarks.length"
@@ -112,7 +96,7 @@ const tabs = computed(() => {
           v-if="error?.statusCode === 403"
           :code="403"
           title="Access Denied"
-          message="It looks like you don't have permission to view this page. Check your account settings or head back home."
+          message="It looks like you don't have permission to view this page. If you believe this is an error, please contact the folder owner."
         />
 
         <ErrorState

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { invitationService } from '@/services/invitation.service';
 import type { IBaseInvitationPayload, ICreateInvitationPayload } from '@/types/invitation.type';
 import { toaster } from '@/utils/toastUtils';
@@ -51,6 +51,9 @@ export function useAcceptInvitation() {
       });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.invitation.lists() });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -69,6 +72,9 @@ export function useDeclineInvitation() {
       });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.invitation.lists() });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }

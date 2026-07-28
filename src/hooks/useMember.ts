@@ -1,15 +1,15 @@
-// src/hooks/useMember.ts
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { memberService } from '@/services/member.services';
 import type {
   IChangeMemberAccessLevelPayload,
   IFolderMembersPayload,
   IKickMemberPayload
 } from '@/types/member.type';
+import { toaster } from '@/utils/toastUtils';
 
 /**
  * Hook to fetch the list of members for a specific folder.
@@ -37,7 +37,7 @@ export function useChangeMemberAccessLevel() {
   return useMutation({
     mutationFn: (payload: IChangeMemberAccessLevelPayload) =>
       memberService.changeMemberAccessLevel(payload),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.member.lists()
       });
@@ -45,6 +45,11 @@ export function useChangeMemberAccessLevel() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.member.detail(variables.memberId)
       });
+
+      toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -71,6 +76,11 @@ export function useKickMember() {
       });
 
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
+
+      toaster.success('Member removed successfully');
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -89,6 +99,9 @@ export function useLeaveFolder() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
 
       router.replace({ name: 'All Bookmarks' });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }

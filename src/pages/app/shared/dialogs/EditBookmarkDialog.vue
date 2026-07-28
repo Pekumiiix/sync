@@ -122,7 +122,10 @@ const fieldClassName =
               <Textarea
                 v-bind="fieldProps"
                 placeholder="Enter description"
-                :class="[fieldClassName, 'resize-none h-32 rounded-2xl! shadow-none']"
+                :class="[
+                  fieldClassName,
+                  'resize-none min-h-32 rounded-2xl! shadow-none scrollbar-none'
+                ]"
               />
             </template>
           </TypedFormField>

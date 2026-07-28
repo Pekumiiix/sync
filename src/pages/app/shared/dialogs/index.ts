@@ -2,6 +2,7 @@ export { default as AddBookmarkDialog } from './AddBookmarkDialog.vue';
 export { default as AddPasswordDialog } from './AddPasswordDialog.vue';
 export { default as CreateBookmarkDialog } from './CreateBookmarkDialog.vue';
 export { default as DeleteBookmarkDialog } from './DeleteBookmarkDialog.vue';
+export { default as DeleteFolderDialog } from './DeleteFolderDialog.vue';
 export { default as EditBookmarkDialog } from './EditBookmarkDialog.vue';
 export { default as FolderFormDialog } from './FolderFormDialog.vue';
 export { default as JoinWorkSpaceDialog } from './JoinWorkspaceDialog.vue';

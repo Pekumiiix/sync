@@ -1,32 +1,34 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useUrlSearchParams } from '@vueuse/core';
+import { computed, provide, reactive, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { useGetAllBookmarks, useGetBookmarkBrowsers } from '@/hooks/useBookmark';
+import { AppContextKey } from '@/keys/injenction-keys';
 import type { BrowserProvider, SortOrder } from '@/types/app.type';
+import { usePaginatedFilter } from '@/utils/paramUtils';
+import { computeFolderTabs } from '@/utils/tabUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper, QueryStateWrapper } from '../shared/wrappers';
 
-const params = useUrlSearchParams('history');
+const route = useRoute<'All Bookmarks'>();
+
+const params = reactive({
+  tab: (route.query.tab as string) || 'all',
+  page: Number(route.query.page as string) || 1
+});
+
+const appContext = ref({
+  canCreateBookmarks: true
+});
+
+provide(AppContextKey, appContext);
 
 const sortOrder = ref<SortOrder>('title_desc');
 
-const currentPage = computed<number>({
-  get: () => Number(params.page) || 1,
-  set: (newValue) => {
-    params.page = String(newValue);
-  }
-});
-
-const activeTab = computed({
-  get: () => (params.tab as string) || 'all',
-  set: (newValue) => {
-    params.tab = newValue;
-    currentPage.value = 1;
-  }
-});
+const currentPage = usePaginatedFilter(params, 'page', 1);
+const activeTab = usePaginatedFilter(params, 'tab', 'all', currentPage);
 
 const queryParams = computed(() => ({
   page: currentPage.value,
@@ -36,23 +38,14 @@ const queryParams = computed(() => ({
 }));
 
 const { data: bookmarksData, isLoading: isLoadingBookmarks } = useGetAllBookmarks(queryParams);
-const { data: bookmarkBrowsersData } = useGetBookmarkBrowsers();
+const bookmarkBrowsersQuery = useGetBookmarkBrowsers();
 
-const tabs = computed(() => {
-  const browsers = bookmarkBrowsersData.value?.data.browsers || [];
-  return [
-    { label: 'All', value: 'all' as const },
-    ...browsers.map((browser) => ({
-      label: browser.browser,
-      value: browser.browser
-    }))
-  ];
-});
+const tabs = computeFolderTabs(() => bookmarkBrowsersQuery.data.value?.data.browsers || []);
 </script>
 
 <template>
   <AppWrapper page="All Bookmarks">
-    <ContentWrapper>
+    <ContentWrapper type="all">
       <QueryStateWrapper
         :is-loading="isLoadingBookmarks"
         loading-title="Fetching bookmarks"
@@ -63,7 +56,7 @@ const tabs = computed(() => {
           v-model:sortOrder="sortOrder"
           :tabs="tabs"
           :bookmarks="bookmarksData?.data.bookmarks || []"
-          :total="bookmarksData?.data.meta.totalCount || 1"
+          :total="bookmarksData?.data.meta.totalCount || 0"
         >
           <PinnedBookmarks
             v-if="bookmarksData?.data.pinnedBookmarks.length"

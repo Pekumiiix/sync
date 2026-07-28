@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { computed } from 'vue';
+import { inject } from 'vue';
 import { Plus } from 'lucide-vue-next';
 import { AnimatePresence } from 'motion-v';
 
@@ -8,6 +9,7 @@ import { fadeSlideYConfig, fadeSlideYVariant } from '@/components/constants/anim
 import { FolderIcon, TrashIcon } from '@/components/icons';
 import { MotionDiv, MotionStaggerContainer } from '@/components/motion-wrappers';
 import { Button } from '@/components/ui/button';
+import { AppContextKey } from '@/keys/injenction-keys';
 import { cn } from '@/lib/utils';
 import type { DisplayType } from '@/types/app.type';
 import type { IBookmark } from '@/types/bookmark.type';
@@ -25,6 +27,12 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const context = inject(AppContextKey);
+
+if (!context) {
+  throw new Error('NestedChild must be rendered within a component that provides AppContextKey');
+}
 
 const addBookmarkDisplayBool = ref(false);
 const moveBookmarkDisplayBool = ref(false);
@@ -104,7 +112,7 @@ watch(
       <!-------------------------------------- Add bookmark button --------------------------------->
       <AnimatePresence>
         <MotionDiv
-          v-if="selectedBookmarks.length === 0"
+          v-if="context.canCreateBookmarks || selectedBookmarks.length === 0"
           :config="fadeSlideYConfig"
           class="size-fit"
         >

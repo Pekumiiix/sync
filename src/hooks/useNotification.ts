@@ -1,9 +1,10 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { notificationService } from '@/services/notification.service';
 import type { IBaseNotificationPayload, IGetNotificationsParam } from '@/types/notification.type';
+import { toaster } from '@/utils/toastUtils';
 
 /**
  * Hook to retrieve all user notifications.
@@ -34,6 +35,9 @@ export function useMarkAllAsRead() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -50,6 +54,9 @@ export function useDeleteAllNotifications() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -67,6 +74,9 @@ export function useDeleteNotification() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -83,6 +93,9 @@ export function useMarkAsRead() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -99,6 +112,9 @@ export function useMarkAsUnread() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.notification.lists()
       });
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }

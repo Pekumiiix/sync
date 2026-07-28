@@ -1,55 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 import { TrashIcon } from '@/components/icons';
 import { BaseAlertDialog } from '@/components/re-useable';
-import { useBulkDeleteBookmarks, useDeleteBookmark } from '@/hooks/useBookmark';
-import { pluralizeIfArray } from '@/utils/stringutils';
+import { useDeleteFolder } from '@/hooks/useFolder';
 
 interface Props {
-  bookmarkIds: string | string[];
+  folderId: string;
 }
 
 const props = defineProps<Props>();
 
 const displayBool = defineModel<boolean>({ default: false });
 
-const isMultiple = computed(() => Array.isArray(props.bookmarkIds) && props.bookmarkIds.length > 1);
-
-const dialogTitle = computed(() => `Delete bookmark${pluralizeIfArray(props.bookmarkIds)}`);
-
-const dialogDescription = computed(
-  () =>
-    `Are you sure you want to delete ${
-      isMultiple.value ? 'these' : 'this'
-    } bookmark${pluralizeIfArray(props.bookmarkIds)}? You won’t be able to restore ${
-      isMultiple.value ? 'them' : 'it'
-    } after this action has been completed.`
-);
-
-const { mutate: deleteBookmark, isPending } = useDeleteBookmark();
-const { mutate: bulkDeleteBookmarks, isPending: isBulkDeletePending } = useBulkDeleteBookmarks();
+const { mutate: deleteFolder, isPending: isDeletingFolder } = useDeleteFolder();
 
 function handleDelete() {
-  if (typeof props.bookmarkIds === 'string') {
-    deleteBookmark(
-      { bookmarkId: props.bookmarkIds },
-      {
-        onSuccess: () => {
-          displayBool.value = false;
-        }
-      }
-    );
-  } else if (Array.isArray(props.bookmarkIds)) {
-    bulkDeleteBookmarks(
-      { bookmarkIds: props.bookmarkIds },
-      {
-        onSuccess: () => {
-          displayBool.value = false;
-        }
-      }
-    );
-  }
+  deleteFolder({ folderId: props.folderId });
 }
 
 function handleCancel() {
@@ -60,9 +25,9 @@ function handleCancel() {
 <template>
   <BaseAlertDialog
     v-model:open="displayBool"
-    :isLoading="isPending || isBulkDeletePending"
-    :title="dialogTitle"
-    :description="dialogDescription"
+    :isLoading="isDeletingFolder"
+    title="Delete folder"
+    description="Are you sure you want to delete this folder? You won’t be able to restore it after this action has been completed."
     :confirm="{ label: 'Yes, delete', action: handleDelete }"
     :cancel="{ label: `No, don't delete`, action: handleCancel }"
     :classNames="{

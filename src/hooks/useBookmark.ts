@@ -1,7 +1,7 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
-import { QUERY_KEYS } from '@/components/constants/query-keys';
+import { QUERY_KEYS } from '@/keys/query-keys';
 import { bookmarkService } from '@/services/bookmark.service';
 import type {
   IBrowserPayload,
@@ -47,6 +47,9 @@ export function useCreateBookmark() {
       });
 
       toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -63,6 +66,11 @@ export function useEditBookmark() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.bookmark.byFolderBase(updatedBookmark.folder.id)
       });
+
+      toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -81,6 +89,9 @@ export function usePinBookmark() {
       });
 
       toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -99,6 +110,9 @@ export function useUnpinBookmark() {
       });
 
       toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -112,6 +126,9 @@ export function useBulkUnpinBookmarks() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
 
       toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -121,12 +138,17 @@ export function useMoveBookmark() {
 
   return useMutation({
     mutationFn: (payload: IMoveBookmarkPayload) => bookmarkService.moveBookmark(payload),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)
       });
+
+      toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -136,12 +158,17 @@ export function useBulkMoveBookmarks() {
 
   return useMutation({
     mutationFn: (payload: IBulkMoveBookmarksPayload) => bookmarkService.bulkMoveBookmarks(payload),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.getFolders() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)
       });
+
+      toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -157,6 +184,9 @@ export function useDeleteBookmark() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
 
       toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
@@ -172,20 +202,32 @@ export function useBulkDeleteBookmarks() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bookmark.all });
 
       toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }
 
-export function useGetBookmarkBrowsers(payload?: IBrowserPayload) {
-  return useQuery({
-    queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(payload?.folderId),
-    queryFn: () => bookmarkService.getBookmarkBrowsers(payload),
-    staleTime: 1000 * 60 * 5
-  });
+export function useGetBookmarkBrowsers(payload?: MaybeRefOrGetter<IBrowserPayload>) {
+  return useQuery(
+    computed(() => {
+      const unwrappedPayload = toValue(payload);
+
+      return {
+        queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(unwrappedPayload?.folderId),
+        queryFn: () => bookmarkService.getBookmarkBrowsers(unwrappedPayload),
+        staleTime: 1000 * 60 * 5
+      };
+    })
+  );
 }
 
 export function useGetBookmarkPreview() {
   return useMutation({
-    mutationFn: (payload: IPreviewBookmarkPayload) => bookmarkService.previewBookmark(payload)
+    mutationFn: (payload: IPreviewBookmarkPayload) => bookmarkService.previewBookmark(payload),
+    onError: () => {
+      toaster.error('Failed to fetch bookmark preview');
+    }
   });
 }
