@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   isLoading: false,
   disabled: false,
   strokeWidth: 2,
-  loaderClass: 'size-7'
+  loaderClass: ''
 });
 
 const isButtonDisabled = computed(() => props.isLoading || props.disabled);

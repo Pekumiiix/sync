@@ -3,9 +3,10 @@ import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 
 import { BaseDialog } from '@/components/re-useable';
-import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/shared';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useContactUs } from '@/hooks/useMarketing';
 import { type ContactData, contactSchema } from '@/pages/marketing/shared/schemas/contact.schema';
 import { createTypedForm } from '@/utils/formUtils';
 
@@ -22,16 +23,29 @@ const showSuccessDialog = ref<boolean>(false);
 
 const displayBool = defineModel<boolean>({ default: false });
 
+const { mutate, isPending } = useContactUs();
+
 const { handleSubmit } = useForm({
   validationSchema: contactSchema
 });
 
 const onSubmit = handleSubmit((data: ContactData) => {
-  displayBool.value = false;
-
-  showSuccessDialog.value = true;
-
-  console.log(data);
+  mutate(
+    {
+      firstName: data.firstname,
+      lastName: data.lastname,
+      email: data.email,
+      message: data.message,
+      company: data.company,
+      country: data.country
+    },
+    {
+      onSuccess: () => {
+        displayBool.value = false;
+        showSuccessDialog.value = true;
+      }
+    }
+  );
 });
 
 const TypedFormField = createTypedForm<ContactData>();
@@ -47,7 +61,7 @@ const TypedFormField = createTypedForm<ContactData>();
         'w-[90%] md:min-w-175 lg:min-w-200 max-w-300 max-h-[90vh] h-fit flex flex-col gap-15 py-10 md:py-20 px-3 md:px-22.75 rounded-[12px] border-none [&>button]:hidden overflow-y-auto scrollbar-none',
       header: 'space-y-0.5',
       title:
-        'text-2xl md:text-[36px] font-semibold leading-9.5 text-left md:text-center md:leading-11 text-black-100 -tracking-[1px]',
+        'text-2xl md:text-[36px] font-semibold leading-9.5 text-left md:text-center md:leading-11 text-black-100 tracking-[-1px]',
       description:
         'text-base md:text-xl leading-6 md:leading-7.5 text-left md:text-center text-black-80'
     }"
@@ -99,12 +113,13 @@ const TypedFormField = createTypedForm<ContactData>();
         </TypedFormField>
       </div>
 
-      <Button
+      <LoadingButton
         type="submit"
+        :is-loading="isPending"
         class="w-full h-12 rounded-full text-base font-medium leading-7"
       >
-        Contact Sales
-      </Button>
+        <span>Contact Sales</span>
+      </LoadingButton>
     </form>
   </BaseDialog>
 
