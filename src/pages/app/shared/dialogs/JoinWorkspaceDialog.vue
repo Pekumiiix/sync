@@ -5,6 +5,7 @@ import { BaseAvatar, BaseDialog, BasePasswordInput } from '@/components/re-useab
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { useAcceptInvitation } from '@/hooks/useInvitation';
+import { useAuthStore } from '@/stores/auth.store';
 import type { Invitation } from '@/types/invitation.type';
 import { timeAgo } from '@/utils/dateUtils';
 import { createTypedForm } from '@/utils/formUtils';
@@ -43,6 +44,8 @@ const onSubmit = handleSubmit((data: JoinWorkspaceData) => {
 });
 
 const TypedFormField = createTypedForm<JoinWorkspaceData>();
+
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -90,7 +93,37 @@ const TypedFormField = createTypedForm<JoinWorkspaceData>();
       </div>
     </div>
 
+    <div
+      v-if="authStore.user?.plan === 'free'"
+      class="w-full flex items-center justify-between py-5 px-4 rounded-2xl bg-[#F0EDFE4D] border border-primary-10"
+    >
+      <div class="flex items-center gap-3">
+        <img
+          src="/images/app/dialogs/locked.png"
+          alt="lock"
+          class="size-13.5"
+        />
+        <div class="w-88 flex flex-col gap-0.5">
+          <p class="text-lg font-medium text-black-90 leading-[100%]">
+            This workspace requires a paid plan
+          </p>
+          <p class="text-sm leading-9.5 text-black-70">
+            To join {{ props.invitation.folder.name }}, you need to subscribe to a paid plan, Click
+            ‘View Plans’ to see available options.
+          </p>
+        </div>
+      </div>
+
+      <Button
+        as-child
+        class="w-fit h-9.5 py-3 px-4 rounded-full text-xs font-medium"
+      >
+        <router-link :to="{ name: 'Pricing' }">View plans</router-link>
+      </Button>
+    </div>
+
     <form
+      v-else
       @submit="onSubmit"
       class="w-full flex flex-col gap-6"
     >

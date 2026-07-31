@@ -8,12 +8,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCreateInvitation } from '@/hooks/useInvitation';
 import { useGetFolderMembers } from '@/hooks/useMember';
+import { useAuthStore } from '@/stores/auth.store';
 import { createTypedForm } from '@/utils/formUtils';
 
 import { MembersItem } from '../components';
 import { type ShareBookmarkData, shareBookmarkSchema } from '../schemas/share-bookmark.schema';
 import { ActionDialogWrapper, QueryStateWrapper } from '../wrappers';
-import { AddPasswordDialog } from '.';
+import { AddPasswordDialog, PaywallDialog } from '.';
 
 interface Props {
   folderId: string;
@@ -63,6 +64,17 @@ const onSubmit = handleSubmit(async (values) => {
 const TypedFormField = createTypedForm<ShareBookmarkData>();
 
 const showAddPasswordDialog = ref(false);
+const showPaywallDialog = ref(false);
+
+const authStore = useAuthStore();
+
+function handleAddPasswordClick() {
+  if (authStore.user?.plan === 'free') {
+    showPaywallDialog.value = true;
+  } else {
+    showAddPasswordDialog.value = true;
+  }
+}
 
 const displayBool = defineModel<boolean>({ default: false });
 </script>
@@ -150,7 +162,7 @@ const displayBool = defineModel<boolean>({ default: false });
       </div>
 
       <Button
-        @click="showAddPasswordDialog = true"
+        @click="handleAddPasswordClick"
         class="w-fit h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] rounded-full py-2 px-4 bg-black-100 hover:bg-black-90"
       >
         Add password
@@ -162,30 +174,6 @@ const displayBool = defineModel<boolean>({ default: false });
     v-model="showAddPasswordDialog"
     :folder-id="folderId"
   />
+
+  <PaywallDialog v-model="showPaywallDialog" />
 </template>
-
-<!-- 
- <div
-        class="w-full flex items-center justify-between py-5 px-4 rounded-[14px] border border-primary-10 bg-[#F0EDFE4D]"
-      >
-        <div class="flex items-center gap-2">
-          <div class="size-10.5 flex items-center justify-center rounded-full bg-primary-100">
-            <LinkIcon class="fill-white size-4.5" />
-          </div>
-
-          <div class="flex flex-col gap-0.5">
-            <p class="text-lg font-medium text-black-90 leading-[100%]">Sharable link</p>
-            <p class="text-sm leading-4.5">Copy link to share publicly</p>
-          </div>
-        </div>
-
-        <Button
-          @click="copy(`${env.frontendUrl}/app/all-bookmarks?invite_token=${new Date().getTime()}`)"
-          :disabled="hasCopied"
-          variant="outline"
-          class="w-21.25 h-9.5 text-xs font-medium leading-[100%] py-3 px-4 rounded-full bg-white border-stroke-1/10"
-        >
-          {{ hasCopied ? 'Link copied' : 'Copy link' }}
-        </Button>
-      </div>
--->

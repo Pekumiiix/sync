@@ -7,4 +7,5 @@ export { default as EditBookmarkDialog } from './EditBookmarkDialog.vue';
 export { default as FolderFormDialog } from './FolderFormDialog.vue';
 export { default as JoinWorkSpaceDialog } from './JoinWorkspaceDialog.vue';
 export { default as MoveBookmarkDialog } from './MoveBookmarkDialog.vue';
+export { default as PaywallDialog } from './PaywallDialog.vue';
 export { default as ShareFolderDialog } from './ShareFolderDialog.vue';

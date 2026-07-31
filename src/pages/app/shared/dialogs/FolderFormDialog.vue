@@ -109,7 +109,7 @@ const TypedFormField = createTypedForm<CreateFolderData>();
           type="button"
           @click="displayBool = false"
           variant="ghost"
-          class="w-full h-11 rounded-full text-base font-medium leading-5.5 bg-[#F8F8F9]"
+          class="w-full h-11 rounded-full text-base font-medium leading-5.5 bg-contemporary-background"
         >
           Cancel
         </Button>
