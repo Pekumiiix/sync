@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { AnimatePresence } from 'motion-v';
 
-import { pricingPlans } from '@/components/constants/pricing-plans';
+import { type PlanName, pricingPlans } from '@/components/constants/pricing-plans';
 import { MotionParagraph } from '@/components/motion-wrappers';
 import { BaseSwitch } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useCheckout } from '@/hooks/useBilling';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/auth.store';
 
 import { SectionDetails } from '../components';
 import { ContactFormDialog } from '../dialogs';
@@ -20,6 +23,32 @@ const plans = computed(() => {
   const cycle = isYearly.value ? 'yearly' : 'monthly';
   return pricingPlans(cycle);
 });
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const { mutate, isPending } = useCheckout();
+
+function handleButtonClick(name: PlanName, variantId?: string) {
+  if (!authStore.isAuthenticated) {
+    router.push({
+      name: 'Sign In',
+      query: { redirect: router.currentRoute.value.path }
+    });
+    return;
+  }
+
+  if (name === 'free') {
+    router.push({ name: 'All Bookmarks' });
+    return;
+  }
+
+  if (!variantId) {
+    return;
+  }
+
+  mutate({ variantId });
+}
 </script>
 
 <template>
@@ -81,7 +110,7 @@ const plans = computed(() => {
                 <h2
                   :class="
                     cn(
-                      'capitalize text-[30px] md:text-4xl leading-10 md:leading-11 font-semibold -tracking-[1px] bg-linear-to-r bg-clip-text text-transparent',
+                      'capitalize text-[30px] md:text-4xl leading-10 md:leading-11 font-semibold tracking-[-1px] bg-linear-to-r bg-clip-text text-transparent',
                       {
                         'to-[#EC4CF5] from-[#96DAFF]': plan.plan_name === 'free',
                         'to-[#90D537] from-[#DE929E]': plan.plan_name === 'basic',
@@ -101,9 +130,11 @@ const plans = computed(() => {
               </p>
             </div>
             <Button
+              :disabled="isPending"
+              @click="handleButtonClick(plan.plan_name, plan.variant_id)"
               class="h-14.5 py-3.5 px-7.5 rounded-full bg-white text-base font-medium font-poppins leading-7.5 text-[#13213B] hover:bg-white-90"
             >
-              <router-link to="/app/all-bookmarks">Get Started</router-link>
+              Get Started
             </Button>
           </div>
 
@@ -130,7 +161,7 @@ const plans = computed(() => {
         class="flex flex-col md:flex-row md:items-center justify-between gap-15 md:gap-5 py-12 px-7 md:px-9.5 rounded-[30px] bg-[#FFFFFF08] border border-black-90"
       >
         <div class="max-w-125 flex flex-col gap-2.5">
-          <h4 class="text-2xl font-semibold leading-7.5 -tracking-[1%] text-white-90">
+          <h4 class="text-2xl font-semibold leading-7.5 tracking-[-1%] text-white-90">
             Not seeing the plan that works best for you?
           </h4>
           <p class="text-[22px] leading-[160%] font-inter text-white-70">

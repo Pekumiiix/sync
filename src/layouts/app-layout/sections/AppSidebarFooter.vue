@@ -19,16 +19,19 @@ import { SidebarFooter } from '@/components/ui/sidebar';
     </div>
 
     <Button
+      as-child
       class="w-full h-9.5 flex items-center justify-center gap-2 py-3 px-6 rounded-full bg-white border border-white/20 cursor-pointer hover:bg-white-90"
     >
-      <img
-        src="/images/app/sidebar/sparkle.gif"
-        alt="Sparkle"
-        class="size-10"
-      />
-      <span class="text-xs font-inter-tight font-semibold text-primary-100 leading-[100%]">
-        Upgrade to basic
-      </span>
+      <router-link :to="{ name: 'Pricing' }">
+        <img
+          src="/images/app/sidebar/sparkle.gif"
+          alt="Sparkle"
+          class="size-10"
+        />
+        <span class="text-xs font-inter-tight font-semibold text-primary-100 leading-[100%]">
+          Upgrade to basic
+        </span>
+      </router-link>
     </Button>
   </SidebarFooter>
 </template>
