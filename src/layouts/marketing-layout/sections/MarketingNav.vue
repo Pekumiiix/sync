@@ -20,7 +20,7 @@ const { isAuthenticated } = useAuthStore();
     class="container w-full flex items-center justify-between p-5 rounded-full bg-secondary shadow-[0px_4px_50px_0px_#B5A5FF69]"
   >
     <router-link
-      to="/"
+      :to="{ name: 'Home' }"
       class="flex items-center gap-1"
     >
       <img
@@ -37,7 +37,7 @@ const { isAuthenticated } = useAuthStore();
 
     <div class="flex items-center gap-3">
       <router-link
-        to="/pricing"
+        :to="{ name: 'Pricing' }"
         class="text-lg font-medium font-inter-tight leading-5 text-black-90 hover:text-primary-100 transition-colors duration-300"
         active-class="text-lg font-medium font-inter-tight leading-5 text-primary-100 hover:text-primary-100 transition-colors duration-300"
       >
@@ -50,8 +50,8 @@ const { isAuthenticated } = useAuthStore();
         as-child
         class="hidden md:flex h-11.75 py-4 px-6 rounded-[30px] text-xs font-semibold leading-[100%] font-instrument-sans"
       >
-        <router-link :to="isAuthenticated ? '/app/all-bookmarks' : '/auth/sign-in'">
-          {{ isAuthenticated ? 'Dashboard' : 'Get Started' }}
+        <router-link :to="{ name: isAuthenticated ? 'All Bookmarks' : 'Sign Up' }">
+          {{ isAuthenticated ? 'Continue' : 'Get Started' }}
         </router-link>
       </Button>
 
@@ -75,8 +75,8 @@ const { isAuthenticated } = useAuthStore();
               as-child
               className="w-full h-12.5 flex items-center justify-center rounded-full py-3 px-4 bg-primary-100 text-sm font-medium leading-[100%] text-white cursor-pointer"
             >
-              <router-link :to="isAuthenticated ? '/app/all-bookmarks' : '/auth/sign-in'">
-                {{ isAuthenticated ? 'Dashboard' : 'Get Started' }}
+              <router-link :to="{ name: isAuthenticated ? 'All Bookmarks' : 'Sign Up' }">
+                {{ isAuthenticated ? 'Continue' : 'Get Started' }}
               </router-link>
             </DropdownMenuItem>
           </DropdownMenuGroup>

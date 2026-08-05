@@ -2,6 +2,9 @@
 import { Button } from '@/components/ui/button';
 import { SectionDetails } from '@/pages/marketing/shared/components';
 import { SectionWrapper } from '@/pages/marketing/shared/wrappers';
+import { useAuthStore } from '@/stores/auth.store';
+
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -21,9 +24,12 @@ import { SectionWrapper } from '@/pages/marketing/shared/wrappers';
         />
 
         <Button
+          :disabled="authStore.isLoading"
           class="w-30.5 md:w-48.25 h-13.75 rounded-full p-4 bg-white text-primary-100 text-base leading-7 font-semibold hover:bg-white-90"
         >
-          Get Started
+          <router-link :to="{ name: authStore.isAuthenticated ? 'All Bookmarks' : 'Sign Up' }">
+            {{ authStore.isAuthenticated ? 'Continue' : 'Get Started' }}
+          </router-link>
         </Button>
       </div>
 

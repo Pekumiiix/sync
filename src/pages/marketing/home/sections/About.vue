@@ -9,7 +9,7 @@ import { SectionWrapper } from '../../shared/wrappers';
     <div class="flex flex-col items-center gap-2 md:gap-5">
       <p class="text-xs leading-3.5 text-primary-100 font-semibold">BOOKMARKING</p>
       <h3
-        class="text-[30px] md:text-[27px] leading-10 md:leading-8.75 text-black-90 -tracking-[2px] text-center font-semibold"
+        class="text-[30px] md:text-[27px] leading-10 md:leading-8.75 text-black-90 tracking-[-2px] text-center font-semibold"
       >
         Invite Others, Organize Together
       </h3>

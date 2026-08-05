@@ -25,11 +25,11 @@ import { Button } from '@/components/ui/button';
 
         <div class="flex flex-col gap-3 md:gap-10">
           <p
-            class="text-center text-[27px] md:text-[72px] leading-8.75 md:leading-23 -tracking-[2px] font-semibold text-white"
+            class="text-center text-[27px] md:text-[72px] leading-8.75 md:leading-23 tracking-[-2px] font-semibold text-white"
           >
             Sync Bookmarks Across All Browsers
           </p>
-          <p class="text-center text-xl md:text-[32px] leading-7 md:leading-12.5 text-[#CCCCCC]">
+          <p class="text-center text-xl md:text-[32px] leading-7 md:leading-12.5 text-white-80">
             Access and organize your bookmarks across any browser and device with seamless syncing.
           </p>
         </div>

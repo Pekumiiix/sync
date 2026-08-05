@@ -1,14 +1,80 @@
 <script setup lang="ts">
+import { computed, defineComponent, h, ref } from 'vue';
 import { MailOpen } from '@lucide/vue';
 
-import { BasePopover } from '@/components/re-useable';
+import { BasePopover, BaseTabs } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 import { useGetInvitations } from '@/hooks/useInvitation';
 
 import { QueryStateWrapper } from '../../wrappers';
 import { InvitationItem } from '../components';
 
+const activeTab = ref<'pending' | 'resolved'>('pending');
+
 const { data: invitationData, isLoading } = useGetInvitations();
+
+const PendingTabContent = defineComponent({
+  setup() {
+    return () => {
+      const pending = invitationData.value?.data.pendingInvitations || [];
+
+      return h(
+        QueryStateWrapper,
+        {
+          isLoading: isLoading.value,
+          isEmpty: !pending.length,
+          'loading-title': 'Loading invitations',
+          'empty-title': 'No pending invitations found'
+        },
+        () =>
+          pending.map((invitation) =>
+            h(InvitationItem, {
+              key: invitation.id,
+              invitation
+            })
+          )
+      );
+    };
+  }
+});
+
+const ResolvedTabContent = defineComponent({
+  setup() {
+    return () => {
+      const resolved = invitationData.value?.data.resolvedInvitations || [];
+
+      return h(
+        QueryStateWrapper,
+        {
+          isLoading: isLoading.value,
+          isEmpty: !resolved.length,
+          'loading-title': 'Loading invitations',
+          'empty-title': 'No resolved invitations found'
+        },
+        () =>
+          resolved.map((invitation) =>
+            h(InvitationItem, {
+              key: invitation.id,
+              invitation
+            })
+          )
+      );
+    };
+  }
+});
+
+const tabs = computed(() => [
+  {
+    value: 'pending',
+    label: 'Pending',
+    element: PendingTabContent
+  },
+  {
+    value: 'resolved',
+    label: 'Resolved',
+    element: ResolvedTabContent
+  }
+]);
 </script>
 
 <template>
@@ -36,31 +102,23 @@ const { data: invitationData, isLoading } = useGetInvitations();
     </template>
 
     <template #default>
-      <div class="flex items-center justify-between p-3.5 border-b border-stroke-1/10">
+      <div class="w-full h-full flex flex-col gap-1.5 p-3.5 pb-0">
         <p class="text-sm font-medium leading-4 text-black-90">Invitations</p>
+
+        <BaseTabs
+          v-model="activeTab"
+          orientation="horizontal"
+          :tabs="tabs"
+          :class-names="{
+            tab: 'w-full flex flex-col gap-3',
+            tabList:
+              'w-full flex justify-start gap-6 border-b border-stroke-1/10 rounded-none bg-transparent p-0',
+            tabTrigger:
+              'flex-none w-fit h-9 py-2 px-1 text-xs border-x-0 border-t-0 border-b-2 border-transparent text-black-80 font-medium leading-[100%] rounded-none bg-transparent shadow-none cursor-pointer hover:text-black-100 data-[state=active]:border-b-primary-100 data-[state=active]:text-black-100 data-[state=active]:bg-transparent data-[state=active]:shadow-none outline-none focus-visible:ring-0',
+            content: 'w-full flex flex-col gap-1'
+          }"
+        />
       </div>
-
-      <QueryStateWrapper
-        :is-loading="isLoading"
-        :is-empty="
-          !invitationData?.data.pendingInvitations.length &&
-          !invitationData?.data.resolvedInvitations.length
-        "
-        loading-title="Loading invitations"
-        empty-title="No invitations found"
-      >
-        <InvitationItem
-          v-for="invitation in invitationData?.data.pendingInvitations || []"
-          :key="invitation.id"
-          :invitation="invitation"
-        />
-
-        <InvitationItem
-          v-for="invitation in invitationData?.data.resolvedInvitations || []"
-          :key="invitation.id"
-          :invitation="invitation"
-        />
-      </QueryStateWrapper>
     </template>
   </BasePopover>
 </template>

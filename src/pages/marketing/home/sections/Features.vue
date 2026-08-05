@@ -64,7 +64,7 @@ const features: IFeatures[] = [
         <p class="text-xs font-semibold leading-3.5 text-primary-100">{{ feature.title }}</p>
         <div class="flex flex-col gap-4">
           <h3
-            class="text-[27px] font-semibold leading-8.75 text-black-80 -tracking-[1px] md:-tracking-[2px]"
+            class="text-[27px] font-semibold leading-8.75 text-black-80 tracking-[-1px] md:tracking-[-2px]"
           >
             {{ feature.heading }}
           </h3>

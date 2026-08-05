@@ -69,7 +69,7 @@ const howItWorks = [
 
         <div class="flex flex-col gap-2">
           <h4
-            class="text-2xl leading-9.5 md:leading-7.5 font-semibold -tracking-[1%] text-black-90"
+            class="text-2xl leading-9.5 md:leading-7.5 font-semibold tracking-[-1%] text-black-90"
           >
             {{ item.heading }}
           </h4>

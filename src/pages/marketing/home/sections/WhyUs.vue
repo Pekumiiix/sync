@@ -63,7 +63,7 @@ const whyUs: IWhyUs[] = [
 
         <div class="flex flex-col items-center gap-1.25">
           <p
-            class="text-2xl md:text-[21px] leading-9.5 md:leading-7 font-medium -tracking-[1%] text-[#13213B]"
+            class="text-2xl md:text-[21px] leading-9.5 md:leading-7 font-medium tracking-[-1%] text-[#13213B]"
           >
             {{ item.title }}
           </p>

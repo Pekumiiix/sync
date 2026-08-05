@@ -79,7 +79,7 @@ function handleAccessLevelChange() {
 
     <div class="flex items-center gap-2">
       <BaseSelect
-        v-if="props.permission?.role === 'owner' && !isCurrentUser"
+        v-if="props.permission?.role === 'owner' && !isCurrentUser && props.member.role !== 'owner'"
         v-model="userAccessLevel"
         @update:model-value="handleAccessLevelChange"
         :options="[

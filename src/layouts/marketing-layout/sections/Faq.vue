@@ -55,7 +55,7 @@ const faqs = [
         wrapper: 'basis-1/2 flex flex-col gap-10',
         item: 'gap-3 pb-0 mb-0 border-none',
         trigger:
-          'text-2xl md:text-lg leading-9.5 md:leading-6 font-medium md:font-semibold text-black-80 -tracking-[1%] cursor-pointer hover:no-underline rounded-none p-0!',
+          'text-2xl md:text-lg leading-9.5 md:leading-6 font-medium md:font-semibold text-black-80 tracking-[-1%] cursor-pointer hover:no-underline rounded-none p-0!',
         content: 'text-xl md:text-lg leading-7 md:leading-6.5 text-black-80 pb-0'
       }"
     />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { AnimatePresence } from 'motion-v';
 
@@ -18,6 +18,7 @@ import { SectionWrapper } from '../wrappers';
 
 const open = ref(false);
 const isYearly = ref(false);
+const activePlan = ref<PlanName | null>(null);
 
 const plans = computed(() => {
   const cycle = isYearly.value ? 'yearly' : 'monthly';
@@ -28,6 +29,12 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const { mutate, isPending } = useCheckout();
+
+watch(isPending, (newIsPending) => {
+  if (!newIsPending) {
+    activePlan.value = null;
+  }
+});
 
 function handleButtonClick(name: PlanName, variantId?: string) {
   if (!authStore.isAuthenticated) {
@@ -47,6 +54,7 @@ function handleButtonClick(name: PlanName, variantId?: string) {
     return;
   }
 
+  activePlan.value = name;
   mutate({ variantId });
 }
 </script>
@@ -134,7 +142,7 @@ function handleButtonClick(name: PlanName, variantId?: string) {
               @click="handleButtonClick(plan.plan_name, plan.variant_id)"
               class="h-14.5 py-3.5 px-7.5 rounded-full bg-white text-base font-medium font-poppins leading-7.5 text-[#13213B] hover:bg-white-90"
             >
-              Get Started
+              {{ isPending && activePlan === plan.plan_name ? 'Processing...' : 'Get Started' }}
             </Button>
           </div>
 
