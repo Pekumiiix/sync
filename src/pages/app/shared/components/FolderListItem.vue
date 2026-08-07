@@ -37,7 +37,7 @@ defineEmits<{
       />
 
       <div class="flex flex-col items-start gap-1">
-        <p class="text-base font-medium leading-5.5 -tracking-[1%] text-black-80">
+        <p class="text-base font-medium leading-5.5 tracking-[-1%] text-black-80">
           {{ folder.name }}
         </p>
         <p

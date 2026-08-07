@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { watch } from 'vue';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { X } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
@@ -21,6 +23,10 @@ interface Props {
   data: Omit<CreateBookmarkData, 'tags' | 'folderId' | 'browser'>;
 }
 
+const route = useRoute<'Bookmark Folder'>();
+
+const folderId = computed(() => route.params.folderId as string);
+
 const props = defineProps<Props>();
 
 const displayBool = defineModel<boolean>({ default: false });
@@ -39,7 +45,9 @@ const { handleSubmit, values, setFieldValue, isSubmitting, meta, resetForm } =
       websiteName: props.data.websiteName,
       favIconUrl: props.data.favIconUrl,
       coverImageUrl: props.data.coverImageUrl,
-      browser: 'manual'
+      browser: 'manual',
+      folderId: folderId.value,
+      tags: []
     }
   });
 

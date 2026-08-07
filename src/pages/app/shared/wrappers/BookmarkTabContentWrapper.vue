@@ -112,7 +112,7 @@ watch(
       <!-------------------------------------- Add bookmark button --------------------------------->
       <AnimatePresence>
         <MotionDiv
-          v-if="context.canCreateBookmarks || selectedBookmarks.length === 0"
+          v-if="context.canCreateBookmarks && selectedBookmarks.length === 0"
           :config="fadeSlideYConfig"
           class="size-fit"
         >

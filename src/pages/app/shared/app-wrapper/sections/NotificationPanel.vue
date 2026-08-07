@@ -32,7 +32,7 @@ const actionButtons = computed(() => [
     disabled: (notificationData.value?.data.meta.unreadCount || 0) === 0,
     icon: CheckCheck,
     class:
-      'text-xs font-medium leading-[100%] text-primary-100 hover:text-primary-100 hover:bg-primary-10 px-2',
+      'text-xs font-medium leading-[100%] text-primary-100 hover:text-primary-100 hover:bg-primary-10 px-2 rounded-full',
     loaderClass: 'size-5 text-primary-100'
   },
   {
@@ -42,7 +42,7 @@ const actionButtons = computed(() => [
     disabled: !notificationData.value?.data.notifications.length,
     icon: TrashIcon,
     class:
-      'flex items-center justify-center text-xs font-medium leading-[100%] stroke-red-500 hover:stroke-red-600 hover:bg-red-50 px-2',
+      'flex items-center justify-center text-xs font-medium leading-[100%] stroke-red-500 hover:stroke-red-600 hover:bg-red-50 px-2 rounded-full',
     loaderClass: 'size-5 text-red-500'
   }
 ]);

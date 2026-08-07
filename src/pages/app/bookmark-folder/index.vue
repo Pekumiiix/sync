@@ -53,9 +53,9 @@ const folderData = computed(() => folderBookmarksData.value?.data?.folder);
 
 const tabs = computeFolderTabs(() => bookmarkBrowsersQuery.data.value?.data.browsers || []);
 
-const appContext = ref({
+const appContext = computed(() => ({
   canCreateBookmarks: folderBookmarksData.value?.data.permission.accessLevel === 'editor'
-});
+}));
 
 provide(AppContextKey, appContext);
 </script>

@@ -33,7 +33,8 @@ const actionButtons = computed(() => [
         isLoading: isMarkingUnread,
         disabled: !props.notification.isRead,
         icon: MailIcon,
-        class: 'size-7 p-0 rounded-full text-black-50 hover:text-black-90 hover:bg-black-5/10',
+        class:
+          'size-7 p-0 rounded-full text-primary-100 hover:text-primary-100 hover:bg-primary-10',
         loaderClass: 'size-3.5'
       }
     : {
@@ -43,7 +44,7 @@ const actionButtons = computed(() => [
         disabled: props.notification.isRead,
         icon: CheckCheck,
         class:
-          'size-7 p-0 rounded-full text-primary-100 hover:text-primary-110 hover:bg-primary-10',
+          'size-7 p-0 rounded-full text-primary-100 hover:text-primary-100 hover:bg-primary-10',
         loaderClass: 'size-3.5'
       },
   {
@@ -81,7 +82,7 @@ const actionButtons = computed(() => [
         <p class="text-sm font-medium leading-4 text-black-90 truncate">
           {{ props.notification.title }}
         </p>
-        <p class="text-[10px] leading-3.5 text-black-70 tracking-[-1%] line-clamp-2">
+        <p class="text-[10px] leading-3.5 text-black-70 tracking-[-1%]">
           {{ props.notification.message }}
         </p>
       </div>
