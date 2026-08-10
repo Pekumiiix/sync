@@ -21,8 +21,11 @@ export interface IUser {
   isEmailVerified: boolean;
   location: string | null;
   avatarUrl: string | null;
-  plan: 'free' | 'standard' | 'basic';
   createdAt: string;
   updatedAt: string;
   settings: UserSettingsResponse;
+  subscription: {
+    plan: 'free' | 'standard' | 'basic';
+    isActive: boolean;
+  };
 }

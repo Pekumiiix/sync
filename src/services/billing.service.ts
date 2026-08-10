@@ -6,6 +6,10 @@ class BillingService {
   checkout(payload: ICheckoutPayload) {
     return apiClient<IApiResponse<ICheckoutResponse>>('post', '/billing/checkout', payload);
   }
+
+  cancelSubscription() {
+    return apiClient<IApiResponse>('delete', '/billing/cancel-subscription');
+  }
 }
 
 export const billingService = new BillingService();

@@ -19,6 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function setCredentials(newToken: string) {
     token.value = newToken;
+
     localStorage.setItem('auth_token', newToken);
   }
 
@@ -26,7 +27,6 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null;
 
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('pending_invite');
   }
 
   const checkAuthStatus = async () => {

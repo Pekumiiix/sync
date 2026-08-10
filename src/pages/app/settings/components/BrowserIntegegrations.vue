@@ -31,8 +31,9 @@ function handleDisconnectBrowser(integrationId: string) {
       />
 
       <div class="flex flex-col gap-1">
-        <p class="text-sm font-medium text-black-90 leading-4 capitalize">
-          {{ integration.browser }}
+        <p class="text-sm font-medium text-black-90 leading-4">
+          <span class="capitalize">{{ integration.browser }}</span> •
+          <span class="lowercase">{{ integration.osPlatform || 'Unknown OS' }}</span>
         </p>
         <p
           v-if="integration.createdAt"

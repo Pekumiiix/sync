@@ -7,6 +7,7 @@ import { BaseTabs } from '@/components/re-useable';
 import { AppWrapper } from '../shared';
 import {
   AccountInformationTab,
+  BillingTab,
   BookmarkManagementTab,
   HelpAndSupportTab,
   NotificationsTab,
@@ -32,6 +33,11 @@ const tabs = [
     value: 'sync_settings',
     label: 'Sync Settings',
     element: SyncSettingsTab
+  },
+  {
+    value: 'billing',
+    label: 'Billing',
+    element: BillingTab
   },
   {
     value: 'bookmark_management',
@@ -63,7 +69,7 @@ const tabs = [
           tabList:
             'h-full flex flex-col justify-start gap-2 pt-0 px-6.5 rounded-none bg-transparent',
           tabTrigger:
-            'w-51 max-h-9.5! justify-start py-2.5 px-6 rounded-full text-sm font-normal leading-4.5 text-black-70 data-[state=active]:font-medium data-[state=active]:text-black-90 data-[state=active]:bg-[#F8F8F9] data-[state=active]:shadow-none cursor-pointer',
+            'w-51 max-h-9.5! justify-start py-2.5 px-6 rounded-full text-sm font-normal leading-4.5 text-black-70 data-[state=active]:font-medium data-[state=active]:text-black-90 data-[state=active]:bg-contemporary-background data-[state=active]:shadow-none cursor-pointer',
           content: 'size-full px-8.75'
         }"
       />

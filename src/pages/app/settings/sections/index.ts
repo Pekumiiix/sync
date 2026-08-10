@@ -1,4 +1,5 @@
 export { default as AccountInformationTab } from './AccountInformationTab.vue';
+export { default as BillingTab } from './BillingTab.vue';
 export { default as BookmarkManagementTab } from './BookmarkManagementTab.vue';
 export { default as HelpAndSupportTab } from './HelpAndSupportTab.vue';
 export { default as NotificationsTab } from './NotificationTab.vue';

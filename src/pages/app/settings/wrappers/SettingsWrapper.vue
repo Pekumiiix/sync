@@ -7,8 +7,8 @@ interface Props {
   description: string;
   isDirty?: boolean;
   isLoading?: boolean;
-  onCancel: () => void;
-  onSave: () => void;
+  onCancel?: () => void;
+  onSave?: () => void;
 }
 
 defineProps<Props>();
@@ -22,19 +22,20 @@ defineProps<Props>();
         <p class="text-sm leading-4.5 text-black-60">{{ description }}</p>
       </div>
 
-      <div class="flex gap-3.75">
+      <div
+        v-if="onCancel && onSave"
+        class="flex gap-3.75"
+      >
         <Button
-          v-if="onCancel"
           @click="onCancel"
           :disabled="!isDirty || isLoading"
           variant="ghost"
-          class="w-24 h-9.5 rounded-full py-3 px-4 text-xs font-medium text-black-100 leading-[100%] bg-[#F8F8F9]"
+          class="w-24 h-9.5 rounded-full py-3 px-4 text-xs font-medium text-black-100 leading-[100%] bg-contemporary-background"
         >
           Cancel
         </Button>
 
         <LoadingButton
-          v-if="onSave"
           @click="onSave"
           :isLoading="isLoading"
           :disabled="!isDirty || isLoading"

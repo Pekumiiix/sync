@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useForm } from 'vee-validate';
 
 import { syncFrequency } from '@/components/constants/sync-frequency';
@@ -31,7 +32,9 @@ const onSubmit = handleSubmit((values) => {
   });
 });
 
-const isUserOnBasicPlan = authStore.user?.plan === 'basic';
+function userPlan(plan: string) {
+  return computed(() => authStore.user?.subscription.plan === plan);
+}
 </script>
 
 <template>
@@ -82,24 +85,39 @@ const isUserOnBasicPlan = authStore.user?.plan === 'basic';
       description="Manage the browsers linked to your account and control where your bookmarks stay synchronized"
       class="flex-col"
     >
-      <div class="grid grid-cols-4 gap-3">
+      <div class="flex flex-wrap gap-3">
         <FrequencyOptionButton
           :isSelected="values.syncInterval === 'immediate'"
-          :disabled="!isUserOnBasicPlan"
+          :disabled="!userPlan('standard').value"
           @click="setFieldValue('syncInterval', 'immediate')"
           class="bg-black-100 hover:bg-black-90 text-white"
         >
           Immediately
           <span
-            v-if="!isUserOnBasicPlan"
+            v-if="!userPlan('standard').value"
             class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)]"
           >
-            Go Basic
+            Go standard
           </span>
         </FrequencyOptionButton>
 
         <FrequencyOptionButton
-          v-for="option in syncFrequency.slice(1)"
+          :isSelected="values.syncInterval === '3_hours'"
+          :disabled="!userPlan('basic').value"
+          @click="setFieldValue('syncInterval', '3_hours')"
+          class="bg-black-100 hover:bg-black-90 text-white"
+        >
+          Every 3 hours
+          <span
+            v-if="!userPlan('basic').value"
+            class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)]"
+          >
+            Go basic
+          </span>
+        </FrequencyOptionButton>
+
+        <FrequencyOptionButton
+          v-for="option in syncFrequency.slice(2)"
           :key="option.value"
           :isSelected="values.syncInterval === option.value"
           @click="setFieldValue('syncInterval', option.value)"

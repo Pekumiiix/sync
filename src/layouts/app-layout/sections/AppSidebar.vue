@@ -132,7 +132,7 @@ const authStore = useAuthStore();
       </SidebarGroup>
     </SidebarContent>
 
-    <AppSidebarFooter v-if="authStore.user?.plan === 'free'" />
+    <AppSidebarFooter v-if="authStore.user?.subscription.plan === 'free'" />
   </Sidebar>
 
   <FolderFormDialog

@@ -20,7 +20,7 @@ withDefaults(defineProps<Props>(), {
     :disabled="disabled"
     @click="onClick"
     :variant="variant"
-    class="w-full h-10.5 flex items-center justify-between gap-2 text-xs font-medium leading-5 py-3 px-4 rounded-full disabled:opacity-90 disabled:cursor-not-allowed"
+    class="w-fit h-10.5 flex items-center justify-between gap-2 text-xs font-medium leading-5 py-3 px-4 rounded-full disabled:opacity-90 disabled:cursor-not-allowed disabled:pointer-events-auto"
   >
     <slot />
 

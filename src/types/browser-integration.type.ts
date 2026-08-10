@@ -8,6 +8,7 @@ export interface Integration {
   lastSyncedAt: string;
   createdAt: string;
   extensionVersion: string | null;
+  osPlatform: string | null;
 }
 
 // Request payloads for browser-integration operations
