@@ -1,7 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-export const accountInformationZodSchema = z.object({
+const accountInformationZodSchema = z.object({
   avatarUrl: z
     .string({ required_error: 'Avatar is required' })
     .url({ message: 'Please enter a valid URL for the avatar' })

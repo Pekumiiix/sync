@@ -15,7 +15,12 @@ const route = useRoute<'Members'>();
 
 const folderId = computed(() => route.params.folderId);
 
-const { data: folderMembersData, isLoading: isloadingFolderMembers } = useGetFolderMembers(() => ({
+const {
+  data: folderMembersData,
+  isLoading: isloadingFolderMembers,
+  isError: isErrorFolderMembers,
+  refetch: refetchFolderMembers
+} = useGetFolderMembers(() => ({
   folderId: folderId.value
 }));
 
@@ -62,7 +67,11 @@ const result = computed(() => {
     <div v-if="query === ''">
       <QueryStateWrapper
         :is-loading="isloadingFolderMembers"
+        :is-error="isErrorFolderMembers"
         loading-title="Fetching members"
+        error-title="Failed to load members"
+        error-message="There was an issue fetching the members. Please try again."
+        @retry="refetchFolderMembers"
       >
         <MembersItem
           v-for="member in folderMembersData?.data.members"

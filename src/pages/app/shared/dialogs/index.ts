@@ -1,5 +1,6 @@
 export { default as AddBookmarkDialog } from './AddBookmarkDialog.vue';
 export { default as AddPasswordDialog } from './AddPasswordDialog.vue';
+export { default as ChangeFolderPasswordDialog } from './ChangeFolderPasswordDialog.vue';
 export { default as CreateBookmarkDialog } from './CreateBookmarkDialog.vue';
 export { default as DeleteBookmarkDialog } from './DeleteBookmarkDialog.vue';
 export { default as DeleteFolderDialog } from './DeleteFolderDialog.vue';
@@ -8,4 +9,5 @@ export { default as FolderFormDialog } from './FolderFormDialog.vue';
 export { default as JoinWorkSpaceDialog } from './JoinWorkspaceDialog.vue';
 export { default as MoveBookmarkDialog } from './MoveBookmarkDialog.vue';
 export { default as PaywallDialog } from './PaywallDialog.vue';
+export { default as RemoveFolderPasswordDialog } from './RemoveFolderPasswordDialog.vue';
 export { default as ShareFolderDialog } from './ShareFolderDialog.vue';

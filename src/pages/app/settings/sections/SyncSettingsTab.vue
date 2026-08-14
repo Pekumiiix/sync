@@ -15,7 +15,7 @@ import { SettingsSubSectionWrapper, SettingsWrapper } from '../wrappers';
 
 const authStore = useAuthStore();
 
-const { data, isLoading } = useGetBrowserIntegrations();
+const { data, isLoading, isError, refetch } = useGetBrowserIntegrations();
 const { mutate, isPending } = useUpdateSettings();
 
 const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
@@ -53,15 +53,16 @@ function userPlan(plan: string) {
     >
       <QueryStateWrapper
         :is-loading="isLoading"
+        :is-error="isError"
         :is-empty="!data?.data.integrations.length"
         empty-title="You currently have no connected browsers"
         loading-title="Loading your connected browsers"
+        error-title="Failed to load browser integrations"
+        error-message="There was an issue fetching your browser integrations. Please try again."
+        @retry="refetch"
       >
         <div class="w-full flex flex-col gap-5">
-          <BrowserIntegegrations
-            :integrations="data?.data.integrations"
-            :isLoading="isLoading"
-          />
+          <BrowserIntegegrations :integrations="data?.data.integrations" />
         </div>
 
         <template #empty>

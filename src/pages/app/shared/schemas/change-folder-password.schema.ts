@@ -3,18 +3,19 @@ import { z } from 'zod';
 
 import { passwordBaseSchema } from '@/components/constants/schema';
 
-const addPasswordZodSchema = z
+const changeFolderPasswordZodSchema = z
   .object({
-    password: passwordBaseSchema,
+    oldPassword: passwordBaseSchema,
+    newPassword: passwordBaseSchema,
     confirmPassword: z
       .string({ required_error: 'Please confirm your password' })
       .min(1, 'Please confirm your password')
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
     path: ['confirmPassword']
   });
 
-export type AddPasswordData = z.infer<typeof addPasswordZodSchema>;
+export type ChangeFolderPasswordData = z.infer<typeof changeFolderPasswordZodSchema>;
 
-export const addPasswordSchema = toTypedSchema(addPasswordZodSchema);
+export const changeFolderPasswordSchema = toTypedSchema(changeFolderPasswordZodSchema);

@@ -15,6 +15,7 @@ export const QUERY_KEYS = {
     lists: () => [...QUERY_KEYS.folder.all, 'list'] as const,
     getFolders: () => [...QUERY_KEYS.folder.lists()] as const,
     bookmarkBrowsersBase: () => [...QUERY_KEYS.folder.all, 'bookmark-browsers'] as const,
+    getFolderDetails: (folderId: string) => [...QUERY_KEYS.folder.all, 'detail', folderId] as const,
     getBookmarkBrowsers: (folderId?: string) =>
       [...QUERY_KEYS.folder.bookmarkBrowsersBase(), { folderId }] as const
   },

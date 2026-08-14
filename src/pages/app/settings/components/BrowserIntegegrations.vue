@@ -7,7 +7,6 @@ import { timeAgo } from '@/utils/dateUtils';
 
 defineProps<{
   integrations?: Integration[];
-  isLoading: boolean;
 }>();
 
 const { mutate, isPending } = useDisconnectBrowserIntegration();

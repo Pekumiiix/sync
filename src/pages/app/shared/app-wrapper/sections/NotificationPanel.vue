@@ -22,7 +22,7 @@ const params = computed(() => ({
 
 const { mutate: markAllRead, isPending: isMarkingRead } = useMarkAllAsRead();
 const { mutate: deleteAll, isPending: isDeletingAll } = useDeleteAllNotifications();
-const { data: notificationData, isLoading } = useGetAllNotifications(params);
+const { data: notificationData, isLoading, isError, refetch } = useGetAllNotifications(params);
 
 const actionButtons = computed(() => [
   {
@@ -98,8 +98,12 @@ const actionButtons = computed(() => [
 
       <QueryStateWrapper
         :is-loading="isLoading"
+        :is-error="isError"
         :is-empty="!notificationData?.data.notifications.length"
         empty-title="No notifications found"
+        error-title="Failed to load notifications"
+        error-message="There was an issue fetching the notifications. Please try again."
+        @retry="refetch"
       >
         <NotificationItem
           v-for="notification in notificationData?.data.notifications"

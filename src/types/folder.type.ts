@@ -1,4 +1,4 @@
-import type { IBookmark, IGetBookmarksQueryParams } from './bookmark.type';
+import type { IGetBookmarksQueryParams } from './bookmark.type';
 import type { MemberAccessLevel, MemberRole } from './member.type';
 
 // Core Models
@@ -26,21 +26,16 @@ export interface ITransformedFolder extends IFolder {
   isSelected: boolean;
 }
 
-export interface IBookmarkData {
-  pinned: IBookmark[];
-  data: IBookmark[];
-}
-
 export interface IFolderPermission {
   role: MemberRole;
   accessLevel: MemberAccessLevel;
 }
 
-// Query params
-
-export type SortBookmarks = 'title_desc' | 'title_asc' | 'newest' | 'oldest';
-
 // Request payloads for folder related operations
+
+export interface IGetFolderDetailsPayload {
+  folderId: FolderId;
+}
 
 export interface IGetFolderBookmarksPayload {
   folderId: FolderId;
@@ -64,6 +59,12 @@ export interface IAddPasswordToFolderPayload {
   folderId: FolderId;
 }
 
+export interface IChangePasswordForFolderPayload {
+  newPassword: string;
+  oldPassword: string;
+  folderId: FolderId;
+}
+
 export interface IRemovePasswordFromFolderPayload {
   folderId: FolderId;
 }
@@ -83,7 +84,7 @@ export interface IGetFoldersResponse {
   };
 }
 
-export interface IFolderBookmarksResponse {
+export interface IFolderDetailsResponse {
   folder: {
     id: FolderId;
     name: string;
@@ -94,11 +95,4 @@ export interface IFolderBookmarksResponse {
   };
   permission: IFolderPermission;
   previewMembers: IFolderMemberPreview[];
-  pinnedBookmarks: IBookmark[];
-  bookmarks: IBookmark[];
-  meta: {
-    currentPage: number;
-    totalPages: number;
-    totalCount: number;
-  };
 }

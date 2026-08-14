@@ -7,11 +7,13 @@ import { folderService } from '@/services/folder.service';
 import type { IApiResponse } from '@/types/api.type';
 import type {
   IAddPasswordToFolderPayload,
+  IChangePasswordForFolderPayload,
   ICreateFolderPayload,
   IDeleteFolderPayload,
   IEditFolderPayload,
-  IFolderBookmarksResponse,
+  IFolderDetailsResponse,
   IGetFolderBookmarksPayload,
+  IGetFolderDetailsPayload,
   IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
 import type { ApiError } from '@/utils/apiUtils';
@@ -29,10 +31,28 @@ export function useGetFolders() {
 }
 
 /**
- * Fetches bookmarks restricted to a single specific folder.
+ * Fetches details for a single specific folder.
+ */
+export function useGetFolderDetails(payload: MaybeRefOrGetter<IGetFolderDetailsPayload>) {
+  return useQuery<IApiResponse<IFolderDetailsResponse>, ApiError>(
+    computed(() => {
+      const unwrappedPayload = toValue(payload);
+
+      return {
+        queryKey: QUERY_KEYS.folder.getFolderDetails(unwrappedPayload.folderId),
+        queryFn: () => folderService.getFolderDetails(unwrappedPayload),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!unwrappedPayload.folderId
+      };
+    })
+  );
+}
+
+/**
+ * Fetches all bookmarks for a specific folder.
  */
 export function useGetFolderBookmarks(payload: MaybeRefOrGetter<IGetFolderBookmarksPayload>) {
-  return useQuery<IApiResponse<IFolderBookmarksResponse>, ApiError>(
+  return useQuery(
     computed(() => {
       const unwrappedPayload = toValue(payload);
 
@@ -78,6 +98,9 @@ export function useEditFolder() {
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getFolders()
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.getFolderDetails(variables.folderId)
       });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
@@ -132,13 +155,32 @@ export function useAddPasswordToFolder() {
       folderService.addPasswordToFolder(payload),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.folder.getFolders()
-      });
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
+        queryKey: QUERY_KEYS.folder.getFolderDetails(variables.folderId)
       });
 
       toaster.success('Password added to folder successfully');
+    },
+    onError: (error) => {
+      toaster.error(error.message);
+    }
+  });
+}
+
+/**
+ * Changes a password for a folder
+ */
+export function useChangePasswordForFolder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IChangePasswordForFolderPayload) =>
+      folderService.changePasswordForFolder(payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.folder.getFolderDetails(variables.folderId)
+      });
+
+      toaster.success('Password changed for folder successfully');
     },
     onError: (error) => {
       toaster.error(error.message);
@@ -157,10 +199,7 @@ export function useRemovePasswordFromFolder() {
       folderService.removePasswordFromFolder(payload),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.folder.getFolders()
-      });
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
+        queryKey: QUERY_KEYS.folder.getFolderDetails(variables.folderId)
       });
 
       toaster.success('Password removed from folder successfully');

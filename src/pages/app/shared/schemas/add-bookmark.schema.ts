@@ -1,7 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-export const addBookmarkZodSchema = z.object({
+const addBookmarkZodSchema = z.object({
   url: z.string({ required_error: 'Provide a valid URL' }).url({ message: 'URL is not valid' })
 });
 

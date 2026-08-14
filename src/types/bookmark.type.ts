@@ -103,10 +103,6 @@ export interface IBulkMoveBookmarksPayload {
 
 // Response objects for bookmark related operations
 
-export interface IBookmarkResponse {
-  bookmark: IBookmark;
-}
-
 export interface IPreviewBookmarkResponse {
   openGraphData: {
     title: string | null;

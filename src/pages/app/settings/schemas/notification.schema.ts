@@ -1,7 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-export const notificationZodSchema = z.object({
+const notificationZodSchema = z.object({
   notifyOnNewMember: z.boolean().optional(),
   notifyOnNewBookmark: z.boolean().optional()
 });

@@ -1,12 +1,15 @@
 import type { IApiResponse } from '@/types/api.type';
+import type { IAllBookmarkResponse } from '@/types/bookmark.type';
 import type {
   IAddPasswordToFolderPayload,
+  IChangePasswordForFolderPayload,
   ICreateFolderPayload,
   IDeleteFolderPayload,
   IEditFolderPayload,
-  IFolderBookmarksResponse,
+  IFolderDetailsResponse,
   IFolderResponse,
   IGetFolderBookmarksPayload,
+  IGetFolderDetailsPayload,
   IGetFoldersResponse,
   IRemovePasswordFromFolderPayload
 } from '@/types/folder.type';
@@ -31,10 +34,20 @@ class FolderService {
     return apiClient<IApiResponse>('delete', `/folders/${payload.folderId}`);
   }
 
+  getFolderDetails(payload: IGetFolderDetailsPayload) {
+    const { folderId } = payload;
+
+    return apiClient<IApiResponse<IFolderDetailsResponse>>('get', `/folders/${folderId}`);
+  }
+
   getFolderBookmarks(payload: IGetFolderBookmarksPayload) {
     const { folderId, param } = payload;
 
-    return apiClient<IApiResponse<IFolderBookmarksResponse>>('get', `/folders/${folderId}`, param);
+    return apiClient<IApiResponse<IAllBookmarkResponse>>(
+      'get',
+      `/folders/${folderId}/bookmarks`,
+      param
+    );
   }
 
   addPasswordToFolder(payload: IAddPasswordToFolderPayload) {
@@ -43,6 +56,19 @@ class FolderService {
     return apiClient<IApiResponse<IFolderResponse>>('patch', `/folders/${folderId}/password`, {
       password
     });
+  }
+
+  changePasswordForFolder(payload: IChangePasswordForFolderPayload) {
+    const { folderId, newPassword, oldPassword } = payload;
+
+    return apiClient<IApiResponse<IFolderResponse>>(
+      'patch',
+      `/folders/${folderId}/password/change`,
+      {
+        newPassword,
+        oldPassword
+      }
+    );
   }
 
   removePasswordFromFolder(payload: IRemovePasswordFromFolderPayload) {

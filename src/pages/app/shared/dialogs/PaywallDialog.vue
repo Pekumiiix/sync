@@ -8,12 +8,12 @@ const displayBool = defineModel({ default: false });
 <template>
   <BaseDialog
     v-model="displayBool"
-    title="Want to Add a Password?"
+    title="Want to update a folder password?"
     description="You’ll need to upgrade to Basic first — unlock this feature and more!"
     :class-names="{
       content: 'w-87.25 h-fit p-6 rounded-[15px] border border-[#292D3233] flex flex-col gap-6',
       header: 'flex flex-col items-center gap-1',
-      title: 'text-2xl leading-9.5 font-medium text-black-90 tracking-[-1%]',
+      title: 'text-2xl leading-9.5 font-medium text-black-90 tracking-[-1%] text-center',
       description: 'text-base text-black-60 text-center'
     }"
   >

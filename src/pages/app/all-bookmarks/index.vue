@@ -37,7 +37,12 @@ const queryParams = computed(() => ({
   sort: sortOrder.value
 }));
 
-const { data: bookmarksData, isLoading: isLoadingBookmarks } = useGetAllBookmarks(queryParams);
+const {
+  data: bookmarksData,
+  isLoading: isLoadingBookmarks,
+  isError: isErrorBookmarks,
+  refetch: refetchBookmarks
+} = useGetAllBookmarks(queryParams);
 const bookmarkBrowsersQuery = useGetBookmarkBrowsers();
 
 const tabs = computeFolderTabs(() => bookmarkBrowsersQuery.data.value?.data.browsers || []);
@@ -48,7 +53,11 @@ const tabs = computeFolderTabs(() => bookmarkBrowsersQuery.data.value?.data.brow
     <ContentWrapper type="all">
       <QueryStateWrapper
         :is-loading="isLoadingBookmarks"
+        :is-error="isErrorBookmarks"
         loading-title="Fetching bookmarks"
+        error-title="Failed to load bookmarks"
+        error-message="There was an issue fetching your bookmarks. Please try again."
+        @retry="refetchBookmarks"
       >
         <BookmarkTabWrapper
           v-model:page="currentPage"

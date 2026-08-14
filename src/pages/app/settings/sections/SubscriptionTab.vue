@@ -23,8 +23,8 @@ function handleCancel() {
 
 <template>
   <SettingsWrapper
-    title="Subscription & Billing"
-    description="Manage your plan, payment methods, and billing history"
+    title="Subscription"
+    description="Manage your plan"
   >
     <SettingsSubSectionWrapper
       title="Current Plan"
@@ -62,6 +62,7 @@ function handleCancel() {
     </SettingsSubSectionWrapper>
 
     <SettingsSubSectionWrapper
+      v-if="user?.subscription.isActive"
       title="Danger Zone"
       description="Destructive actions for your subscription"
       class="border-t border-black-10 pt-8"

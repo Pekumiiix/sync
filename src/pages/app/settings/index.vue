@@ -7,10 +7,10 @@ import { BaseTabs } from '@/components/re-useable';
 import { AppWrapper } from '../shared';
 import {
   AccountInformationTab,
-  BillingTab,
   BookmarkManagementTab,
   HelpAndSupportTab,
   NotificationsTab,
+  SubscriptionTab,
   SyncSettingsTab
 } from './sections';
 
@@ -35,9 +35,9 @@ const tabs = [
     element: SyncSettingsTab
   },
   {
-    value: 'billing',
-    label: 'Billing',
-    element: BillingTab
+    value: 'subscription',
+    label: 'Subscription',
+    element: SubscriptionTab
   },
   {
     value: 'bookmark_management',

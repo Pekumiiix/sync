@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { passwordBaseSchema } from '@/components/constants/schema';
 
-export const joinWorkspaceZodSchema = z.object({
+const joinWorkspaceZodSchema = z.object({
   password: passwordBaseSchema
 });
 

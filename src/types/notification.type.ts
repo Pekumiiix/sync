@@ -10,8 +10,6 @@ type NotificationType =
   | 'folder_updated'
   | 'folder_deleted';
 
-export type ActionStatus = 'pending' | 'accepted' | 'declined';
-
 interface NotificationActor {
   firstName: string;
   lastName: string;

@@ -11,7 +11,7 @@ import { InvitationItem } from '../components';
 
 const activeTab = ref<'pending' | 'resolved'>('pending');
 
-const { data: invitationData, isLoading } = useGetInvitations();
+const { data: invitationData, isLoading, isError, refetch } = useGetInvitations();
 
 const PendingTabContent = defineComponent({
   setup() {
@@ -105,19 +105,26 @@ const tabs = computed(() => [
       <div class="w-full h-full flex flex-col gap-1.5 p-3.5 pb-0">
         <p class="text-sm font-medium leading-4 text-black-90">Invitations</p>
 
-        <BaseTabs
-          v-model="activeTab"
-          orientation="horizontal"
-          :tabs="tabs"
-          :class-names="{
-            tab: 'w-full flex flex-col gap-3',
-            tabList:
-              'w-full flex justify-start gap-6 border-b border-stroke-1/10 rounded-none bg-transparent p-0',
-            tabTrigger:
-              'flex-none w-fit h-9 py-2 px-1 text-xs border-x-0 border-t-0 border-b-2 border-transparent text-black-80 font-medium leading-[100%] rounded-none bg-transparent shadow-none cursor-pointer hover:text-black-100 data-[state=active]:border-b-primary-100 data-[state=active]:text-black-100 data-[state=active]:bg-transparent data-[state=active]:shadow-none outline-none focus-visible:ring-0',
-            content: 'w-full flex flex-col gap-1'
-          }"
-        />
+        <QueryStateWrapper
+          :is-error="isError"
+          error-title="Failed to load invitations"
+          error-message="There was an issue fetching the invitations. Please try again."
+          @retry="refetch"
+        >
+          <BaseTabs
+            v-model="activeTab"
+            orientation="horizontal"
+            :tabs="tabs"
+            :class-names="{
+              tab: 'w-full flex flex-col gap-3',
+              tabList:
+                'w-full flex justify-start gap-6 border-b border-stroke-1/10 rounded-none bg-transparent p-0',
+              tabTrigger:
+                'flex-none w-fit h-9 py-2 px-1 text-xs border-x-0 border-t-0 border-b-2 border-transparent text-black-80 font-medium leading-[100%] rounded-none bg-transparent shadow-none cursor-pointer hover:text-black-100 data-[state=active]:border-b-primary-100 data-[state=active]:text-black-100 data-[state=active]:bg-transparent data-[state=active]:shadow-none outline-none focus-visible:ring-0',
+              content: 'w-full flex flex-col gap-1'
+            }"
+          />
+        </QueryStateWrapper>
       </div>
     </template>
   </BasePopover>

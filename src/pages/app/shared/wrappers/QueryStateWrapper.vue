@@ -33,7 +33,7 @@ const emit = defineEmits<{
 <template>
   <div
     v-if="isError"
-    class="w-full py-5 flex flex-col items-center justify-center text-center px-4 gap-6"
+    class="w-full h-full py-5 flex flex-col items-center justify-center text-center px-4 gap-6"
   >
     <slot
       name="error"
@@ -45,7 +45,7 @@ const emit = defineEmits<{
         </div>
 
         <div class="flex flex-col items-center gap-2">
-          <h3 class="text-lg font-medium leading-6 text-black-90 -tracking-[1%]">
+          <h3 class="text-lg font-medium leading-6 text-black-90 tracking-[-1%]">
             {{ errorTitle }}
           </h3>
           <p class="text-base leading-[120%] text-black-70 max-w-sm">
@@ -57,7 +57,7 @@ const emit = defineEmits<{
       <LoadingButton
         :is-loading="isLoading"
         @click="emit('retry')"
-        class="h-10 px-5 flex items-center justify-center text-sm font-medium rounded-full"
+        class="h-10 px-6 flex items-center justify-center text-sm font-medium rounded-full transition-colors shadow-sm"
       >
         Try Again
       </LoadingButton>
@@ -85,7 +85,7 @@ const emit = defineEmits<{
             />
           </div>
 
-          <p class="text-lg text-center font-medium leading-7 text-black-90 -tracking-[1%]">
+          <p class="text-lg text-center font-medium leading-7 text-black-90 tracking-[-1%]">
             {{ loadingTitle }}
           </p>
         </div>

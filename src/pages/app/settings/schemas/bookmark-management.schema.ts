@@ -1,7 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-export const bookmarkManagementZodSchema = z.object({
+const bookmarkManagementZodSchema = z.object({
   autoMergeBookmarks: z.boolean()
 });
 

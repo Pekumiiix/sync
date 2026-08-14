@@ -3,10 +3,13 @@ import { useForm } from 'vee-validate';
 
 import { BasePasswordInput } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
-import { useAddPasswordToFolder } from '@/hooks/useFolder';
+import { useChangePasswordForFolder } from '@/hooks/useFolder';
 import { createTypedForm } from '@/utils/formUtils';
 
-import { type AddPasswordData, addPasswordSchema } from '../schemas/add-password.schema';
+import {
+  type ChangeFolderPasswordData,
+  changeFolderPasswordSchema
+} from '../schemas/change-folder-password.schema';
 import { ActionDialogWrapper } from '../wrappers';
 
 interface Props {
@@ -15,31 +18,26 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { handleSubmit, meta, isSubmitting } = useForm<AddPasswordData>({
-  validationSchema: addPasswordSchema,
+const { handleSubmit, meta, isSubmitting } = useForm<ChangeFolderPasswordData>({
+  validationSchema: changeFolderPasswordSchema,
   initialValues: {
-    password: '',
+    oldPassword: '',
+    newPassword: '',
     confirmPassword: ''
   }
 });
 
-const { mutate: addPasswordToFolder, isPending } = useAddPasswordToFolder();
+const { mutate: changePasswordForFolder, isPending } = useChangePasswordForFolder();
 
-const onSubmit = handleSubmit((data: AddPasswordData) => {
-  addPasswordToFolder(
-    {
-      folderId: props.folderId,
-      password: data.password
-    },
-    {
-      onSuccess: () => {
-        displayBool.value = false;
-      }
-    }
-  );
+const onSubmit = handleSubmit((data: ChangeFolderPasswordData) => {
+  changePasswordForFolder({
+    folderId: props.folderId,
+    newPassword: data.newPassword,
+    oldPassword: data.oldPassword
+  });
 });
 
-const TypedFormField = createTypedForm<AddPasswordData>();
+const TypedFormField = createTypedForm<ChangeFolderPasswordData>();
 
 const displayBool = defineModel<boolean>({ default: false });
 </script>
@@ -47,17 +45,25 @@ const displayBool = defineModel<boolean>({ default: false });
 <template>
   <ActionDialogWrapper
     v-model="displayBool"
-    title="Restrict access by setting a password"
+    title="Change Folder Password"
     content-class="max-w-[625px] w-full"
-    description="Add a password for security"
+    description="Update your folder password"
   >
     <form
       @submit="onSubmit"
       class="w-full flex flex-col gap-5 px-6 pt-6 mb-6"
     >
       <TypedFormField
-        name="password"
-        label="Enter password"
+        name="oldPassword"
+        label="Current Password"
+      >
+        <template #default="fieldProps">
+          <BasePasswordInput v-bind="fieldProps" />
+        </template>
+      </TypedFormField>
+      <TypedFormField
+        name="newPassword"
+        label="New Password"
       >
         <template #default="fieldProps">
           <BasePasswordInput v-bind="fieldProps" />
@@ -65,7 +71,7 @@ const displayBool = defineModel<boolean>({ default: false });
       </TypedFormField>
       <TypedFormField
         name="confirmPassword"
-        label="Confirm password"
+        label="Confirm New Password"
       >
         <template #default="fieldProps">
           <BasePasswordInput v-bind="fieldProps" />
@@ -80,7 +86,7 @@ const displayBool = defineModel<boolean>({ default: false });
         :disabled="!meta.valid || isSubmitting || isPending"
         class="w-fit h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] bg-black-100 py-2 px-4 rounded-full hover:bg-black-90"
       >
-        <span>Save Password</span>
+        <span>Change Password</span>
       </LoadingButton>
     </div>
   </ActionDialogWrapper>

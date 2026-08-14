@@ -68,7 +68,7 @@ export function useKickMember() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.bookmark.byFolderBase(variables.folderId)
+        queryKey: QUERY_KEYS.folder.getFolderDetails(variables.folderId)
       });
 
       queryClient.removeQueries({

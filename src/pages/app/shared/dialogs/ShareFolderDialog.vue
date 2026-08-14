@@ -14,7 +14,12 @@ import { createTypedForm } from '@/utils/formUtils';
 import { MembersItem } from '../components';
 import { type ShareBookmarkData, shareBookmarkSchema } from '../schemas/share-bookmark.schema';
 import { ActionDialogWrapper, QueryStateWrapper } from '../wrappers';
-import { AddPasswordDialog, PaywallDialog } from '.';
+import {
+  AddPasswordDialog,
+  ChangeFolderPasswordDialog,
+  PaywallDialog,
+  RemoveFolderPasswordDialog
+} from '.';
 
 interface Props {
   folderId: string;
@@ -63,20 +68,30 @@ const onSubmit = handleSubmit(async (values) => {
 
 const TypedFormField = createTypedForm<ShareBookmarkData>();
 
-const showAddPasswordDialog = ref(false);
-const showPaywallDialog = ref(false);
-
 const authStore = useAuthStore();
 
+const showAddPasswordDialog = ref(false);
+const showChangePasswordDialog = ref(false);
+const showRemovePasswordDialog = ref(false);
+const showPaywallDialog = ref(false);
+
+const displayBool = defineModel<boolean>({ default: false });
+
 function handleAddPasswordClick() {
-  if (authStore.user?.plan === 'free') {
+  if (authStore.user?.subscription.plan === 'free') {
     showPaywallDialog.value = true;
   } else {
     showAddPasswordDialog.value = true;
   }
 }
 
-const displayBool = defineModel<boolean>({ default: false });
+function handleChangePasswordClick() {
+  if (authStore.user?.subscription.plan === 'free') {
+    showPaywallDialog.value = true;
+  } else {
+    showChangePasswordDialog.value = true;
+  }
+}
 </script>
 
 <template>
@@ -102,7 +117,7 @@ const displayBool = defineModel<boolean>({ default: false });
               <Input
                 v-bind="fieldProps"
                 placeholder="Enter email..."
-                class="text-xs leading-[100%] placeholder:text-black-70 p-0 border-none rounded-none"
+                class="text-xs leading-[100%] placeholder:text-black-70 p-0 border-none rounded-none focus-visible:ring-0"
               />
             </template>
           </TypedFormField>
@@ -140,12 +155,14 @@ const displayBool = defineModel<boolean>({ default: false });
       @retry="refetchFolderMembers"
       loading-title="Loading members"
     >
-      <MembersItem
-        v-for="member in folderMembersData?.data.members || []"
-        :key="member.id"
-        :member="member"
-        :member-id="member.id"
-      />
+      <div class="flex flex-col overflow-y-auto">
+        <MembersItem
+          v-for="member in folderMembersData?.data.members || []"
+          :key="member.id"
+          :member="member"
+          :member-id="member.id"
+        />
+      </div>
     </QueryStateWrapper>
 
     <div
@@ -163,15 +180,51 @@ const displayBool = defineModel<boolean>({ default: false });
 
       <Button
         @click="handleAddPasswordClick"
-        class="w-fit h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] rounded-full py-2 px-4 bg-black-100 hover:bg-black-90"
+        class="w-fit h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] rounded-full py-2 px-4 bg-black-100 hover:bg-black-90 transition-colors"
       >
         Add password
       </Button>
+    </div>
+
+    <div
+      v-if="folderMembersData?.data.permission.role === 'owner' && props.isProtected"
+      class="w-full flex items-center justify-between p-6 border-t border-[#292D321A]"
+    >
+      <div class="flex flex-col gap-1">
+        <p class="text-lg font-medium leading-[100%] text-black-90">Link is password protected</p>
+        <p class="text-sm leading-4.5 text-black-70">Control access to your protected folder</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          @click="showRemovePasswordDialog = true"
+          class="w-fit h-11 text-base font-medium leading-5.5 text-red-600 tracking-[-1%] rounded-full py-2 px-4 hover:bg-red-50 hover:text-red-600 transition-colors"
+        >
+          Remove
+        </Button>
+        <Button
+          @click="handleChangePasswordClick"
+          class="w-fit h-11 text-base font-medium leading-5.5 text-white tracking-[-1%] rounded-full py-2 px-4 bg-black-100 hover:bg-black-90 transition-colors"
+        >
+          Change
+        </Button>
+      </div>
     </div>
   </ActionDialogWrapper>
 
   <AddPasswordDialog
     v-model="showAddPasswordDialog"
+    :folder-id="folderId"
+  />
+  <ChangeFolderPasswordDialog
+    v-if="showChangePasswordDialog"
+    v-model="showChangePasswordDialog"
+    :folder-id="folderId"
+  />
+  <RemoveFolderPasswordDialog
+    v-if="showRemovePasswordDialog"
+    v-model="showRemovePasswordDialog"
     :folder-id="folderId"
   />
 
