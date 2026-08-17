@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Plus } from 'lucide-vue-next';
 
+import { folderLimitConfig, PLAN_FOLDER_LIMITS } from '@/components/constants/plan-limit';
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +14,7 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar';
 import { useGetFolders } from '@/hooks/useFolder';
-import { FolderFormDialog } from '@/pages/app/shared/dialogs';
+import { FolderFormDialog, PaywallDialog } from '@/pages/app/shared/dialogs';
 import { useAuthStore } from '@/stores/auth.store';
 
 import { AppSidebarGroup } from '../components';
@@ -56,8 +57,21 @@ const generalSidebarItems = computed(() => {
 });
 
 const displayCreateFolderDialog = ref(false);
+const displayPaywallDialog = ref(false);
 
 const authStore = useAuthStore();
+
+const currentPlan = computed(() => authStore.user?.subscription.plan ?? 'free');
+const folderLimit = computed(() => PLAN_FOLDER_LIMITS[currentPlan.value]);
+const ownedFolderLength = computed(() => (foldersData.value?.data.ownedFolders || []).length);
+
+function handleCreateFolder() {
+  if (ownedFolderLength.value >= folderLimit.value) {
+    displayPaywallDialog.value = true;
+  } else {
+    displayCreateFolderDialog.value = true;
+  }
+}
 </script>
 
 <template>
@@ -87,7 +101,7 @@ const authStore = useAuthStore();
       <AppSidebarGroup
         label="Owned folders"
         :isLoading="isLoading"
-        :isEmpty="!foldersData?.data.ownedFolders?.length"
+        :isEmpty="!ownedFolderLength"
         :items="
           foldersData?.data.ownedFolders.map((folder) => ({
             href: `${folder.id}`,
@@ -117,7 +131,7 @@ const authStore = useAuthStore();
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                @click="displayCreateFolderDialog = true"
+                @click="handleCreateFolder"
                 class="h-12.25 flex items-center py-3.5 px-3 gap-1.5 cursor-pointer"
               >
                 <Plus
@@ -138,5 +152,12 @@ const authStore = useAuthStore();
   <FolderFormDialog
     v-model="displayCreateFolderDialog"
     type="create"
+  />
+
+  <PaywallDialog
+    v-if="currentPlan !== 'standard'"
+    v-model="displayPaywallDialog"
+    :title="folderLimitConfig[currentPlan].title"
+    :description="folderLimitConfig[currentPlan].description"
   />
 </template>

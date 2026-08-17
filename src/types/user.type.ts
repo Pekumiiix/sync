@@ -1,4 +1,5 @@
-import type { TSyncFrequency } from '@/types/settings.type';
+import type { PlanName } from '@/components/constants/pricing-plans';
+import type { TSyncFrequency } from '@/types/app.type';
 
 export interface UserSettingsResponse {
   management: {
@@ -25,7 +26,7 @@ export interface IUser {
   updatedAt: string;
   settings: UserSettingsResponse;
   subscription: {
-    plan: 'free' | 'standard' | 'basic';
+    plan: PlanName;
     isActive: boolean;
   };
 }

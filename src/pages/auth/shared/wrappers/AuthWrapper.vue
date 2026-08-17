@@ -71,7 +71,7 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
         class="size-16.75"
       />
 
-      <p class="text-[31px] font-bold leading-[100%] -tracking-[2%] text-black-100">
+      <p class="text-[31px] font-bold leading-[100%] tracking-[-2%] text-black-100">
         {{ pageConfig[page].message }}
       </p>
     </div>
@@ -87,6 +87,7 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
       <div class="w-full flex flex-col gap-8">
         <LoadingButton
           class="w-full py-8.25 rounded-full text-[29px] leading-8.25"
+          loader-class="size-8.25"
           :isLoading="isLoading"
           :disabled="!isValid"
         >
@@ -136,7 +137,7 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
       v-if="isSignInOrSignUp"
       class="w-full flex items-center justify-center gap-1.25"
     >
-      <p class="text-[29px] -tracking-[2%] leading-[100%]">
+      <p class="text-[29px] tracking-[-2%] leading-[100%]">
         <span class="text-black-60">{{ pageConfig[page].authAlternative?.text }}</span> ✨
         <router-link
           :to="pageConfig[page].authAlternative?.href || '#'"

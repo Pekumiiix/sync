@@ -35,6 +35,24 @@ const onSubmit = handleSubmit((values) => {
 function userPlan(plan: string) {
   return computed(() => authStore.user?.subscription.plan === plan);
 }
+
+const frequencyOptions = computed(() => {
+  return syncFrequency.map((option) => {
+    let requiredPlan: 'standard' | 'basic' | null = null;
+
+    if (option.value === 'immediate') requiredPlan = 'standard';
+    else if (option.value === '3_hours') requiredPlan = 'basic';
+
+    const hasAccess = requiredPlan ? userPlan(requiredPlan).value : true;
+
+    return {
+      ...option,
+      isSelected: values.syncInterval === option.value,
+      isDisabled: !hasAccess,
+      upgradePrompt: !hasAccess ? requiredPlan : null
+    };
+  });
+});
 </script>
 
 <template>
@@ -88,44 +106,25 @@ function userPlan(plan: string) {
     >
       <div class="flex flex-wrap gap-3">
         <FrequencyOptionButton
-          :isSelected="values.syncInterval === 'immediate'"
-          :disabled="!userPlan('standard').value"
-          @click="setFieldValue('syncInterval', 'immediate')"
-          class="bg-black-100 hover:bg-black-90 text-white"
-        >
-          Immediately
-          <span
-            v-if="!userPlan('standard').value"
-            class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)]"
-          >
-            Go standard
-          </span>
-        </FrequencyOptionButton>
-
-        <FrequencyOptionButton
-          :isSelected="values.syncInterval === '3_hours'"
-          :disabled="!userPlan('basic').value"
-          @click="setFieldValue('syncInterval', '3_hours')"
-          class="bg-black-100 hover:bg-black-90 text-white"
-        >
-          Every 3 hours
-          <span
-            v-if="!userPlan('basic').value"
-            class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)]"
-          >
-            Go basic
-          </span>
-        </FrequencyOptionButton>
-
-        <FrequencyOptionButton
-          v-for="option in syncFrequency.slice(2)"
+          v-for="option in frequencyOptions"
           :key="option.value"
-          :isSelected="values.syncInterval === option.value"
+          :isSelected="option.isSelected"
+          :disabled="option.isDisabled"
           @click="setFieldValue('syncInterval', option.value)"
-          class="bg-[#F9F9FB] text-black-90"
-          variant="ghost"
+          :class="
+            option.isDisabled
+              ? 'bg-black-100 hover:bg-black-90 text-white'
+              : 'bg-[#F9F9FB] text-black-90'
+          "
+          :variant="option.isDisabled ? undefined : 'ghost'"
         >
           {{ option.label }}
+          <span
+            v-if="option.upgradePrompt"
+            class="py-0.75 px-1 rounded-full text-[8px] leading-2.5 text-black-100 bg-[linear-gradient(100.67deg,#39F2FF_11.49%,#FF88F9_93.75%)] capitalize"
+          >
+            Go {{ option.upgradePrompt }}
+          </span>
         </FrequencyOptionButton>
       </div>
     </SettingsSubSectionWrapper>

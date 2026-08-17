@@ -1,22 +1,37 @@
 <script setup lang="ts">
-import { computed, provide, reactive, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onMounted, provide, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { useGetAllBookmarks, useGetBookmarkBrowsers } from '@/hooks/useBookmark';
 import { AppContextKey } from '@/keys/injenction-keys';
 import type { BrowserProvider, SortOrder } from '@/types/app.type';
 import { usePaginatedFilter } from '@/utils/paramUtils';
 import { computeFolderTabs } from '@/utils/tabUtils';
+import { toaster } from '@/utils/toastUtils';
 
 import { AppWrapper } from '../shared';
 import { PinnedBookmarks } from '../shared/sections';
 import { BookmarkTabWrapper, ContentWrapper, QueryStateWrapper } from '../shared/wrappers';
 
 const route = useRoute<'All Bookmarks'>();
+const router = useRouter();
 
 const params = reactive({
   tab: (route.query.tab as string) || 'all',
-  page: Number(route.query.page as string) || 1
+  page: Number(route.query.page as string) || 1,
+  billing: route.query.billing as string
+});
+
+onMounted(() => {
+  if (params.billing === 'success') {
+    toaster.success('Upgrade complete! Your new plan is now active.');
+
+    const { billing: _billing, ...remainingQuery } = route.query;
+
+    router.replace({
+      query: remainingQuery
+    });
+  }
 });
 
 const appContext = ref({

@@ -11,9 +11,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
-  },
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN'
+  }
 });
 
 api.interceptors.request.use(

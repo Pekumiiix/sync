@@ -1,4 +1,4 @@
-import type { TSyncFrequency } from '@/types/settings.type';
+import type { TSyncFrequency } from '@/types/app.type';
 
 export const syncFrequency: { label: string; value: TSyncFrequency }[] = [
   {

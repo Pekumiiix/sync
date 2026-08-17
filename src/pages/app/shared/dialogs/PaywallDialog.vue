@@ -3,13 +3,20 @@ import { BaseDialog } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
 
 const displayBool = defineModel({ default: false });
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+defineProps<Props>();
 </script>
 
 <template>
   <BaseDialog
     v-model="displayBool"
-    title="Want to update a folder password?"
-    description="You’ll need to upgrade to Basic first — unlock this feature and more!"
+    :title="title"
+    :description="description"
     :class-names="{
       content: 'w-87.25 h-fit p-6 rounded-[15px] border border-[#292D3233] flex flex-col gap-6',
       header: 'flex flex-col items-center gap-1',

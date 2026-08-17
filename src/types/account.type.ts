@@ -1,6 +1,6 @@
 // Request payload for account related operations
 
-import type { TSyncFrequency } from './settings.type';
+import type { TSyncFrequency } from './app.type';
 import type { IUser } from './user.type';
 
 export interface IUpdateProfilePayload {

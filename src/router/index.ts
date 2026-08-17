@@ -120,11 +120,11 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach(async (to) => {
+router.beforeEach((to) => {
   const authStore = useAuthStore();
 
   if (authStore.isLoading) {
-    await authStore.checkAuthStatus();
+    authStore.checkAuthStatus();
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {

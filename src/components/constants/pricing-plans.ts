@@ -2,36 +2,37 @@ export function pricingPlans(cycle: BillingCycle): IPricingPlans[] {
   return [
     {
       plan_name: 'free',
-      usecase: 'small group',
+      usecase: 'Individuals & casual sharing',
       price: 0,
-      benefits: ['1 users', '3 Folders', 'Folder Download']
+      benefits: [
+        'Up to 3 Folders',
+        '2 members per folder',
+        '12-hour sync interval',
+        'Standard link sharing'
+      ]
     },
     {
       plan_name: 'basic',
-      usecase: 'small group',
+      usecase: 'Small teams & active users',
       price: cycle === 'monthly' ? 2 : 20,
       variant_id: cycle === 'monthly' ? '1977743' : '1977755',
       benefits: [
-        '1-3 users',
-        '10 Folders',
-        'Folder Download',
-        'Full-Page Archiving',
-        'Shared Folders with Roles',
-        'Priority Syncing'
+        'Up to 20 Folders',
+        '5 members per folder',
+        '3-hour sync interval',
+        'Join password-protected folders'
       ]
     },
     {
       plan_name: 'standard',
-      usecase: 'midsize group',
+      usecase: 'Growing teams & power users',
       price: cycle === 'monthly' ? 5 : 48,
       variant_id: cycle === 'monthly' ? '1977772' : '1977780',
       benefits: [
-        '4-10 users',
         'Unlimited Folders',
-        'Folder Download',
-        'Full-Page Archiving',
-        'Shared Folders with Roles',
-        'Priority Syncing'
+        '10 members per folder',
+        'Immediate sync interval',
+        'Create & join password-protected folders'
       ]
     }
   ];

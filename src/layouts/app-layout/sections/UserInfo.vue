@@ -4,9 +4,9 @@ import { ChevronsUpDown, LogOut } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { SettingsIcon } from '@/components/icons';
-import { BaseAvatar } from '@/components/re-useable';
-import { BasePopover } from '@/components/re-useable';
+import { BaseAvatar, BasePopover } from '@/components/re-useable';
 import { Button } from '@/components/ui/button';
+import { useSignOut } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/auth.store';
 import { computeUserName, truncateString } from '@/utils/stringutils';
 
@@ -14,7 +14,7 @@ const authStore = useAuthStore();
 
 const { user } = storeToRefs(authStore);
 
-const { signOut } = authStore;
+const { mutate: signOutMutation, isPending: isSigningOut } = useSignOut();
 
 const fullName = computed(() => computeUserName(user.value?.firstName, user.value?.lastName));
 </script>
@@ -59,12 +59,12 @@ const fullName = computed(() => computeUserName(user.value?.firstName, user.valu
       <div class="h-px bg-black-10 my-1 mx-1" />
 
       <Button
-        @click="() => signOut.mutate()"
+        @click="() => signOutMutation()"
         variant="ghost"
         class="flex items-center justify-start gap-2 px-3 py-2 text-sm font-medium text-red-600 rounded-md hover:text-red-600 hover:bg-red-50 transition-colors w-full text-left"
       >
         <LogOut class="size-4" />
-        {{ signOut.isPending ? 'Signing out...' : 'Sign out' }}
+        {{ isSigningOut ? 'Signing out...' : 'Sign out' }}
       </Button>
     </div>
   </BasePopover>

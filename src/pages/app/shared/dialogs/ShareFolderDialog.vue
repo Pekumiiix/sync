@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useForm } from 'vee-validate';
 
+import { memberLimitConfig, PLAN_MEMBER_LIMIT } from '@/components/constants/plan-limit';
 import { BaseSelect } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
@@ -24,9 +25,21 @@ import {
 interface Props {
   folderId: string;
   isProtected: boolean;
+  memberCount: number;
 }
 
 const props = defineProps<Props>();
+
+const TypedFormField = createTypedForm<ShareBookmarkData>();
+
+const authStore = useAuthStore();
+
+const showAddPasswordDialog = ref(false);
+const showChangePasswordDialog = ref(false);
+const showRemovePasswordDialog = ref(false);
+const showPaywallDialog = ref(false);
+
+const displayBool = defineModel<boolean>({ default: false });
 
 const {
   data: folderMembersData,
@@ -46,39 +59,38 @@ const { handleSubmit, meta, isSubmitting, resetForm } = useForm<ShareBookmarkDat
   }
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  createInvitation(
-    {
-      folderId: props.folderId,
-      email: values.email,
-      accessLevel: values.accessLevel
-    },
-    {
-      onSuccess: () => {
-        resetForm({
-          values: {
-            email: '',
-            accessLevel: 'editor'
-          }
-        });
+const currentPlan = computed(() => authStore.user?.subscription.plan ?? 'free');
+const memberLimit = computed(() => PLAN_MEMBER_LIMIT[currentPlan.value]);
+
+const isSaturated = computed(() => props.memberCount >= memberLimit.value);
+const isOwner = computed(() => folderMembersData.value?.data.permission.role === 'owner');
+
+const onSubmit = handleSubmit((values) => {
+  if (isSaturated.value) {
+    showPaywallDialog.value = true;
+  } else {
+    createInvitation(
+      {
+        folderId: props.folderId,
+        email: values.email,
+        accessLevel: values.accessLevel
+      },
+      {
+        onSuccess: () => {
+          resetForm({
+            values: {
+              email: '',
+              accessLevel: 'editor'
+            }
+          });
+        }
       }
-    }
-  );
+    );
+  }
 });
 
-const TypedFormField = createTypedForm<ShareBookmarkData>();
-
-const authStore = useAuthStore();
-
-const showAddPasswordDialog = ref(false);
-const showChangePasswordDialog = ref(false);
-const showRemovePasswordDialog = ref(false);
-const showPaywallDialog = ref(false);
-
-const displayBool = defineModel<boolean>({ default: false });
-
 function handleAddPasswordClick() {
-  if (authStore.user?.subscription.plan === 'free') {
+  if (currentPlan.value === 'free') {
     showPaywallDialog.value = true;
   } else {
     showAddPasswordDialog.value = true;
@@ -86,7 +98,7 @@ function handleAddPasswordClick() {
 }
 
 function handleChangePasswordClick() {
-  if (authStore.user?.subscription.plan === 'free') {
+  if (currentPlan.value === 'free') {
     showPaywallDialog.value = true;
   } else {
     showChangePasswordDialog.value = true;
@@ -187,7 +199,7 @@ function handleChangePasswordClick() {
     </div>
 
     <div
-      v-if="folderMembersData?.data.permission.role === 'owner' && props.isProtected"
+      v-if="isOwner && props.isProtected"
       class="w-full flex items-center justify-between p-6 border-t border-[#292D321A]"
     >
       <div class="flex flex-col gap-1">
@@ -228,5 +240,17 @@ function handleChangePasswordClick() {
     :folder-id="folderId"
   />
 
-  <PaywallDialog v-model="showPaywallDialog" />
+  <PaywallDialog
+    v-model="showPaywallDialog"
+    :title="
+      isSaturated
+        ? memberLimitConfig[authStore.user?.subscription.plan ?? 'free'].title
+        : 'Want to update a folder password?'
+    "
+    :description="
+      isSaturated
+        ? memberLimitConfig[authStore.user?.subscription.plan ?? 'free'].title
+        : 'You’ll need to upgrade to Standard plan first — unlock this feature and more!'
+    "
+  />
 </template>

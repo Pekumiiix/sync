@@ -16,7 +16,7 @@ import { BaseAvatar } from '@/components/re-useable';
 import { LoadingButton } from '@/components/shared';
 import { useLeaveFolder } from '@/hooks/useMember';
 import { useSearchBookmarks, useSearchFolderBookmarks } from '@/hooks/useSearch';
-import type { IFolderBookmarksResponse } from '@/types/folder.type';
+import type { IFolderDetailsResponse } from '@/types/folder.type';
 import type { MemberRole } from '@/types/member.type';
 import { transformBookmarks } from '@/utils/bookmarkUtils';
 import { computeUserName } from '@/utils/stringutils';
@@ -34,9 +34,9 @@ interface AllBookmarksProps {
 
 interface FolderBookmarksProps {
   type: 'folder';
-  folder: IFolderBookmarksResponse['folder'];
+  folder: IFolderDetailsResponse['folder'];
   role: MemberRole;
-  previewMembers: IFolderBookmarksResponse['previewMembers'];
+  previewMembers: IFolderDetailsResponse['previewMembers'];
 }
 
 const props = defineProps<AllBookmarksProps | FolderBookmarksProps>();
@@ -201,6 +201,7 @@ function handleLeaveFolder() {
     v-model="showShareDialog"
     :folder-id="folder.id"
     :is-protected="folder.isProtected"
+    :member-count="folder.memberCount"
   />
 
   <FolderFormDialog

@@ -64,19 +64,20 @@ export function useSignIn() {
 export function useSignOut() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const authStore = useAuthStore();
 
   return useMutation({
     mutationFn: () => authService.signOut(),
     onSettled: () => {
-      const authStore = useAuthStore();
-
-      queryClient.clear();
-
       authStore.clearCredentials();
+
+      queryClient.removeQueries({ queryKey: QUERY_KEYS.auth.currentUser() });
 
       toaster.success('You have been signed out.');
 
       router.push({ name: 'Sign In' });
+
+      queryClient.clear();
     }
   });
 }

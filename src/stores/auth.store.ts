@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = computed(() => isFetchingCurrentUser.value);
 
   const user = computed(() => data.value?.data?.user ?? null);
-  const isAuthenticated = computed(() => !!token.value || !!user.value);
+  const isAuthenticated = computed(() => !!token.value && !!user.value);
 
   function setCredentials(newToken: string) {
     token.value = newToken;
