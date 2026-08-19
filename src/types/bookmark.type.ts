@@ -104,15 +104,13 @@ export interface IBulkMoveBookmarksPayload {
 // Response objects for bookmark related operations
 
 export interface IPreviewBookmarkResponse {
-  openGraphData: {
-    title: string | null;
-    description: string | null;
-    coverImageUrl: string | null;
-    faviconUrl: string | null;
-    websiteName: string | null;
-    domain: string;
-    url: string;
-  };
+  title: string | null;
+  description: string | null;
+  coverImageUrl: string | null;
+  faviconUrl: string | null;
+  websiteName: string | null;
+  domain: string;
+  url: string;
 }
 
 export interface IAllBookmarkResponse {

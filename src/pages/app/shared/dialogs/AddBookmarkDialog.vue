@@ -25,7 +25,7 @@ const bookmarkDetails = ref<Omit<CreateBookmarkData, 'tags' | 'folderId' | 'brow
 const onSubmit = handleSubmit(async (values) => {
   getBookmarkPreview(values, {
     onSuccess(data) {
-      const previewData = data?.data.openGraphData;
+      const previewData = data?.data;
 
       bookmarkDetails.value = {
         title: previewData?.title ?? '',

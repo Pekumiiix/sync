@@ -80,7 +80,11 @@ const frequencyOptions = computed(() => {
         @retry="refetch"
       >
         <div class="w-full flex flex-col gap-5">
-          <BrowserIntegegrations :integrations="data?.data.integrations" />
+          <BrowserIntegegrations
+            v-for="integration in data?.data.integrations || []"
+            :key="integration.id"
+            :integration="integration"
+          />
         </div>
 
         <template #empty>

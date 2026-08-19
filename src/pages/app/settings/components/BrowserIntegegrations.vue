@@ -6,7 +6,7 @@ import type { Integration } from '@/types/browser-integration.type';
 import { timeAgo } from '@/utils/dateUtils';
 
 defineProps<{
-  integrations?: Integration[];
+  integration: Integration;
 }>();
 
 const { mutate, isPending } = useDisconnectBrowserIntegration();
@@ -18,8 +18,6 @@ function handleDisconnectBrowser(integrationId: string) {
 
 <template>
   <div
-    v-for="integration in integrations || []"
-    :key="integration.id"
     class="w-full h-14.5 flex items-center justify-between px-4 py-3.25 rounded-full bg-[#F9F9FB]"
   >
     <div class="flex items-center gap-1.75">

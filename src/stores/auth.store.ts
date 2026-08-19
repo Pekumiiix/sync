@@ -10,10 +10,11 @@ export const useAuthStore = defineStore('auth', () => {
   const signIn = useSignIn();
   const signOut = useSignOut();
 
+  const isInitialized = ref<boolean>(false);
+
   const token = ref<string | null>(localStorage.getItem('auth_token'));
 
   const isLoading = computed(() => isFetchingCurrentUser.value);
-
   const user = computed(() => data.value?.data?.user ?? null);
   const isAuthenticated = computed(() => !!token.value && !!user.value);
 
@@ -30,24 +31,32 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const checkAuthStatus = async () => {
-    return new Promise((resolve) => {
-      if (!isFetchingCurrentUser.value) {
-        resolve(true);
-        return;
-      }
+    if (isInitialized.value) return;
 
-      const unwatch = watch(isFetchingCurrentUser, (isFetching) => {
-        if (!isFetching) {
-          unwatch();
+    try {
+      await new Promise((resolve) => {
+        if (!isFetchingCurrentUser.value) {
           resolve(true);
+          return;
         }
+
+        // Wait until fetching completes
+        const unwatch = watch(isFetchingCurrentUser, (isFetching) => {
+          if (!isFetching) {
+            unwatch();
+            resolve(true);
+          }
+        });
       });
-    });
+    } finally {
+      isInitialized.value = true;
+    }
   };
 
   return {
     user,
     isLoading,
+    isInitialized,
     isAuthenticated,
     signIn,
     signOut,
