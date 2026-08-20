@@ -18,7 +18,7 @@ const { mutate, isPending } = useUpdateSettings();
 const { handleSubmit, meta, resetForm, isSubmitting } = useForm<BookmarkManagementData>({
   validationSchema: bookmarkManagementSchema,
   initialValues: {
-    autoMergeBookmarks: authStore.user?.settings.autoMergeDuplicate
+    autoMergeBookmarks: authStore.user?.settings.management.autoMergeDuplicate
   }
 });
 

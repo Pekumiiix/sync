@@ -94,7 +94,7 @@ const authStore = useAuthStore();
     </div>
 
     <div
-      v-if="authStore.user?.plan === 'free'"
+      v-if="authStore.user?.subscription.plan === 'free'"
       class="w-full flex items-center justify-between py-5 px-4 rounded-2xl bg-[#F0EDFE4D] border border-primary-10"
     >
       <div class="flex items-center gap-3">
