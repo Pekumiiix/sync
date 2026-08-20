@@ -10,6 +10,7 @@ import BookmarkFolderPage from '@/pages/app/bookmark-folder/index.vue';
 import MembersPage from '@/pages/app/members/index.vue';
 import AppNotFoundPage from '@/pages/app/not-found/index.vue';
 import SettingsPage from '@/pages/app/settings/index.vue';
+import CallbackPage from '@/pages/auth/callback/index.vue';
 // -- Auth Pages --------
 import ForgotPasswordPage from '@/pages/auth/forgot-password/index.vue';
 import ResetPasswordPage from '@/pages/auth/reset-paasword/index.vue';
@@ -79,6 +80,12 @@ const router = createRouter({
           name: 'Verify Email',
           meta: { requiresAuth: true },
           component: VerifyEmailPage
+        },
+        {
+          path: 'callback',
+          name: 'Callback',
+          meta: { requiresGuest: true },
+          component: CallbackPage
         }
       ]
     },
@@ -122,6 +129,10 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+
+  if (to.query.token) {
+    authStore.setCredentials(to.query.token as string);
+  }
 
   if (!authStore.isInitialized) {
     await authStore.checkAuthStatus();

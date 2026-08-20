@@ -9,6 +9,7 @@ import {
   AccountInformationTab,
   BookmarkManagementTab,
   HelpAndSupportTab,
+  LinkedAccountsTab,
   NotificationsTab,
   SubscriptionTab,
   SyncSettingsTab
@@ -43,6 +44,11 @@ const tabs = [
     value: 'bookmark_management',
     label: 'Bookmark Management',
     element: BookmarkManagementTab
+  },
+  {
+    value: 'linked_accounts',
+    label: 'Linked Accounts',
+    element: LinkedAccountsTab
   },
   {
     value: 'notifications',

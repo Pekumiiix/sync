@@ -25,7 +25,7 @@ const onSubmit = handleSubmit((values) => {
   mutate({
     firstName,
     lastName,
-    email: values.email,
+    email: values.email.toLowerCase(),
     password: values.password
   });
 });

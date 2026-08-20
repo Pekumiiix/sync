@@ -5,6 +5,9 @@ import { useSeoMeta } from '@vueuse/head';
 
 import { Toaster } from '@/components/ui/sonner';
 
+import FullScreenLoader from './components/shared/FullScreenLoader.vue';
+import { useAuthStore } from './stores/auth.store';
+
 import 'vue-sonner/style.css';
 
 const route = useRoute();
@@ -38,12 +41,15 @@ useSeoMeta({
   // twitterSite: '@SyncApp',
 });
 
+const authStore = useAuthStore();
 </script>
 
 <template>
   <Toaster />
 
-  <RouterView />
+  <FullScreenLoader v-if="!authStore.isInitialized" />
+
+  <RouterView v-else />
 </template>
 
 <style scoped>

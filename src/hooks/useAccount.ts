@@ -1,14 +1,28 @@
+import type { MaybeRefOrGetter } from 'vue';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 
 import { QUERY_KEYS } from '@/keys/query-keys';
 import { accountService } from '@/services/account.service';
-import type { IUpdateProfilePayload, IUpdateSettingsPayload } from '@/types/account.type';
+import type {
+  IDisconnectOAuthIdentityPayload,
+  IUpdateProfilePayload,
+  IUpdateSettingsPayload
+} from '@/types/account.type';
 import { toaster } from '@/utils/toastUtils';
 
-export function useCurrentUser() {
+export function useCurrentUser(enabled: MaybeRefOrGetter<boolean> = true) {
   return useQuery({
     queryKey: QUERY_KEYS.auth.currentUser(),
     queryFn: () => accountService.getProfile(),
+    staleTime: 1000 * 60 * 5,
+    enabled
+  });
+}
+
+export function useOAuthIdentities() {
+  return useQuery({
+    queryKey: QUERY_KEYS.oauthIdentities.lists(),
+    queryFn: () => accountService.getOAuthIdentities(),
     staleTime: 1000 * 60 * 5
   });
 }
@@ -45,6 +59,22 @@ export function useUpdateSettings() {
     },
     onError: () => {
       toaster.error('Failed to update settings');
+    }
+  });
+}
+
+export function useDisconnectOAuthIdentity() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IDisconnectOAuthIdentityPayload) =>
+      accountService.disconnectOAuthIdentity(payload),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.oauthIdentities.lists() });
+      toaster.success(response.message);
+    },
+    onError: (error) => {
+      toaster.error(error.message);
     }
   });
 }

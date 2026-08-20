@@ -63,6 +63,13 @@ export interface RouteNamedMap {
     Record<never, never>,
     never
   >;
+  Callback: RouteRecordInfo<
+    'Callback',
+    '/auth/callback',
+    Record<never, never>,
+    Record<never, never>,
+    never
+  >;
 
   // --- App Routes ---
   App: RouteRecordInfo<

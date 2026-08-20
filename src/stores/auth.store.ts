@@ -5,14 +5,14 @@ import { useCurrentUser } from '@/hooks/useAccount';
 import { useSignIn, useSignOut } from '@/hooks/useAuth';
 
 export const useAuthStore = defineStore('auth', () => {
-  const { data, isLoading: isFetchingCurrentUser } = useCurrentUser();
-
-  const signIn = useSignIn();
-  const signOut = useSignOut();
-
   const isInitialized = ref<boolean>(false);
 
   const token = ref<string | null>(localStorage.getItem('auth_token'));
+
+  const { data, isLoading: isFetchingCurrentUser } = useCurrentUser(computed(() => !!token.value));
+
+  const signIn = useSignIn();
+  const signOut = useSignOut();
 
   const isLoading = computed(() => isFetchingCurrentUser.value);
   const user = computed(() => data.value?.data?.user ?? null);

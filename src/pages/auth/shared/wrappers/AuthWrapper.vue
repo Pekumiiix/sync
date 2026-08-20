@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 
 import { LoadingButton } from '@/components/shared';
 import { Button } from '@/components/ui/button';
+import env from '@/config/env';
 
 type AuthPages = 'sign_in' | 'sign_up' | 'forgot_password' | 'reset_password' | 'verify_email';
 
@@ -58,6 +59,12 @@ const pageConfig: Record<AuthPages, IPageConfig> = {
 };
 
 const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.page));
+
+function handleGoogleSignIn() {
+  const baseUrl = env.apiUrl;
+
+  window.location.href = `${baseUrl}/oauth/google`;
+}
 </script>
 
 <template>
@@ -122,6 +129,7 @@ const isSignInOrSignUp = computed(() => ['sign_in', 'sign_up'].includes(props.pa
           type="button"
           variant="outline"
           class="w-full flex items-center gap-4 py-8.25 rounded-full text-[29px] leading-8.25 text-black-100 border-stroke-1/10"
+          @click="handleGoogleSignIn"
         >
           <img
             src="/images/auth/google.png"

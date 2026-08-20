@@ -63,5 +63,9 @@ export const QUERY_KEYS = {
   browserIntegration: {
     all: ['browser-integrations'] as const,
     lists: () => [...QUERY_KEYS.browserIntegration.all, 'list'] as const
+  },
+  oauthIdentities: {
+    all: ['oauth-identities'] as const,
+    lists: () => [...QUERY_KEYS.oauthIdentities.all, 'list'] as const
   }
 } as const;

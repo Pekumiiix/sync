@@ -18,7 +18,7 @@ const { mutate, isPending } = useForgotPassword();
 
 const onSubmit = handleSubmit((values) => {
   mutate({
-    email: values.email
+    email: values.email.toLowerCase()
   });
 });
 </script>

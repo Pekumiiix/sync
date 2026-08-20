@@ -22,7 +22,7 @@ const { mutate, isPending } = signIn;
 
 const onSubmit = handleSubmit((values) => {
   mutate({
-    email: values.email,
+    email: values.email.toLowerCase(),
     password: values.password,
     rememberMe: values.rememberMe
   });
@@ -79,7 +79,7 @@ const onSubmit = handleSubmit((values) => {
 
       <router-link
         to="/auth/forgot-password"
-        class="text-[27px] leading-7.25 text-[#D22109] -tracking-[2%]"
+        class="text-[27px] leading-7.25 text-[#D22109] tracking-[-2%]"
       >
         Forgot password?
       </router-link>

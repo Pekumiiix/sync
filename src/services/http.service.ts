@@ -5,7 +5,7 @@ import router from '@/router';
 import { useAuthStore } from '@/stores/auth.store';
 
 const api = axios.create({
-  baseURL: env.apiUrl,
+  baseURL: `${env.apiUrl}/api/v1`,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -37,17 +37,24 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       const authStore = useAuthStore();
 
-      authStore.clearCredentials();
-
       const currentPath = window.location.pathname;
       const currentFullPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
       const isAppRoute = currentPath.startsWith('/app');
 
-      if (isAppRoute) {
-        router.replace({
-          name: 'Sign In',
-          query: { redirect: currentFullPath }
-        });
+      const requestToken = error.config?.headers?.Authorization;
+      const currentToken = localStorage.getItem('auth_token');
+      const wasCurrentToken =
+        requestToken === `Bearer ${currentToken}` || (!requestToken && !currentToken);
+
+      if (wasCurrentToken) {
+        authStore.clearCredentials();
+
+        if (isAppRoute) {
+          router.replace({
+            name: 'Sign In',
+            query: { redirect: currentFullPath }
+          });
+        }
       }
     }
 

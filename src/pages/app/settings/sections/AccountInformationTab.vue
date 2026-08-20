@@ -4,13 +4,13 @@ import { useDropZone } from '@vueuse/core';
 import { LoaderCircle } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 
-import { BaseAvatar } from '@/components/re-useable';
+import { BaseAvatar, BasePasswordInput } from '@/components/re-useable';
 import { Input } from '@/components/ui/input';
 import { useUpdateProfile } from '@/hooks/useAccount';
 import { useUploadMedia } from '@/hooks/useCloudinary';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
-import { getChangedValues } from '@/utils/formUtils';
+import { createTypedForm, getChangedValues } from '@/utils/formUtils';
 import { computeUserName } from '@/utils/stringutils';
 
 import { SettingsInputField } from '../components';
@@ -26,6 +26,7 @@ const fileInputRef = ref<HTMLInputElement>();
 const selectedFile = ref<File | null>(null);
 
 const authStore = useAuthStore();
+
 const { mutate, isPending } = useUpdateProfile();
 const { mutate: uploadMedia, isPending: isUploading } = useUploadMedia();
 
@@ -37,7 +38,9 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
       firstName: authStore.user?.firstName,
       lastName: authStore.user?.lastName,
       email: authStore.user?.email,
-      location: authStore.user?.location || undefined
+      location: authStore.user?.location || undefined,
+      password: '',
+      confirmPassword: ''
     }
   });
 
@@ -104,6 +107,8 @@ function onInputChange(event: Event) {
     }
   }
 }
+
+const TypedFormField = createTypedForm<AccountInformationData>();
 </script>
 
 <template>
@@ -200,6 +205,36 @@ function onInputChange(event: Event) {
           readonly
           placeholder="Enter your email"
         />
+      </div>
+    </SettingsSubSectionWrapper>
+
+    <SettingsSubSectionWrapper
+      title="Password"
+      description="Update your password"
+    >
+      <div class="max-w-139 w-full flex flex-col gap-2.5">
+        <TypedFormField name="password">
+          <template #default="fieldProps">
+            <BasePasswordInput
+              v-bind="fieldProps"
+              :class-names="{
+                root: 'h-10.5 text-sm font-regular leading-5 placeholder:text-black-50 py-2.75 px-4.5 rounded-full border-black-50'
+              }"
+            />
+          </template>
+        </TypedFormField>
+
+        <TypedFormField name="confirmPassword">
+          <template #default="fieldProps">
+            <BasePasswordInput
+              v-bind="fieldProps"
+              placeholder="Confirm your new password"
+              :class-names="{
+                root: 'h-10.5 text-sm font-regular leading-5 placeholder:text-black-50 py-2.75 px-4.5 rounded-full border-black-50'
+              }"
+            />
+          </template>
+        </TypedFormField>
       </div>
     </SettingsSubSectionWrapper>
 
