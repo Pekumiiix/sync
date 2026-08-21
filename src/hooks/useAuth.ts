@@ -106,6 +106,9 @@ export function useVerifyEmail() {
 export function useForgotPassword() {
   return useMutation({
     mutationFn: (payload: IResetPasswordPayload) => authService.forgotPassword(payload),
+    onSuccess: (response) => {
+      toaster.success(response.message);
+    },
     onError: (error) => {
       toaster.error(error.message);
     }
