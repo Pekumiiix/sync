@@ -10,7 +10,7 @@ import { useUpdateProfile } from '@/hooks/useAccount';
 import { useUploadMedia } from '@/hooks/useCloudinary';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
-import { createTypedForm, getChangedValues } from '@/utils/formUtils';
+import { createTypedForm } from '@/utils/formUtils';
 import { computeUserName } from '@/utils/stringutils';
 
 import { SettingsInputField } from '../components';
@@ -45,13 +45,7 @@ const { handleSubmit, values, setFieldValue, meta, resetForm, isSubmitting } =
   });
 
 const onSubmit = handleSubmit((values) => {
-  const initial = meta.value.initialValues as Partial<AccountInformationData>;
-
-  const payload = getChangedValues(values, initial);
-
-  if (!payload) return;
-
-  mutate(payload.changedValues, {
+  mutate(values, {
     onSuccess: () => {
       resetForm({ values: values });
     }

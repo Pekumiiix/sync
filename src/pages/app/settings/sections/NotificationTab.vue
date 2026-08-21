@@ -3,7 +3,6 @@ import { useField, useForm } from 'vee-validate';
 
 import { useUpdateSettings } from '@/hooks/useAccount';
 import { useAuthStore } from '@/stores/auth.store';
-import { getChangedValues } from '@/utils/formUtils';
 
 import { SettingsSwitch } from '../components';
 import { type NotificationData, notificationSchema } from '../schemas/notification.schema';
@@ -22,13 +21,11 @@ const { handleSubmit, meta, resetForm, isSubmitting } = useForm<NotificationData
 });
 
 const onSubmit = handleSubmit((values) => {
-  const initial = meta.value.initialValues as Partial<NotificationData>;
-
-  const payload = getChangedValues(values, initial);
-
-  if (!payload) return;
-
-  mutate(payload.changedValues);
+  mutate(values, {
+    onSuccess: () => {
+      resetForm({ values: values });
+    }
+  });
 });
 
 const { value: notifyOnNewBookmark } = useField<boolean>('notifyOnNewBookmark');
