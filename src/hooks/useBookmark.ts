@@ -45,6 +45,7 @@ export function useCreateBookmark() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.folder.getBookmarkBrowsers(variables.folderId)
       });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.folder.bookmarkBrowsersBase() });
 
       toaster.success(response.message);
     },

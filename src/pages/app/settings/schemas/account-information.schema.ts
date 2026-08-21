@@ -33,7 +33,7 @@ const accountInformationZodSchema = z
       .min(2, { message: 'Location must be at least 2 characters' })
       .max(100, { message: 'Location cannot exceed 100 characters' })
       .optional(),
-    password: passwordBaseSchema.optional(),
+    password: z.union([z.literal(''), passwordBaseSchema]).optional(),
     confirmPassword: z.string().optional()
   })
   .refine((data) => data.password === data.confirmPassword, {
